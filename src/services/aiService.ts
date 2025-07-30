@@ -569,6 +569,7 @@ Your task is to enhance a user story with comprehensive details including:
 - Dependencies and assumptions
 - Risk assessment
 - Test cases
+- Structured acceptance criteria table with Given-When-Then format
 
 Return a JSON object with the following structure:
 {
@@ -582,10 +583,17 @@ Return a JSON object with the following structure:
   "assumptions": ["Assumption 1", "Assumption 2", ...],
   "constraints": ["Constraint 1", "Constraint 2", ...],
   "risks": ["Risk 1", "Risk 2", ...],
-  "testCases": ["Test case 1", "Test case 2", ...]
+  "testCases": ["Test case 1", "Test case 2", ...],
+  "structuredAcceptanceCriteria": [
+    {
+      "scenario": "Scenario name",
+      "acceptancePoint": "Acceptance point name", 
+      "givenWhenThen": "Given [condition], When [action], Then [expected result]"
+    }
+  ]
 }
 
-Focus on making the story more detailed, actionable, and comprehensive.`;
+Focus on making the story more detailed, actionable, and comprehensive. Generate 3-5 structured acceptance criteria scenarios based on the story content.`;
 
       const userPrompt = `Enhance this user story: ${task.title} - ${task.description}`;
 
@@ -649,6 +657,23 @@ Focus on making the story more detailed, actionable, and comprehensive.`;
           "测试无效输入的错误处理",
           "测试正常负载下的性能",
           "测试与依赖系统的集成"
+        ],
+        structuredAcceptanceCriteria: [
+          {
+            scenario: "功能实现",
+            acceptancePoint: "基本功能",
+            givenWhenThen: "Given 用户访问功能，When 功能实现时，Then 应该按描述工作"
+          },
+          {
+            scenario: "用户交互",
+            acceptancePoint: "用户操作",
+            givenWhenThen: "Given 用户与功能交互，When 他们执行操作时，Then 应该产生预期结果"
+          },
+          {
+            scenario: "系统处理",
+            acceptancePoint: "系统响应",
+            givenWhenThen: "Given 系统处理请求，When 验证通过时，Then 操作应该成功完成"
+          }
         ]
       };
     } else {
@@ -694,6 +719,23 @@ Focus on making the story more detailed, actionable, and comprehensive.`;
           "Test error handling for invalid inputs",
           "Test performance under normal load",
           "Test integration with dependent systems"
+        ],
+        structuredAcceptanceCriteria: [
+          {
+            scenario: "Feature Implementation",
+            acceptancePoint: "Basic Functionality",
+            givenWhenThen: "Given the user accesses the feature, When the feature is implemented, Then it should work as described"
+          },
+          {
+            scenario: "User Interaction",
+            acceptancePoint: "User Operation",
+            givenWhenThen: "Given the user interacts with the feature, When they perform the action, Then the expected result should occur"
+          },
+          {
+            scenario: "System Processing",
+            acceptancePoint: "System Response",
+            givenWhenThen: "Given the system processes the request, When validation passes, Then the operation should complete successfully"
+          }
         ]
       };
     }

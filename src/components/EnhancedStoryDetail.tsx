@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Sparkles, Save, Edit, Trash2 } from 'lucide-react';
 import type { Task } from '../types/story';
@@ -24,6 +24,11 @@ interface EnhancedStoryData {
   constraints: string[];
   risks: string[];
   testCases: string[];
+  structuredAcceptanceCriteria?: {
+    scenario: string;
+    acceptancePoint: string;
+    givenWhenThen: string;
+  }[];
 }
 
 const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
@@ -36,6 +41,17 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [enhancedData, setEnhancedData] = useState<EnhancedStoryData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [editableData, setEditableData] = useState<EnhancedStoryData | null>(null);
+
+  // Load cached enhanced story data
+  useEffect(() => {
+    const cachedStories = JSON.parse(localStorage.getItem('enhancedStories') || '{}');
+    const cachedStory = cachedStories[task.id];
+    if (cachedStory) {
+      setEnhancedData(cachedStory);
+      setEditableData(cachedStory);
+    }
+  }, [task.id]);
 
   const polishWithAI = async () => {
     setIsLoading(true);
@@ -100,6 +116,12 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
       }
       
       setEnhancedData(enhancedStory);
+      setEditableData(enhancedStory);
+      
+      // Cache the enhanced story
+      const cachedStories = JSON.parse(localStorage.getItem('enhancedStories') || '{}');
+      cachedStories[task.id] = enhancedStory;
+      localStorage.setItem('enhancedStories', JSON.stringify(cachedStories));
     } catch (error) {
       console.error('Failed to enhance story:', error);
     } finally {
@@ -108,17 +130,24 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
   };
 
   const handleSave = () => {
-    if (enhancedData) {
+    if (editableData) {
       const updatedTask: Task = {
         ...task,
-        description: enhancedData.userStory,
-        acceptanceCriteria: enhancedData.acceptanceCriteria,
+        description: editableData.userStory,
+        acceptanceCriteria: editableData.acceptanceCriteria,
         // Add enhanced data to task metadata
         metadata: {
           ...task.metadata,
-          enhancedData
+          enhancedData: editableData
         }
       };
+      
+      // Update cache with edited data
+      const cachedStories = JSON.parse(localStorage.getItem('enhancedStories') || '{}');
+      cachedStories[task.id] = editableData;
+      localStorage.setItem('enhancedStories', JSON.stringify(cachedStories));
+      
+      setEnhancedData(editableData);
       onUpdate(updatedTask);
       setIsEditing(false);
     }
@@ -185,13 +214,19 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
                 <h4 className="font-semibold mb-2">{t('storyDetail.userStory')}</h4>
                 <div className="bg-gray-50 p-4 rounded-md">
                   <p className="text-sm">
-                    <span className="font-medium">{t('storyDetail.asA')}</span> {enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || ''}
+                    <span className="font-medium">{t('storyDetail.asA')}</span> {enhancedData.userStory.includes('作为') ? 
+                      enhancedData.userStory.split('作为')[1]?.split('，我希望')[0]?.trim() || enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || '' :
+                      enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || ''}
                   </p>
                   <p className="text-sm mt-1">
-                    <span className="font-medium">{t('storyDetail.iWant')}</span> {enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || ''}
+                    <span className="font-medium">{t('storyDetail.iWant')}</span> {enhancedData.userStory.includes('我希望') ? 
+                      enhancedData.userStory.split('，我希望')[1]?.split('，以便')[0]?.trim() || enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || '' :
+                      enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || ''}
                   </p>
                   <p className="text-sm mt-1">
-                    <span className="font-medium">{t('storyDetail.soThat')}</span> {enhancedData.userStory.split('so that')[1]?.trim() || ''}
+                    <span className="font-medium">{t('storyDetail.soThat')}</span> {enhancedData.userStory.includes('以便') ? 
+                      enhancedData.userStory.split('，以便')[1]?.trim() || enhancedData.userStory.split('so that')[1]?.trim() || '' :
+                      enhancedData.userStory.split('so that')[1]?.trim() || ''}
                   </p>
                 </div>
               </div>
@@ -206,47 +241,82 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
                 </ul>
                 
                 {/* Structured Acceptance Criteria Table */}
-                <div className="mt-6">
-                  <h5 className="font-semibold mb-3 text-gray-800">结构化验收标准</h5>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 rounded-lg">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">场景</th>
-                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">验收点</th>
-                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Given-When-Then</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white">
-                        <tr className="border-b">
-                          <td className="px-4 py-2 text-sm text-gray-700">成功配对</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">QR码扫描</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">Given 有效设备QR码，When 用户扫描成功，Then 系统应识别设备信息</td>
-                        </tr>
-                        <tr className="border-b">
-                          <td className="px-4 py-2 text-sm text-gray-700">成功配对</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">设备验证</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">Given 识别到设备ID，When 系统验证，Then 应返回设备详细信息</td>
-                        </tr>
-                        <tr className="border-b">
-                          <td className="px-4 py-2 text-sm text-gray-700">成功配对</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">绑定确认</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">Given 可用设备，When 用户确认绑定，Then 应创建绑定记录</td>
-                        </tr>
-                        <tr className="border-b">
-                          <td className="px-4 py-2 text-sm text-gray-700">无效QR码</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">错误处理</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">Given 无效QR码，When 用户扫描，Then 应显示适当错误信息</td>
-                        </tr>
-                        <tr>
-                          <td className="px-4 py-2 text-sm text-gray-700">设备冲突</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">冲突处理</td>
-                          <td className="px-4 py-2 text-sm text-gray-700">Given 已绑定设备，When 用户尝试绑定，Then 应提示冲突信息</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                {enhancedData.structuredAcceptanceCriteria && enhancedData.structuredAcceptanceCriteria.length > 0 && (
+                  <div className="mt-6">
+                    <h5 className="font-semibold mb-3 text-gray-800">结构化验收标准</h5>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full border border-gray-200 rounded-lg">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">场景</th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">验收点</th>
+                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Given-When-Then</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white">
+                          {enhancedData.structuredAcceptanceCriteria.map((criteria, index) => (
+                            <tr key={index} className="border-b">
+                              <td className="px-4 py-2 text-sm text-gray-700">
+                                {isEditing && editableData ? (
+                                  <input
+                                    type="text"
+                                    value={editableData.structuredAcceptanceCriteria?.[index]?.scenario || ''}
+                                    onChange={(e) => {
+                                      const updated = { ...editableData };
+                                      if (updated.structuredAcceptanceCriteria) {
+                                        updated.structuredAcceptanceCriteria[index].scenario = e.target.value;
+                                        setEditableData(updated);
+                                      }
+                                    }}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                  />
+                                ) : (
+                                  criteria.scenario
+                                )}
+                              </td>
+                              <td className="px-4 py-2 text-sm text-gray-700">
+                                {isEditing && editableData ? (
+                                  <input
+                                    type="text"
+                                    value={editableData.structuredAcceptanceCriteria?.[index]?.acceptancePoint || ''}
+                                    onChange={(e) => {
+                                      const updated = { ...editableData };
+                                      if (updated.structuredAcceptanceCriteria) {
+                                        updated.structuredAcceptanceCriteria[index].acceptancePoint = e.target.value;
+                                        setEditableData(updated);
+                                      }
+                                    }}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                  />
+                                ) : (
+                                  criteria.acceptancePoint
+                                )}
+                              </td>
+                              <td className="px-4 py-2 text-sm text-gray-700">
+                                {isEditing && editableData ? (
+                                  <textarea
+                                    value={editableData.structuredAcceptanceCriteria?.[index]?.givenWhenThen || ''}
+                                    onChange={(e) => {
+                                      const updated = { ...editableData };
+                                      if (updated.structuredAcceptanceCriteria) {
+                                        updated.structuredAcceptanceCriteria[index].givenWhenThen = e.target.value;
+                                        setEditableData(updated);
+                                      }
+                                    }}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+                                    rows={2}
+                                  />
+                                ) : (
+                                  criteria.givenWhenThen
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Definition of Done */}
