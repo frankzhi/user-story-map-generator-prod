@@ -1155,39 +1155,71 @@ Focus on making the story more detailed, actionable, and comprehensive. Generate
       if (this.deepseekService.isConfigured()) {
         // Use DeepSeek to process feedback and modify story map
         const response = await this.deepseekService.generateStoryMapWithFeedback(feedbackPrompt);
-        return response;
-      } else {
-        // For mock mode, return a modified version of charging pile story map
-        const baseStoryMap = this.generateChargingPileStoryMap();
-        // Modify based on feedback keywords
-        if (feedbackPrompt.toLowerCase().includes('增加') || feedbackPrompt.toLowerCase().includes('add')) {
-          // Add a new epic
-          baseStoryMap.epics.push({
-            title: "新增功能模块",
-            description: "根据用户反馈新增的功能模块",
-            features: [{
-              title: "反馈功能",
-              description: "基于用户反馈实现的功能",
-              tasks: [{
-                title: "实现反馈处理",
-                description: "处理用户反馈并更新系统",
-                priority: "high",
-                effort: "3 days",
-                acceptance_criteria: [
-                  "Given 用户提交反馈，When 系统处理，Then 应记录反馈内容",
-                  "Given 反馈处理完成，When 用户查看，Then 应显示处理结果",
-                  "Given 反馈涉及功能修改，When 系统更新，Then 应通知相关用户"
-                ]
-              }]
-            }]
-          });
+        
+        // Try to parse the response as JSON first
+        try {
+          const parsedResponse = JSON.parse(response);
+          return parsedResponse;
+        } catch (parseError) {
+          console.error('Failed to parse AI response as JSON:', parseError);
+          console.log('Raw AI response:', response);
+          
+          // If parsing fails, return a modified version based on feedback
+          return this.generateModifiedStoryMapFromFeedback(feedbackPrompt);
         }
-        return baseStoryMap;
+      } else {
+        // For mock mode, return a modified version based on feedback
+        return this.generateModifiedStoryMapFromFeedback(feedbackPrompt);
       }
     } catch (error) {
       console.error('Error generating story map with feedback:', error);
-      return this.generateMockStoryMap('');
+      return this.generateModifiedStoryMapFromFeedback(feedbackPrompt);
     }
+  }
+
+  private generateModifiedStoryMapFromFeedback(feedbackPrompt: string): StoryMapYAML {
+    const baseStoryMap = this.generateChargingPileStoryMap();
+    
+    // Modify based on feedback keywords
+    if (feedbackPrompt.toLowerCase().includes('增加') || feedbackPrompt.toLowerCase().includes('add')) {
+      // Add a new epic
+      baseStoryMap.epics.push({
+        title: "新增功能模块",
+        description: "根据用户反馈新增的功能模块",
+        features: [{
+          title: "反馈功能",
+          description: "基于用户反馈实现的功能",
+          tasks: [{
+            title: "实现反馈处理",
+            description: "处理用户反馈并更新系统",
+            priority: "high",
+            effort: "3 days",
+            acceptance_criteria: [
+              "Given 用户提交反馈，When 系统处理，Then 应记录反馈内容",
+              "Given 反馈处理完成，When 用户查看，Then 应显示处理结果",
+              "Given 反馈涉及功能修改，When 系统更新，Then 应通知相关用户"
+            ]
+          }]
+        }]
+      });
+    }
+    
+    if (feedbackPrompt.toLowerCase().includes('修改') || feedbackPrompt.toLowerCase().includes('change')) {
+      // Modify existing epics
+      if (baseStoryMap.epics.length > 0) {
+        baseStoryMap.epics[0].title = "修改后的" + baseStoryMap.epics[0].title;
+        baseStoryMap.epics[0].description += "（根据用户反馈进行了修改）";
+      }
+    }
+    
+    if (feedbackPrompt.toLowerCase().includes('删除') || feedbackPrompt.toLowerCase().includes('remove')) {
+      // Remove some epics
+      if (baseStoryMap.epics.length > 1) {
+        baseStoryMap.epics.pop();
+      }
+    }
+    
+    return baseStoryMap;
   }
 
   convertStoryMapToYAML(storyMap: StoryMap): string {

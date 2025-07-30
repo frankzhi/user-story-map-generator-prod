@@ -244,9 +244,12 @@ Return ONLY the JSON object, no additional text or explanations.`;
 1. 保持原有的故事地图结构
 2. 根据用户反馈调整相关的内容
 3. 确保修改后的故事地图更加符合用户需求
-4. 返回完整的修改后的YAML格式故事地图
+4. 返回完整的修改后的JSON格式故事地图
 
-请直接返回修改后的YAML格式故事地图，不要包含其他解释文字。
+请直接返回修改后的JSON格式故事地图，不要包含其他解释文字。JSON格式应该包含：
+- title: 故事地图标题
+- description: 故事地图描述
+- epics: 阶段数组，每个阶段包含features数组，每个feature包含tasks数组
 
 ${languageContext}`;
 
