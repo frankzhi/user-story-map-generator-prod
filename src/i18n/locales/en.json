@@ -67,7 +67,12 @@
     "copyStory": "Copy Story",
     "doubleClickToEdit": "Double-click user story cards to edit content",
     "potentialCustomer": "Potential Customer",
-    "supportingNeed": "Supporting Need"
+    "supportingNeed": "Supporting Need",
+    "phases": "Phases",
+    "activities": "Activities",
+    "touchpoints": "Touchpoints",
+    "userStories": "User Stories",
+    "supportingNeeds": "Supporting Needs"
   },
   "storyDetail": {
     "title": "Story Details",

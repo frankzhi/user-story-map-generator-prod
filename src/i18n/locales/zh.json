@@ -67,7 +67,12 @@
     "copyStory": "复制故事",
     "doubleClickToEdit": "双击用户故事卡片可以编辑内容",
     "potentialCustomer": "潜在客户",
-    "supportingNeed": "支撑性需求"
+    "supportingNeed": "支撑性需求",
+    "phases": "阶段",
+    "activities": "活动",
+    "touchpoints": "接触点",
+    "userStories": "用户故事",
+    "supportingNeeds": "支撑性需求"
   },
   "storyDetail": {
     "title": "故事详情",

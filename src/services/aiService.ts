@@ -75,8 +75,31 @@ export class AIService {
   }
 
   private generateMockStoryMap(productDescription: string): StoryMapYAML {
-    // Always return car rental service for demo
-    return this.generateCarRentalStoryMap();
+    // For mock demo, always return car rental service
+    // For other cases, generate based on product description
+    if (productDescription.toLowerCase().includes('租车') || 
+        productDescription.toLowerCase().includes('car rental') ||
+        productDescription.toLowerCase().includes('vehicle') ||
+        productDescription.toLowerCase().includes('车')) {
+      return this.generateCarRentalStoryMap();
+    } else if (productDescription.toLowerCase().includes('电商') || 
+               productDescription.toLowerCase().includes('e-commerce') ||
+               productDescription.toLowerCase().includes('shopping')) {
+      return this.generateEcommerceStoryMap();
+    } else if (productDescription.toLowerCase().includes('社交') || 
+               productDescription.toLowerCase().includes('social')) {
+      return this.generateSocialNetworkStoryMap();
+    } else if (productDescription.toLowerCase().includes('任务') || 
+               productDescription.toLowerCase().includes('task') ||
+               productDescription.toLowerCase().includes('project')) {
+      return this.generateTaskManagementStoryMap();
+    } else if (productDescription.toLowerCase().includes('充电') || 
+               productDescription.toLowerCase().includes('charging')) {
+      return this.generateChargingStationStoryMap();
+    } else {
+      // Generate a generic story map based on the product description
+      return this.generateGenericStoryMap(productDescription);
+    }
   }
 
   private generateEcommerceStoryMap(): StoryMapYAML {
