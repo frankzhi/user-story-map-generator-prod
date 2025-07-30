@@ -1,4 +1,4 @@
-import type { StoryMapYAML, Task } from '../types/story';
+import type { StoryMapYAML, Task, StoryMap } from '../types/story';
 import { DeepSeekService } from './deepseekService';
 import { GeminiService } from './geminiService';
 import i18n from '../i18n';
@@ -1148,5 +1148,55 @@ Focus on making the story more detailed, actionable, and comprehensive. Generate
 
   private generateId(): string {
     return Math.random().toString(36).substr(2, 9);
+  }
+
+  async generateStoryMapWithFeedback(feedbackPrompt: string): Promise<StoryMapYAML> {
+    try {
+      // For now, return mock data since DeepSeek feedback is not implemented yet
+      return this.generateMockStoryMap('');
+    } catch (error) {
+      console.error('Error generating story map with feedback:', error);
+      return this.generateMockStoryMap('');
+    }
+  }
+
+  convertStoryMapToYAML(storyMap: StoryMap): string {
+    const yamlData = {
+      title: storyMap.title,
+      description: storyMap.description,
+      epics: storyMap.epics.map(epic => ({
+        title: epic.title,
+        description: epic.description,
+        features: epic.features.map(feature => ({
+          title: feature.title,
+          description: feature.description,
+          tasks: feature.tasks.map(task => ({
+            title: task.title,
+            description: task.description,
+            priority: task.priority,
+            effort: task.estimatedEffort,
+            acceptance_criteria: task.acceptanceCriteria
+          }))
+        }))
+      }))
+    };
+
+    return `# ${yamlData.title}
+# ${yamlData.description}
+
+${yamlData.epics.map(epic => `## ${epic.title}
+${epic.description}
+
+${epic.features.map(feature => `### ${feature.title}
+${feature.description}
+
+${feature.tasks.map(task => `#### ${task.title}
+- **Description:** ${task.description}
+- **Priority:** ${task.priority}
+- **Effort:** ${task.effort}
+- **Acceptance Criteria:**
+${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
+
+`).join('')}`).join('')}`).join('\n')}`;
   }
 } 

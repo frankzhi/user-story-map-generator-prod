@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Download, Eye, User, CheckCircle, Clock, Info, MapPin, Smartphone, CreditCard, Car } from 'lucide-react';
+import { ArrowLeft, Download, Eye, User, CheckCircle, Clock, Info, MapPin, Smartphone, CreditCard, Car, MessageSquare, Edit } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { StoryMap, UserStory, Task } from '../types/story';
 import EnhancedStoryDetail from './EnhancedStoryDetail';
+import { StoryMapEditor } from './StoryMapEditor';
+import { FeedbackModal } from './FeedbackModal';
 
 interface StoryMapViewProps {
   storyMap: StoryMap;
@@ -13,6 +15,9 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
   const { t } = useTranslation();
   const [selectedStory, setSelectedStory] = useState<UserStory | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(storyMap);
 
   const handleStoryClick = (story: UserStory) => {
     setSelectedStory(story);
@@ -25,7 +30,7 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
   };
 
   const downloadYAML = () => {
-    const yamlContent = convertToYAML(storyMap);
+    const yamlContent = convertToYAML(currentStoryMap);
     const blob = new Blob([yamlContent], { type: 'text/yaml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -79,7 +84,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
 
   // Transform epics into hierarchical map layout
   const transformToMapLayout = () => {
-    return storyMap.epics.map(epic => ({
+    return currentStoryMap.epics.map(epic => ({
       phase: {
         title: epic.title,
         description: epic.description
@@ -214,6 +219,16 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
 
   const mapLayout = transformToMapLayout();
 
+  const handleStoryMapUpdate = (updatedStoryMap: StoryMap) => {
+    setCurrentStoryMap(updatedStoryMap);
+    setShowEditor(false);
+  };
+
+  const handleFeedbackUpdate = (updatedStoryMap: StoryMap) => {
+    setCurrentStoryMap(updatedStoryMap);
+    setShowFeedback(false);
+  };
+
   return (
     <div className="story-map-container min-h-screen bg-gray-50">
       {/* Header */}
@@ -229,17 +244,33 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 {t('common.back')}
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{storyMap.title}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{currentStoryMap.title}</h1>
                 <p className="text-gray-600 text-sm">{t('storyMap.doubleClickToEdit')}</p>
               </div>
             </div>
-            <button
-              onClick={downloadYAML}
-              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              {t('common.export')} YAML
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowFeedback(true)}
+                className="flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                {t('storyMap.feedback')}
+              </button>
+              <button
+                onClick={() => setShowEditor(true)}
+                className="flex items-center bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                {t('storyMap.editStoryMap')}
+              </button>
+              <button
+                onClick={downloadYAML}
+                className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {t('common.export')} YAML
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -449,7 +480,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           onClose={closeModal}
           onUpdate={(updatedTask) => {
             // Update the story in the story map
-            const updatedStoryMap = { ...storyMap };
+            const updatedStoryMap = { ...currentStoryMap };
             updatedStoryMap.epics = updatedStoryMap.epics.map(epic => ({
               ...epic,
               features: epic.features.map(feature => ({
@@ -459,13 +490,31 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 )
               }))
             }));
-            // You could add a callback to update the parent component
+            setCurrentStoryMap(updatedStoryMap);
             closeModal();
           }}
           onDelete={() => {
             // Handle story deletion
             closeModal();
           }}
+        />
+      )}
+
+      {/* Story Map Editor Modal */}
+      {showEditor && (
+        <StoryMapEditor
+          storyMap={currentStoryMap}
+          onSave={handleStoryMapUpdate}
+          onClose={() => setShowEditor(false)}
+        />
+      )}
+
+      {/* Feedback Modal */}
+      {showFeedback && (
+        <FeedbackModal
+          storyMap={currentStoryMap}
+          onClose={() => setShowFeedback(false)}
+          onUpdate={handleFeedbackUpdate}
         />
       )}
     </div>
