@@ -1,0 +1,135 @@
+{
+  "common": {
+    "language": "Language",
+    "english": "English",
+    "chinese": "中文",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "ready": "Ready to use",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "generate": "Generate",
+    "refresh": "Refresh",
+    "export": "Export",
+    "import": "Import"
+  },
+  "homepage": {
+    "title": "User Story Map Generator",
+    "subtitle": "AI-powered user story map generator with DeepSeek and Gemini integration",
+    "description": "Generate comprehensive user story maps for your product development",
+    "productDescription": "Product Description",
+    "productDescriptionPlaceholder": "Describe your product or feature (e.g., E-commerce platform for selling books)",
+    "aiProvider": "AI Provider",
+    "generateStoryMap": "Generate Story Map",
+    "recentMaps": "Recent Story Maps",
+    "noRecentMaps": "No recent story maps found",
+    "createNewMap": "Create New Story Map",
+    "viewAllMaps": "View All Maps"
+  },
+  "storyMap": {
+    "title": "Story Map",
+    "epic": "Epic",
+    "feature": "Feature",
+    "task": "Task",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "done": "Done"
+    },
+    "effort": "Effort",
+    "acceptanceCriteria": "Acceptance Criteria",
+    "description": "Description",
+    "details": "Details",
+    "polishWithAI": "Polish with AI",
+    "addTask": "Add Task",
+    "addFeature": "Add Feature",
+    "addEpic": "Add Epic",
+    "editStory": "Edit Story",
+    "deleteStory": "Delete Story",
+    "moveStory": "Move Story",
+    "copyStory": "Copy Story"
+  },
+  "storyDetail": {
+    "title": "Story Details",
+    "userStory": "User Story",
+    "asA": "As a",
+    "iWant": "I want",
+    "soThat": "so that",
+    "acceptanceCriteria": "Acceptance Criteria",
+    "definitionOfDone": "Definition of Done",
+    "technicalNotes": "Technical Notes",
+    "businessValue": "Business Value",
+    "storyPoints": "Story Points",
+    "dependencies": "Dependencies",
+    "assumptions": "Assumptions",
+    "constraints": "Constraints",
+    "risks": "Risks",
+    "testCases": "Test Cases",
+    "polishWithAI": "Polish with AI",
+    "polishDescription": "Use AI to enhance this story with more details, acceptance criteria, and technical considerations",
+    "generating": "Generating enhanced story...",
+    "enhancedStory": "Enhanced Story"
+  },
+  "aiProviders": {
+    "deepseek": "DeepSeek",
+    "gemini": "Google Gemini",
+    "mock": "Mock Data (Demo)"
+  },
+  "errors": {
+    "apiKeyMissing": "API key not configured",
+    "generationFailed": "Failed to generate story map",
+    "networkError": "Network error occurred",
+    "invalidResponse": "Invalid response from AI service",
+    "timeout": "Request timed out"
+  },
+  "success": {
+    "storyMapGenerated": "Story map generated successfully",
+    "storyEnhanced": "Story enhanced successfully",
+    "saved": "Changes saved successfully"
+  },
+  "sampleStories": {
+    "chargingStation": {
+      "title": "Charging Station Device Pairing Feature",
+      "description": "As a charging station user, I want to pair new charging station devices by scanning QR codes, so that I can add devices to my account for management and use.",
+      "background": {
+        "system": "Charging Station User Mobile App",
+        "module": "Device Management Module",
+        "environment": "Mobile App (iOS/Android)",
+        "targetUsers": "Registered charging station users (individual/enterprise)"
+      },
+      "requirements": {
+        "functional": [
+          "QR code scanning functionality",
+          "Device verification process",
+          "User-device binding",
+          "Binding success notification"
+        ],
+        "nonFunctional": [
+          "Security: QR code content must be encrypted",
+          "Performance: Pairing process should complete within 5 seconds",
+          "Reliability: Pairing success rate > 99.5%"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Given a valid device QR code, When user scans successfully, Then system should identify device information",
+        "Given device ID is recognized, When system verifies, Then device details should be returned",
+        "Given available device, When user confirms binding, Then binding record should be created",
+        "Given invalid QR code, When user scans, Then appropriate error message should be displayed",
+        "Given already bound device, When user attempts to bind, Then conflict information should be prompted"
+      ]
+    }
+  }
+} 

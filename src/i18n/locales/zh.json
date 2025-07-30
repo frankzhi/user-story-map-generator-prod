@@ -1,0 +1,135 @@
+{
+  "common": {
+    "language": "语言",
+    "english": "English",
+    "chinese": "中文",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除",
+    "ready": "可以使用",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "generate": "生成",
+    "refresh": "刷新",
+    "export": "导出",
+    "import": "导入"
+  },
+  "homepage": {
+    "title": "用户故事地图生成器",
+    "subtitle": "AI驱动的用户故事地图生成器，支持DeepSeek和Gemini集成",
+    "description": "为您的产品开发生成全面的用户故事地图",
+    "productDescription": "产品描述",
+    "productDescriptionPlaceholder": "描述您的产品或功能（例如：销售图书的电商平台）",
+    "aiProvider": "AI提供商",
+    "generateStoryMap": "生成故事地图",
+    "recentMaps": "最近的故事地图",
+    "noRecentMaps": "未找到最近的故事地图",
+    "createNewMap": "创建新故事地图",
+    "viewAllMaps": "查看所有地图"
+  },
+  "storyMap": {
+    "title": "故事地图",
+    "epic": "史诗",
+    "feature": "功能",
+    "task": "任务",
+    "priority": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "status": {
+      "todo": "待办",
+      "inProgress": "进行中",
+      "done": "已完成"
+    },
+    "effort": "工作量",
+    "acceptanceCriteria": "验收标准",
+    "description": "描述",
+    "details": "详情",
+    "polishWithAI": "AI优化",
+    "addTask": "添加任务",
+    "addFeature": "添加功能",
+    "addEpic": "添加史诗",
+    "editStory": "编辑故事",
+    "deleteStory": "删除故事",
+    "moveStory": "移动故事",
+    "copyStory": "复制故事"
+  },
+  "storyDetail": {
+    "title": "故事详情",
+    "userStory": "用户故事",
+    "asA": "作为",
+    "iWant": "我希望",
+    "soThat": "以便",
+    "acceptanceCriteria": "验收标准",
+    "definitionOfDone": "完成定义",
+    "technicalNotes": "技术说明",
+    "businessValue": "业务价值",
+    "storyPoints": "故事点数",
+    "dependencies": "依赖关系",
+    "assumptions": "假设",
+    "constraints": "约束",
+    "risks": "风险",
+    "testCases": "测试用例",
+    "polishWithAI": "AI优化",
+    "polishDescription": "使用AI增强此故事的详细信息、验收标准和技术考虑",
+    "generating": "正在生成增强故事...",
+    "enhancedStory": "增强故事"
+  },
+  "aiProviders": {
+    "deepseek": "DeepSeek",
+    "gemini": "Google Gemini",
+    "mock": "模拟数据（演示）"
+  },
+  "errors": {
+    "apiKeyMissing": "API密钥未配置",
+    "generationFailed": "生成故事地图失败",
+    "networkError": "发生网络错误",
+    "invalidResponse": "AI服务响应无效",
+    "timeout": "请求超时"
+  },
+  "success": {
+    "storyMapGenerated": "故事地图生成成功",
+    "storyEnhanced": "故事增强成功",
+    "saved": "更改保存成功"
+  },
+  "sampleStories": {
+    "chargingStation": {
+      "title": "充电桩设备配对功能",
+      "description": "作为充电桩用户，我希望能够通过扫描设备上的QR码来配对新的充电桩设备，以便将设备添加到我的账户中进行管理和使用。",
+      "background": {
+        "system": "充电桩用户移动应用",
+        "module": "设备管理模块",
+        "environment": "移动端应用（iOS/Android）",
+        "targetUsers": "已注册的充电桩用户（个人/企业）"
+      },
+      "requirements": {
+        "functional": [
+          "QR码扫描功能",
+          "设备验证流程",
+          "用户-设备绑定",
+          "绑定成功通知"
+        ],
+        "nonFunctional": [
+          "安全性：QR码内容需加密",
+          "性能：配对过程应在5秒内完成",
+          "可靠性：配对成功率>99.5%"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Given 有效设备QR码，When 用户扫描成功，Then 系统应识别设备信息",
+        "Given 识别到设备ID，When 系统验证，Then 应返回设备详细信息",
+        "Given 可用设备，When 用户确认绑定，Then 应创建绑定记录",
+        "Given 无效QR码，When 用户扫描，Then 应显示适当错误信息",
+        "Given 已绑定设备，When 用户尝试绑定，Then 应提示冲突信息"
+      ]
+    }
+  }
+} 

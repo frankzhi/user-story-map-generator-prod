@@ -161,6 +161,57 @@ Return ONLY the JSON object, no additional text or explanations.`;
     return transformed;
   }
 
+  async generateEnhancedStory(userPrompt: string, systemPrompt: string): Promise<any> {
+    if (!this.apiKey) {
+      throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
+    }
+
+    const messages: DeepSeekMessage[] = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ];
+
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages,
+          temperature: 0.7,
+          max_tokens: 4000
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`DeepSeek API error: ${response.status} - ${errorText}`);
+      }
+
+      const data: DeepSeekResponse = await response.json();
+      const content = data.choices[0]?.message?.content;
+
+      if (!content) {
+        throw new Error('No response content from DeepSeek API');
+      }
+
+      // Try to extract JSON from the response
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('No valid JSON found in DeepSeek response');
+      }
+
+      return JSON.parse(jsonMatch[0]);
+
+    } catch (error) {
+      console.error('DeepSeek API error:', error);
+      throw new Error(`Failed to enhance story: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
   isConfigured(): boolean {
     try {
       return !!this.apiKey;

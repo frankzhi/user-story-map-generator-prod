@@ -1,4 +1,4 @@
-import type { StoryMapYAML } from '../types/story';
+import type { StoryMapYAML, Task } from '../types/story';
 import { DeepSeekService } from './deepseekService';
 import { GeminiService } from './geminiService';
 
@@ -427,6 +427,101 @@ export class AIService {
     };
 
     return storyMap;
+  }
+
+  async enhanceStory(task: Task): Promise<any> {
+    try {
+      const systemPrompt = `You are an expert user story analyst and technical writer. 
+      
+Your task is to enhance a user story with comprehensive details including:
+- Complete user story format (As a... I want... so that...)
+- Detailed acceptance criteria
+- Definition of Done
+- Technical notes and considerations
+- Business value assessment
+- Story point estimation
+- Dependencies and assumptions
+- Risk assessment
+- Test cases
+
+Return a JSON object with the following structure:
+{
+  "userStory": "Complete user story in proper format",
+  "acceptanceCriteria": ["Criteria 1", "Criteria 2", ...],
+  "definitionOfDone": ["DoD item 1", "DoD item 2", ...],
+  "technicalNotes": "Technical considerations and implementation notes",
+  "businessValue": "Business value and impact assessment",
+  "storyPoints": 5,
+  "dependencies": ["Dependency 1", "Dependency 2", ...],
+  "assumptions": ["Assumption 1", "Assumption 2", ...],
+  "constraints": ["Constraint 1", "Constraint 2", ...],
+  "risks": ["Risk 1", "Risk 2", ...],
+  "testCases": ["Test case 1", "Test case 2", ...]
+}
+
+Focus on making the story more detailed, actionable, and comprehensive.`;
+
+      const userPrompt = `Enhance this user story: ${task.title} - ${task.description}`;
+
+      // Use DeepSeek if available, otherwise fall back to mock data
+      if (this.deepseekService.isConfigured()) {
+        const response = await this.deepseekService.generateEnhancedStory(userPrompt, systemPrompt);
+        return response;
+      } else {
+        // Return mock enhanced data
+        return this.generateMockEnhancedStory(task);
+      }
+    } catch (error) {
+      console.error('Error enhancing story:', error);
+      return this.generateMockEnhancedStory(task);
+    }
+  }
+
+  private generateMockEnhancedStory(task: Task): any {
+    return {
+      userStory: `As a ${task.title.toLowerCase().includes('user') ? 'user' : 'stakeholder'}, I want ${task.description.toLowerCase()} so that I can achieve better outcomes and improve efficiency.`,
+      acceptanceCriteria: [
+        `Given ${task.title}, When the feature is implemented, Then it should work as described`,
+        `Given the user interacts with the feature, When they perform the action, Then the expected result should occur`,
+        `Given the system processes the request, When validation passes, Then the operation should complete successfully`
+      ],
+      definitionOfDone: [
+        "Code is written and reviewed",
+        "Unit tests are implemented and passing",
+        "Integration tests are implemented and passing",
+        "Documentation is updated",
+        "Feature is deployed to staging environment"
+      ],
+      technicalNotes: "This feature requires proper error handling, logging, and monitoring. Consider performance implications and security best practices.",
+      businessValue: "This feature will improve user experience and increase operational efficiency, contributing to overall business goals.",
+      storyPoints: 5,
+      dependencies: [
+        "User authentication system",
+        "Database schema updates",
+        "API endpoint development"
+      ],
+      assumptions: [
+        "Users have basic technical knowledge",
+        "System has sufficient performance capacity",
+        "No major infrastructure changes required"
+      ],
+      constraints: [
+        "Must work within existing system architecture",
+        "Budget and timeline constraints apply",
+        "Must comply with security policies"
+      ],
+      risks: [
+        "Potential performance impact on existing features",
+        "User adoption may be slower than expected",
+        "Integration complexity with existing systems"
+      ],
+      testCases: [
+        "Test successful completion of the main workflow",
+        "Test error handling for invalid inputs",
+        "Test performance under normal load",
+        "Test integration with dependent systems"
+      ]
+    };
   }
 
   private generateId(): string {

@@ -1,3 +1,21 @@
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  type: 'task';
+  priority: 'high' | 'medium' | 'low';
+  status: 'todo' | 'in-progress' | 'done';
+  acceptanceCriteria: string[];
+  estimatedEffort: string;
+  assignee?: string;
+  dependencies?: string[];
+  createdAt: string;
+  updatedAt: string;
+  metadata?: {
+    enhancedData?: any;
+  };
+}
+
 export interface UserStory {
   id: string;
   title: string;
