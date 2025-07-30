@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for user story map */
+.story-map-container {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen;
+}
+
+.story-card {
+  @apply bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500 hover:shadow-lg transition-shadow duration-200 cursor-pointer;
+}
+
+.story-card:hover {
+  @apply border-l-4 border-blue-600;
+}
+
+.story-epic {
+  @apply bg-indigo-100 border-l-4 border-indigo-500;
+}
+
+.story-feature {
+  @apply bg-blue-100 border-l-4 border-blue-500;
+}
+
+.story-task {
+  @apply bg-green-100 border-l-4 border-green-500;
+}
+
+.story-detail-modal {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.story-detail-content {
+  @apply bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
