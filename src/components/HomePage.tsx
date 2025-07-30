@@ -29,6 +29,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
     setRecentMaps(savedMaps.slice(0, 5)); // Show last 5 maps
   }, []);
 
+  // Auto-fill car rental description when mock demo is selected
+  useEffect(() => {
+    if (selectedProvider === 'mock' && !productDescription.trim()) {
+      setProductDescription(t('homepage.carRentalDescription'));
+    }
+  }, [selectedProvider, productDescription, t]);
+
   const handleGenerateStoryMap = async () => {
     if (!productDescription.trim()) {
       setError(t('homepage.enterDescription'));
@@ -292,35 +299,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
 
         {/* Example Descriptions */}
         <div className="mt-12 bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Try These Examples:</h3>
-          <div className="grid md:grid-cols-2 gap-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('homepage.tryTheseExamples')}</h3>
+          <div className="grid md:grid-cols-1 gap-4">
             <button
-              onClick={() => setProductDescription('An e-commerce platform for selling handmade crafts and artisanal products')}
+              onClick={() => setProductDescription(t('homepage.carRentalDescription'))}
               className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
             >
-              <h4 className="font-medium text-gray-900">E-commerce Platform</h4>
-              <p className="text-sm text-gray-600">Handmade crafts marketplace</p>
-            </button>
-            <button
-              onClick={() => setProductDescription('A social networking app for pet owners to connect and share pet photos')}
-              className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-            >
-              <h4 className="font-medium text-gray-900">Social Pet Network</h4>
-              <p className="text-sm text-gray-600">Pet owner community app</p>
-            </button>
-            <button
-              onClick={() => setProductDescription('A task management system for remote teams with project tracking')}
-              className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-            >
-              <h4 className="font-medium text-gray-900">Task Management</h4>
-              <p className="text-sm text-gray-600">Remote team collaboration</p>
-            </button>
-            <button
-              onClick={() => setProductDescription('A fitness tracking app with workout plans and progress monitoring')}
-              className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-            >
-              <h4 className="font-medium text-gray-900">Fitness Tracker</h4>
-              <p className="text-sm text-gray-600">Workout and progress tracking</p>
+              <h4 className="font-medium text-gray-900">{t('homepage.carRentalService')}</h4>
+              <p className="text-sm text-gray-600">{t('homepage.carRentalDescription')}</p>
             </button>
           </div>
         </div>

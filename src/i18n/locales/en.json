@@ -33,7 +33,10 @@
     "noRecentMaps": "No recent story maps found",
     "createNewMap": "Create New Story Map",
     "viewAllMaps": "View All Maps",
-    "enterDescription": "Please enter a product description"
+    "enterDescription": "Please enter a product description",
+    "tryTheseExamples": "Try These Examples:",
+    "carRentalService": "Car Rental Service Requirements",
+    "carRentalDescription": "Online car rental platform providing convenient vehicle rental services"
   },
   "storyMap": {
     "title": "Story Map",

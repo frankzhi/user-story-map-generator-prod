@@ -33,7 +33,10 @@
     "noRecentMaps": "未找到最近的故事地图",
     "createNewMap": "创建新故事地图",
     "viewAllMaps": "查看所有地图",
-    "enterDescription": "请输入产品描述"
+    "enterDescription": "请输入产品描述",
+    "tryTheseExamples": "试试这些例子：",
+    "carRentalService": "租车服务需求描述",
+    "carRentalDescription": "在线租车平台，提供便捷的车辆租赁服务"
   },
   "storyMap": {
     "title": "故事地图",

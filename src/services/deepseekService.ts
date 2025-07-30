@@ -34,6 +34,9 @@ export class DeepSeekService {
       throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
     }
 
+    const currentLang = i18n.language;
+    const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese). All content including titles, descriptions, and acceptance criteria should be in Chinese.' : 'Please respond in English.';
+    
     const systemPrompt = `You are an expert product manager and user story mapping specialist. 
     
 Your task is to generate a comprehensive user story map from a product description. 
@@ -84,7 +87,7 @@ Return ONLY the JSON object, no additional text or explanations.`;
     const userPrompt = `Generate a user story map for this product: ${productDescription}`;
 
     const messages: DeepSeekMessage[] = [
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: systemPrompt + '\n\n' + languageContext },
       { role: 'user', content: userPrompt }
     ];
 
