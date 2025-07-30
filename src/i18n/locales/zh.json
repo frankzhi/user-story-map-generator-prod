@@ -64,7 +64,10 @@
     "editStory": "编辑故事",
     "deleteStory": "删除故事",
     "moveStory": "移动故事",
-    "copyStory": "复制故事"
+    "copyStory": "复制故事",
+    "doubleClickToEdit": "双击用户故事卡片可以编辑内容",
+    "potentialCustomer": "潜在客户",
+    "supportingNeed": "支撑性需求"
   },
   "storyDetail": {
     "title": "故事详情",

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Download, Eye } from 'lucide-react';
+import { ArrowLeft, Download, Eye, User, CheckCircle, Clock, Info, MapPin, Smartphone, CreditCard, Car } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { StoryMap, UserStory, Task } from '../types/story';
 import EnhancedStoryDetail from './EnhancedStoryDetail';
 
@@ -9,6 +10,7 @@ interface StoryMapViewProps {
 }
 
 export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) => {
+  const { t } = useTranslation();
   const [selectedStory, setSelectedStory] = useState<UserStory | null>(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -75,10 +77,87 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
 `).join('')}`).join('')}`).join('\n')}`;
   };
 
+  // Transform epics into phases/activities for map layout
+  const transformToMapLayout = () => {
+    return storyMap.epics.map(epic => ({
+      phase: epic.title,
+      activities: epic.features.map(feature => ({
+        title: feature.title,
+        description: feature.description,
+        userStories: feature.tasks.map(task => ({
+          ...task,
+          touchpoint: getTouchpointForTask(task),
+          supportingNeeds: generateSupportingNeeds(task)
+        }))
+      }))
+    }));
+  };
+
+  const getTouchpointForTask = (task: UserStory) => {
+    // Generate appropriate touchpoint based on task content
+    if (task.title.includes('搜索') || task.title.includes('search')) {
+      return '微信小程序/搜索页面';
+    } else if (task.title.includes('浏览') || task.title.includes('browse')) {
+      return '微信小程序/车辆列表页';
+    } else if (task.title.includes('预订') || task.title.includes('booking')) {
+      return '微信小程序/预订页面';
+    } else if (task.title.includes('支付') || task.title.includes('payment')) {
+      return '微信小程序/支付页面';
+    } else if (task.title.includes('取车') || task.title.includes('pickup')) {
+      return '车辆服务机构端小程序/交车页面';
+    } else if (task.title.includes('用车') || task.title.includes('usage')) {
+      return '微信小程序/用车指南页';
+    }
+    return '微信小程序/主页面';
+  };
+
+  const generateSupportingNeeds = (task: UserStory) => {
+    // Generate supporting needs based on task content
+    const needs = [];
+    if (task.title.includes('搜索') || task.title.includes('search')) {
+      needs.push('实现微信小程序搜索优化');
+      needs.push('建立车辆信息数据库');
+    } else if (task.title.includes('预订') || task.title.includes('booking')) {
+      needs.push('实现基于地理位置的服务');
+      needs.push('开发预订系统API');
+    } else if (task.title.includes('支付') || task.title.includes('payment')) {
+      needs.push('实现PCI DSS合规的支付处理系统');
+      needs.push('集成第三方支付网关');
+    } else if (task.title.includes('取车') || task.title.includes('pickup')) {
+      needs.push('开发微信小程序与车辆服务机构端小程序的数据同步');
+      needs.push('实现车辆状态远程监控系统');
+    }
+    return needs.length > 0 ? needs : ['开发相关API接口', '实现数据同步机制'];
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'done':
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case 'in-progress':
+        return <Clock className="w-4 h-4 text-orange-600" />;
+      default:
+        return <Info className="w-4 h-4 text-blue-600" />;
+    }
+  };
+
+  const getTouchpointIcon = (touchpoint: string) => {
+    if (touchpoint.includes('搜索') || touchpoint.includes('search')) {
+      return <MapPin className="w-4 h-4" />;
+    } else if (touchpoint.includes('支付') || touchpoint.includes('payment')) {
+      return <CreditCard className="w-4 h-4" />;
+    } else if (touchpoint.includes('用车') || touchpoint.includes('car')) {
+      return <Car className="w-4 h-4" />;
+    }
+    return <Smartphone className="w-4 h-4" />;
+  };
+
+  const mapLayout = transformToMapLayout();
+
   return (
-    <div className="story-map-container min-h-screen">
+    <div className="story-map-container min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -87,11 +166,11 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                Back
+                {t('common.back')}
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{storyMap.title}</h1>
-                <p className="text-gray-600">{storyMap.description}</p>
+                <p className="text-gray-600 text-sm">{t('storyMap.doubleClickToEdit')}</p>
               </div>
             </div>
             <button
@@ -99,78 +178,143 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
               className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               <Download className="w-4 h-4 mr-2" />
-              Download YAML
+              {t('common.export')} YAML
             </button>
           </div>
         </div>
       </div>
 
-      {/* Story Map Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {storyMap.epics.map((epic) => (
-            <div key={epic.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
-              {/* Epic Header */}
-              <div className="bg-indigo-600 text-white px-6 py-4">
-                <h2 className="text-xl font-semibold">{epic.title}</h2>
-                <p className="text-indigo-100 mt-1">{epic.description}</p>
+      {/* Map Container */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          {/* Map Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4">
+            <h2 className="text-xl font-semibold">{storyMap.title}</h2>
+            <p className="text-blue-100 text-sm mt-1">{storyMap.description}</p>
+          </div>
+
+          {/* Map Content */}
+          <div className="overflow-x-auto">
+            <div className="min-w-max">
+              {/* Phases Row */}
+              <div className="grid grid-cols-12 gap-2 bg-gray-100 p-4 border-b">
+                {mapLayout.map((phase, phaseIndex) => (
+                  <div
+                    key={phaseIndex}
+                    className="col-span-3 bg-blue-600 text-white px-4 py-3 rounded-lg text-center font-semibold"
+                  >
+                    {phase.phase}
+                  </div>
+                ))}
               </div>
 
-              {/* Features */}
-              <div className="p-6">
-                <div className="grid gap-6">
-                  {epic.features.map((feature) => (
-                    <div key={feature.id} className="border border-gray-200 rounded-lg">
-                      {/* Feature Header */}
-                      <div className="bg-blue-50 px-4 py-3 border-b border-gray-200">
-                        <h3 className="text-lg font-medium text-gray-900">{feature.title}</h3>
-                        <p className="text-gray-600 text-sm mt-1">{feature.description}</p>
-                      </div>
+              {/* Activities Row */}
+              <div className="grid grid-cols-12 gap-2 bg-gray-50 p-4 border-b">
+                {mapLayout.map((phase, phaseIndex) => (
+                  <div key={phaseIndex} className="col-span-3">
+                    <div className="space-y-2">
+                      {phase.activities.map((activity, activityIndex) => (
+                        <div
+                          key={activityIndex}
+                          className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium text-center"
+                        >
+                          {activity.title}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-                      {/* Tasks */}
-                      <div className="p-4">
-                        <div className="grid gap-4">
-                          {feature.tasks.map((task) => (
+              {/* Touchpoints Row */}
+              <div className="grid grid-cols-12 gap-2 bg-white p-4 border-b">
+                {mapLayout.map((phase, phaseIndex) => (
+                  <div key={phaseIndex} className="col-span-3">
+                    <div className="space-y-2">
+                      {phase.activities.map((activity, activityIndex) => (
+                        <div key={activityIndex} className="space-y-1">
+                          {activity.userStories.map((story, storyIndex) => (
                             <div
-                              key={task.id}
-                              className="story-card cursor-pointer"
-                              onClick={() => handleStoryClick(task)}
+                              key={storyIndex}
+                              className="bg-white border border-gray-200 rounded-md p-2 shadow-sm"
                             >
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <h4 className="font-medium text-gray-900 mb-2">{task.title}</h4>
-                                  <p className="text-gray-600 text-sm mb-3">{task.description}</p>
-                                  
-                                  <div className="flex items-center gap-4 text-sm">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                      task.priority === 'high' ? 'bg-red-100 text-red-800' :
-                                      task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                      'bg-green-100 text-green-800'
-                                    }`}>
-                                      {task.priority} priority
-                                    </span>
-                                    <span className="text-gray-500">{task.estimatedEffort}</span>
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                      task.status === 'done' ? 'bg-green-100 text-green-800' :
-                                      task.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
-                                      'bg-gray-100 text-gray-800'
-                                    }`}>
-                                      {task.status}
-                                    </span>
-                                  </div>
-                                </div>
-                                <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                  {t('storyMap.potentialCustomer')}
+                                </span>
+                                {getTouchpointIcon(story.touchpoint)}
                               </div>
+                              <p className="text-xs text-gray-700">{story.touchpoint}</p>
                             </div>
                           ))}
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* User Stories Row */}
+              <div className="grid grid-cols-12 gap-2 bg-white p-4 border-b">
+                {mapLayout.map((phase, phaseIndex) => (
+                  <div key={phaseIndex} className="col-span-3">
+                    <div className="space-y-2">
+                      {phase.activities.map((activity, activityIndex) => (
+                        <div key={activityIndex} className="space-y-1">
+                          {activity.userStories.map((story, storyIndex) => (
+                            <div
+                              key={storyIndex}
+                              className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-3 shadow-sm hover:shadow-md transition-shadow"
+                              onClick={() => handleStoryClick(story)}
+                            >
+                              <div className="flex items-start justify-between mb-2">
+                                <User className="w-4 h-4 text-gray-500" />
+                                {getStatusIcon(story.status)}
+                              </div>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                {story.description}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Supporting Needs Row */}
+              <div className="grid grid-cols-12 gap-2 bg-white p-4">
+                {mapLayout.map((phase, phaseIndex) => (
+                  <div key={phaseIndex} className="col-span-3">
+                    <div className="space-y-2">
+                      {phase.activities.map((activity, activityIndex) => (
+                        <div key={activityIndex} className="space-y-1">
+                          {activity.userStories.map((story, storyIndex) => (
+                            <div key={storyIndex} className="space-y-1">
+                              {story.supportingNeeds.map((need, needIndex) => (
+                                <div
+                                  key={needIndex}
+                                  className="bg-white border border-gray-200 rounded-md p-2 shadow-sm"
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                                      {t('storyMap.supportingNeed')}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-gray-700">{need}</p>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
 

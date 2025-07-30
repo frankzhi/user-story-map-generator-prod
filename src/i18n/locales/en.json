@@ -64,7 +64,10 @@
     "editStory": "Edit Story",
     "deleteStory": "Delete Story",
     "moveStory": "Move Story",
-    "copyStory": "Copy Story"
+    "copyStory": "Copy Story",
+    "doubleClickToEdit": "Double-click user story cards to edit content",
+    "potentialCustomer": "Potential Customer",
+    "supportingNeed": "Supporting Need"
   },
   "storyDetail": {
     "title": "Story Details",
