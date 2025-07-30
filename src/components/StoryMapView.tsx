@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Download, Eye } from 'lucide-react';
-import type { StoryMap, UserStory } from '../types/story';
-import { StoryDetailModal } from './StoryDetailModal';
+import type { StoryMap, UserStory, Task } from '../types/story';
+import EnhancedStoryDetail from './EnhancedStoryDetail';
 
 interface StoryMapViewProps {
   storyMap: StoryMap;
@@ -174,11 +174,30 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         </div>
       </div>
 
-      {/* Story Detail Modal */}
+      {/* Enhanced Story Detail Modal */}
       {showModal && selectedStory && (
-        <StoryDetailModal
-          story={selectedStory}
+        <EnhancedStoryDetail
+          task={selectedStory as Task}
           onClose={closeModal}
+          onUpdate={(updatedTask) => {
+            // Update the story in the story map
+            const updatedStoryMap = { ...storyMap };
+            updatedStoryMap.epics = updatedStoryMap.epics.map(epic => ({
+              ...epic,
+              features: epic.features.map(feature => ({
+                ...feature,
+                tasks: feature.tasks.map(task => 
+                  task.id === updatedTask.id ? updatedTask as UserStory : task
+                )
+              }))
+            }));
+            // You could add a callback to update the parent component
+            closeModal();
+          }}
+          onDelete={() => {
+            // Handle story deletion
+            closeModal();
+          }}
         />
       )}
     </div>

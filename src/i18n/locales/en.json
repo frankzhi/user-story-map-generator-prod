@@ -32,7 +32,8 @@
     "recentMaps": "Recent Story Maps",
     "noRecentMaps": "No recent story maps found",
     "createNewMap": "Create New Story Map",
-    "viewAllMaps": "View All Maps"
+    "viewAllMaps": "View All Maps",
+    "enterDescription": "Please enter a product description"
   },
   "storyMap": {
     "title": "Story Map",

@@ -83,6 +83,8 @@ export class AIService {
       return this.generateSocialNetworkStoryMap();
     } else if (keywords.includes('task') || keywords.includes('todo')) {
       return this.generateTaskManagementStoryMap();
+    } else if (keywords.includes('charging') || keywords.includes('station')) {
+      return this.generateChargingStationStoryMap();
     } else {
       return this.generateGenericStoryMap(productDescription);
     }
@@ -316,6 +318,129 @@ export class AIService {
                     "Users can create new projects",
                     "Projects can have multiple tasks",
                     "Project progress is tracked"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+  }
+
+  private generateChargingStationStoryMap(): StoryMapYAML {
+    return {
+      title: "充电桩设备配对功能需求分析",
+      description: "充电桩用户移动应用的设备管理模块，支持设备配对和管理功能",
+      epics: [
+        {
+          title: "设备管理模块",
+          description: "充电桩设备的注册、配对、管理和监控功能",
+          features: [
+            {
+              title: "设备配对功能",
+              description: "通过QR码扫描实现设备配对和用户绑定",
+              tasks: [
+                {
+                  title: "QR码扫描功能",
+                  description: "实现设备QR码扫描和识别功能",
+                  priority: "high",
+                  effort: "5 days",
+                  acceptance_criteria: [
+                    "扫描有效QR码时能正确识别设备信息",
+                    "扫描无效QR码时显示适当错误信息",
+                    "扫描过程在5秒内完成",
+                    "支持多种QR码格式和加密内容"
+                  ]
+                },
+                {
+                  title: "设备验证流程",
+                  description: "验证设备可用性和绑定状态",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "验证设备是否已在系统中注册",
+                    "检查设备是否已被其他用户绑定",
+                    "验证设备状态是否可用",
+                    "API响应时间小于2秒"
+                  ]
+                },
+                {
+                  title: "用户设备绑定",
+                  description: "创建用户与设备的绑定关系",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "成功创建用户-设备绑定记录",
+                    "绑定过程使用事务处理确保数据一致性",
+                    "绑定成功率大于99.5%",
+                    "支持绑定记录的查询和管理"
+                  ]
+                },
+                {
+                  title: "绑定成功通知",
+                  description: "向用户显示绑定成功信息和后续操作指引",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "显示绑定成功的确认信息",
+                    "提供设备使用指南和注意事项",
+                    "支持返回设备列表查看新增设备",
+                    "通知信息清晰易懂"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "设备管理功能",
+              description: "已绑定设备的管理和监控功能",
+              tasks: [
+                {
+                  title: "设备列表显示",
+                  description: "显示用户绑定的所有设备",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "列表显示设备基本信息和状态",
+                    "支持设备搜索和筛选",
+                    "设备信息实时更新",
+                    "列表加载时间小于1秒"
+                  ]
+                },
+                {
+                  title: "设备状态监控",
+                  description: "实时监控设备运行状态",
+                  priority: "medium",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "显示设备在线/离线状态",
+                    "监控设备充电状态和功率",
+                    "异常状态及时告警",
+                    "状态更新频率可配置"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "用户账户管理",
+          description: "用户账户相关的功能模块",
+          features: [
+            {
+              title: "用户认证",
+              description: "用户登录和身份验证功能",
+              tasks: [
+                {
+                  title: "用户登录",
+                  description: "实现安全的用户登录功能",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "支持用户名/密码登录",
+                    "支持手机验证码登录",
+                    "登录失败时显示友好错误信息",
+                    "登录状态保持和自动续期"
                   ]
                 }
               ]

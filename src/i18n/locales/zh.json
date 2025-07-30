@@ -32,7 +32,8 @@
     "recentMaps": "最近的故事地图",
     "noRecentMaps": "未找到最近的故事地图",
     "createNewMap": "创建新故事地图",
-    "viewAllMaps": "查看所有地图"
+    "viewAllMaps": "查看所有地图",
+    "enterDescription": "请输入产品描述"
   },
   "storyMap": {
     "title": "故事地图",
