@@ -84,31 +84,55 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         title: epic.title,
         description: epic.description
       },
-      activities: epic.features.map(feature => ({
-        title: feature.title,
-        description: feature.description,
-        touchpoints: feature.tasks.map(task => ({
-          touchpoint: getTouchpointForTask(task),
-          task: task
-        })),
-        userStories: feature.tasks.map(task => ({
+      activities: epic.features.map(feature => {
+        // Get unique touchpoints for this activity
+        const uniqueTouchpoints = Array.from(new Set(
+          feature.tasks.map(task => getTouchpointForTask(task))
+        )).map(touchpoint => ({ touchpoint }));
+        
+        // Get all user stories for this activity
+        const userStories = feature.tasks.map(task => ({
           ...task,
           touchpoint: getTouchpointForTask(task),
           supportingNeeds: generateSupportingNeeds(task)
-        })),
-        supportingNeeds: feature.tasks.flatMap(task => 
-          generateSupportingNeeds(task).map(need => ({
-            need,
-            task: task
-          }))
-        )
-      }))
+        }));
+        
+        // Get unique supporting needs for this activity
+        const allSupportingNeeds = feature.tasks.flatMap(task => generateSupportingNeeds(task));
+        const uniqueSupportingNeeds = Array.from(new Set(allSupportingNeeds)).map(need => ({
+          need,
+          task: feature.tasks[0] // Use first task as reference
+        }));
+        
+        return {
+          title: feature.title,
+          description: feature.description,
+          touchpoints: uniqueTouchpoints,
+          userStories: userStories,
+          supportingNeeds: uniqueSupportingNeeds
+        };
+      })
     }));
   };
 
   const getTouchpointForTask = (task: UserStory) => {
     // Generate appropriate touchpoint based on task content
-    if (task.title.includes('搜索') || task.title.includes('search')) {
+    // For charging pile management app
+    if (task.title.includes('充电') || task.title.includes('charging')) {
+      if (task.title.includes('状态') || task.title.includes('status') || task.title.includes('监控')) {
+        return '移动APP/设备状态页面';
+      } else if (task.title.includes('记录') || task.title.includes('record') || task.title.includes('历史')) {
+        return '移动APP/充电记录页面';
+      } else if (task.title.includes('配对') || task.title.includes('pair') || task.title.includes('绑定')) {
+        return '移动APP/设备管理页面';
+      } else if (task.title.includes('配置') || task.title.includes('config') || task.title.includes('设置')) {
+        return '移动APP/设备配置页面';
+      } else if (task.title.includes('权限') || task.title.includes('permission') || task.title.includes('管理')) {
+        return '移动APP/权限管理页面';
+      }
+    }
+    // For car rental app
+    else if (task.title.includes('搜索') || task.title.includes('search')) {
       return '微信小程序/搜索页面';
     } else if (task.title.includes('浏览') || task.title.includes('browse')) {
       return '微信小程序/车辆列表页';
@@ -121,26 +145,49 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     } else if (task.title.includes('用车') || task.title.includes('usage')) {
       return '微信小程序/用车指南页';
     }
-    return '微信小程序/主页面';
+    return '移动APP/主页面';
   };
 
   const generateSupportingNeeds = (task: UserStory) => {
-    // Generate supporting needs based on task content
+    // Generate specific supporting needs based on task content
     const needs = [];
-    if (task.title.includes('搜索') || task.title.includes('search')) {
-      needs.push('实现微信小程序搜索优化');
-      needs.push('建立车辆信息数据库');
-    } else if (task.title.includes('预订') || task.title.includes('booking')) {
-      needs.push('实现基于地理位置的服务');
-      needs.push('开发预订系统API');
-    } else if (task.title.includes('支付') || task.title.includes('payment')) {
-      needs.push('实现PCI DSS合规的支付处理系统');
-      needs.push('集成第三方支付网关');
-    } else if (task.title.includes('取车') || task.title.includes('pickup')) {
-      needs.push('开发微信小程序与车辆服务机构端小程序的数据同步');
-      needs.push('实现车辆状态远程监控系统');
+    
+    // For charging pile management app
+    if (task.title.includes('充电') || task.title.includes('charging')) {
+      if (task.title.includes('状态') || task.title.includes('status')) {
+        needs.push('开发充电桩状态监控API接口');
+        needs.push('集成WebSocket实时数据推送服务');
+      } else if (task.title.includes('记录') || task.title.includes('record')) {
+        needs.push('设计充电记录数据库表结构');
+        needs.push('开发充电历史查询API接口');
+      } else if (task.title.includes('配对') || task.title.includes('pair')) {
+        needs.push('集成蓝牙BLE通信协议');
+        needs.push('开发设备配对验证API接口');
+      } else if (task.title.includes('配置') || task.title.includes('config')) {
+        needs.push('开发设备参数设置API接口');
+        needs.push('集成设备配置同步服务');
+      } else if (task.title.includes('权限') || task.title.includes('permission')) {
+        needs.push('开发用户权限管理API接口');
+        needs.push('集成权限验证中间件服务');
+      }
     }
-    return needs.length > 0 ? needs : ['开发相关API接口', '实现数据同步机制'];
+    // For car rental app
+    else if (task.title.includes('搜索') || task.title.includes('search')) {
+      needs.push('开发车辆搜索API接口');
+      needs.push('集成Elasticsearch搜索引擎');
+    } else if (task.title.includes('预订') || task.title.includes('booking')) {
+      needs.push('开发订单管理API接口');
+      needs.push('集成库存管理系统');
+    } else if (task.title.includes('支付') || task.title.includes('payment')) {
+      needs.push('集成微信支付API接口');
+      needs.push('开发订单支付状态同步服务');
+    } else if (task.title.includes('取车') || task.title.includes('pickup')) {
+      needs.push('开发取车验证API接口');
+      needs.push('集成车辆状态管理系统');
+    }
+    
+    // Only return specific needs, avoid generic ones
+    return needs.length > 0 ? needs : [];
   };
 
   const getStatusIcon = (status: string) => {
@@ -221,7 +268,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                       {mapLayout.map((phaseGroup, phaseIndex) => {
                         // Calculate total width for this phase based on its activities
                         const totalActivities = phaseGroup.activities.length;
-                        const phaseWidth = Math.max(300, totalActivities * 200); // Minimum 300px, 200px per activity
+                        const phaseWidth = Math.max(250, totalActivities * 150); // Reduced minimum width and per-activity width
                         
                         return (
                           <div
@@ -245,7 +292,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="flex-1 flex">
                       {mapLayout.map((phaseGroup, phaseIndex) => {
                         const totalActivities = phaseGroup.activities.length;
-                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const phaseWidth = Math.max(250, totalActivities * 150);
                         const activityWidth = phaseWidth / totalActivities;
                         
                         return (
@@ -253,7 +300,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                             {phaseGroup.activities.map((activity, activityIndex) => (
                               <div
                                 key={activityIndex}
-                                className="bg-blue-500 text-white px-4 py-3 rounded-md text-sm font-medium text-center flex-shrink-0 border-r border-blue-400"
+                                className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium text-center flex-shrink-0 border-r border-blue-400"
                                 style={{ width: `${activityWidth}px` }}
                               >
                                 <div className="text-sm">{activity.title}</div>
@@ -274,7 +321,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="flex-1 flex">
                       {mapLayout.map((phaseGroup, phaseIndex) => {
                         const totalActivities = phaseGroup.activities.length;
-                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const phaseWidth = Math.max(250, totalActivities * 150);
                         const activityWidth = phaseWidth / totalActivities;
                         
                         return (
@@ -282,15 +329,15 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                             {phaseGroup.activities.map((activity, activityIndex) => (
                               <div 
                                 key={activityIndex} 
-                                className="flex flex-col gap-2 border-r border-gray-200"
+                                className="flex flex-col gap-1 border-r border-gray-200"
                                 style={{ width: `${activityWidth}px` }}
                               >
                                 {activity.touchpoints.map((item, touchpointIndex) => (
                                   <div
                                     key={touchpointIndex}
-                                    className="bg-white border border-gray-200 rounded-md p-3 shadow-sm flex-shrink-0 mx-2"
+                                    className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1"
                                   >
-                                    <div className="flex items-center gap-2 mb-2">
+                                    <div className="flex items-center gap-2 mb-1">
                                       <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                                         {t('storyMap.potentialCustomer')}
                                       </span>
@@ -315,7 +362,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="flex-1 flex">
                       {mapLayout.map((phaseGroup, phaseIndex) => {
                         const totalActivities = phaseGroup.activities.length;
-                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const phaseWidth = Math.max(250, totalActivities * 150);
                         const activityWidth = phaseWidth / totalActivities;
                         
                         return (
@@ -323,16 +370,16 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                             {phaseGroup.activities.map((activity, activityIndex) => (
                               <div 
                                 key={activityIndex} 
-                                className="flex flex-col gap-2 border-r border-gray-200"
+                                className="flex flex-col gap-1 border-r border-gray-200"
                                 style={{ width: `${activityWidth}px` }}
                               >
                                 {activity.userStories.map((story, storyIndex) => (
                                   <div
                                     key={storyIndex}
-                                    className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-3 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-2"
+                                    className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1"
                                     onClick={() => handleStoryClick(story)}
                                   >
-                                    <div className="flex items-start justify-between mb-2">
+                                    <div className="flex items-start justify-between mb-1">
                                       <User className="w-4 h-4 text-gray-500" />
                                       {getStatusIcon(story.status)}
                                     </div>
@@ -357,7 +404,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="flex-1 flex">
                       {mapLayout.map((phaseGroup, phaseIndex) => {
                         const totalActivities = phaseGroup.activities.length;
-                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const phaseWidth = Math.max(250, totalActivities * 150);
                         const activityWidth = phaseWidth / totalActivities;
                         
                         return (
@@ -365,15 +412,15 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                             {phaseGroup.activities.map((activity, activityIndex) => (
                               <div 
                                 key={activityIndex} 
-                                className="flex flex-col gap-2 border-r border-gray-200"
+                                className="flex flex-col gap-1 border-r border-gray-200"
                                 style={{ width: `${activityWidth}px` }}
                               >
                                 {activity.supportingNeeds.map((item, needIndex) => (
                                   <div
                                     key={needIndex}
-                                    className="bg-white border border-gray-200 rounded-md p-3 shadow-sm flex-shrink-0 mx-2"
+                                    className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1"
                                   >
-                                    <div className="flex items-center gap-2 mb-2">
+                                    <div className="flex items-center gap-2 mb-1">
                                       <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
                                         {t('storyMap.supportingNeed')}
                                       </span>
