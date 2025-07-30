@@ -79,18 +79,66 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
 
   // Transform epics into phases/activities for map layout
   const transformToMapLayout = () => {
-    return storyMap.epics.map(epic => ({
-      phase: epic.title,
-      activities: epic.features.map(feature => ({
-        title: feature.title,
-        description: feature.description,
-        userStories: feature.tasks.map(task => ({
-          ...task,
-          touchpoint: getTouchpointForTask(task),
-          supportingNeeds: generateSupportingNeeds(task)
-        }))
-      }))
-    }));
+    // Flatten all phases and activities into a single horizontal flow
+    const allPhases: Array<{title: string; description: string; width: number}> = [];
+    const allActivities: Array<{title: string; description: string; phase: string}> = [];
+    const allTouchpoints: Array<{touchpoint: string; phase: string; activity: string}> = [];
+    const allUserStories: Array<any> = [];
+    const allSupportingNeeds: Array<{need: string; phase: string; activity: string}> = [];
+
+    storyMap.epics.forEach(epic => {
+      // Add phase
+      allPhases.push({
+        title: epic.title,
+        description: epic.description,
+        width: epic.features.length * 3 // Each activity takes 3 columns
+      });
+
+      // Add activities for this phase
+      epic.features.forEach(feature => {
+        allActivities.push({
+          title: feature.title,
+          description: feature.description,
+          phase: epic.title
+        });
+
+        // Add user stories for this activity
+        feature.tasks.forEach(task => {
+          const touchpoint = getTouchpointForTask(task);
+          const supportingNeeds = generateSupportingNeeds(task);
+          
+          allTouchpoints.push({
+            touchpoint,
+            phase: epic.title,
+            activity: feature.title
+          });
+
+          allUserStories.push({
+            ...task,
+            touchpoint,
+            supportingNeeds,
+            phase: epic.title,
+            activity: feature.title
+          });
+
+          supportingNeeds.forEach(need => {
+            allSupportingNeeds.push({
+              need,
+              phase: epic.title,
+              activity: feature.title
+            });
+          });
+        });
+      });
+    });
+
+    return {
+      phases: allPhases,
+      activities: allActivities,
+      touchpoints: allTouchpoints,
+      userStories: allUserStories,
+      supportingNeeds: allSupportingNeeds
+    };
   };
 
   const getTouchpointForTask = (task: UserStory) => {
@@ -201,13 +249,14 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                   {t('storyMap.phases')}
                 </div>
-                <div className="flex-1 grid grid-cols-12 gap-2">
-                  {mapLayout.map((phase, phaseIndex) => (
+                <div className="flex-1 flex gap-2">
+                  {mapLayout.phases.map((phase, phaseIndex) => (
                     <div
                       key={phaseIndex}
-                      className="col-span-3 bg-blue-600 text-white px-4 py-3 rounded-lg text-center font-semibold"
+                      className="bg-blue-600 text-white px-4 py-3 rounded-lg text-center font-semibold flex-shrink-0"
+                      style={{ minWidth: `${phase.width * 60}px` }}
                     >
-                      {phase.phase}
+                      {phase.title}
                     </div>
                   ))}
                 </div>
@@ -218,19 +267,14 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                   {t('storyMap.activities')}
                 </div>
-                <div className="flex-1 grid grid-cols-12 gap-2">
-                  {mapLayout.map((phase, phaseIndex) => (
-                    <div key={phaseIndex} className="col-span-3">
-                      <div className="flex flex-wrap gap-2">
-                        {phase.activities.map((activity, activityIndex) => (
-                          <div
-                            key={activityIndex}
-                            className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium text-center flex-shrink-0"
-                          >
-                            {activity.title}
-                          </div>
-                        ))}
-                      </div>
+                <div className="flex-1 flex gap-2">
+                  {mapLayout.activities.map((activity, activityIndex) => (
+                    <div
+                      key={activityIndex}
+                      className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium text-center flex-shrink-0"
+                      style={{ minWidth: '180px' }}
+                    >
+                      {activity.title}
                     </div>
                   ))}
                 </div>
@@ -241,29 +285,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                   {t('storyMap.touchpoints')}
                 </div>
-                <div className="flex-1 grid grid-cols-12 gap-2">
-                  {mapLayout.map((phase, phaseIndex) => (
-                    <div key={phaseIndex} className="col-span-3">
-                      <div className="space-y-2">
-                        {phase.activities.map((activity, activityIndex) => (
-                          <div key={activityIndex} className="space-y-1">
-                            {activity.userStories.map((story, storyIndex) => (
-                              <div
-                                key={storyIndex}
-                                className="bg-white border border-gray-200 rounded-md p-2 shadow-sm"
-                              >
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                    {t('storyMap.potentialCustomer')}
-                                  </span>
-                                  {getTouchpointIcon(story.touchpoint)}
-                                </div>
-                                <p className="text-xs text-gray-700">{story.touchpoint}</p>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
+                <div className="flex-1 flex gap-2">
+                  {mapLayout.touchpoints.map((item, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0"
+                      style={{ minWidth: '180px' }}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          {t('storyMap.potentialCustomer')}
+                        </span>
+                        {getTouchpointIcon(item.touchpoint)}
                       </div>
+                      <p className="text-xs text-gray-700">{item.touchpoint}</p>
                     </div>
                   ))}
                 </div>
@@ -274,30 +309,21 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                   {t('storyMap.userStories')}
                 </div>
-                <div className="flex-1 grid grid-cols-12 gap-2">
-                  {mapLayout.map((phase, phaseIndex) => (
-                    <div key={phaseIndex} className="col-span-3">
-                      <div className="space-y-2">
-                        {phase.activities.map((activity, activityIndex) => (
-                          <div key={activityIndex} className="space-y-1">
-                            {activity.userStories.map((story, storyIndex) => (
-                              <div
-                                key={storyIndex}
-                                className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-3 shadow-sm hover:shadow-md transition-shadow"
-                                onClick={() => handleStoryClick(story)}
-                              >
-                                <div className="flex items-start justify-between mb-2">
-                                  <User className="w-4 h-4 text-gray-500" />
-                                  {getStatusIcon(story.status)}
-                                </div>
-                                <p className="text-sm text-gray-700 leading-relaxed">
-                                  {story.description}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
+                <div className="flex-1 flex gap-2">
+                  {mapLayout.userStories.map((story, storyIndex) => (
+                    <div
+                      key={storyIndex}
+                      className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-3 shadow-sm hover:shadow-md transition-shadow flex-shrink-0"
+                      style={{ minWidth: '180px' }}
+                      onClick={() => handleStoryClick(story)}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <User className="w-4 h-4 text-gray-500" />
+                        {getStatusIcon(story.status)}
                       </div>
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {story.description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -308,32 +334,19 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                   {t('storyMap.supportingNeeds')}
                 </div>
-                <div className="flex-1 grid grid-cols-12 gap-2">
-                  {mapLayout.map((phase, phaseIndex) => (
-                    <div key={phaseIndex} className="col-span-3">
-                      <div className="space-y-2">
-                        {phase.activities.map((activity, activityIndex) => (
-                          <div key={activityIndex} className="space-y-1">
-                            {activity.userStories.map((story, storyIndex) => (
-                              <div key={storyIndex} className="space-y-1">
-                                {story.supportingNeeds.map((need, needIndex) => (
-                                  <div
-                                    key={needIndex}
-                                    className="bg-white border border-gray-200 rounded-md p-2 shadow-sm"
-                                  >
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                                        {t('storyMap.supportingNeed')}
-                                      </span>
-                                    </div>
-                                    <p className="text-xs text-gray-700">{need}</p>
-                                  </div>
-                                ))}
-                              </div>
-                            ))}
-                          </div>
-                        ))}
+                <div className="flex-1 flex gap-2">
+                  {mapLayout.supportingNeeds.map((item, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0"
+                      style={{ minWidth: '180px' }}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                          {t('storyMap.supportingNeed')}
+                        </span>
                       </div>
+                      <p className="text-xs text-gray-700">{item.need}</p>
                     </div>
                   ))}
                 </div>
