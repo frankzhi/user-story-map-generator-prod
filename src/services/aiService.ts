@@ -1152,8 +1152,38 @@ Focus on making the story more detailed, actionable, and comprehensive. Generate
 
   async generateStoryMapWithFeedback(feedbackPrompt: string): Promise<StoryMapYAML> {
     try {
-      // For now, return mock data since DeepSeek feedback is not implemented yet
-      return this.generateMockStoryMap('');
+      if (this.deepseekService.isConfigured()) {
+        // Use DeepSeek to process feedback and modify story map
+        const response = await this.deepseekService.generateStoryMapWithFeedback(feedbackPrompt);
+        return response;
+      } else {
+        // For mock mode, return a modified version of charging pile story map
+        const baseStoryMap = this.generateChargingPileStoryMap();
+        // Modify based on feedback keywords
+        if (feedbackPrompt.toLowerCase().includes('增加') || feedbackPrompt.toLowerCase().includes('add')) {
+          // Add a new epic
+          baseStoryMap.epics.push({
+            title: "新增功能模块",
+            description: "根据用户反馈新增的功能模块",
+            features: [{
+              title: "反馈功能",
+              description: "基于用户反馈实现的功能",
+              tasks: [{
+                title: "实现反馈处理",
+                description: "处理用户反馈并更新系统",
+                priority: "high",
+                effort: "3 days",
+                acceptance_criteria: [
+                  "Given 用户提交反馈，When 系统处理，Then 应记录反馈内容",
+                  "Given 反馈处理完成，When 用户查看，Then 应显示处理结果",
+                  "Given 反馈涉及功能修改，When 系统更新，Then 应通知相关用户"
+                ]
+              }]
+            }]
+          });
+        }
+        return baseStoryMap;
+      }
     } catch (error) {
       console.error('Error generating story map with feedback:', error);
       return this.generateMockStoryMap('');

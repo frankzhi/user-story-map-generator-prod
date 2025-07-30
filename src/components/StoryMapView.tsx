@@ -3,7 +3,7 @@ import { ArrowLeft, Download, Eye, User, CheckCircle, Clock, Info, MapPin, Smart
 import { useTranslation } from 'react-i18next';
 import type { StoryMap, UserStory, Task } from '../types/story';
 import EnhancedStoryDetail from './EnhancedStoryDetail';
-import { StoryMapEditor } from './StoryMapEditor';
+import { InlineStoryMapEditor } from './InlineStoryMapEditor';
 import { FeedbackModal } from './FeedbackModal';
 
 interface StoryMapViewProps {
@@ -502,9 +502,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
 
       {/* Story Map Editor Modal */}
       {showEditor && (
-        <StoryMapEditor
+        <InlineStoryMapEditor
           storyMap={currentStoryMap}
-          onSave={handleStoryMapUpdate}
+          onUpdate={handleStoryMapUpdate}
           onClose={() => setShowEditor(false)}
         />
       )}

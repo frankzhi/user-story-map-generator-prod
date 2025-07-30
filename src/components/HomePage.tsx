@@ -21,15 +21,49 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
   const [showRecentMaps, setShowRecentMaps] = useState(false);
   const [inputMode, setInputMode] = useState<'simple' | 'structured'>('simple');
   const [structuredData, setStructuredData] = useState({
-    productName: '',
-    productPositioning: '',
-    targetUsers: '',
-    productForm: '',
-    mainStages: ['', '', ''],
-    mainScenarios: ['', '', ''],
-    keyTouchpoints: ['', '', ''],
-    coreFeatures: ['', '', ''],
-    additionalDescription: ''
+    productName: '包充满App',
+    productPositioning: '为电车车主提供第一方和第三方公共充电服务的App',
+    targetUsers: '豪华进口纯电/混动车主、国产电车品牌车主',
+    productForm: '包括鸿蒙系统的原生移动App',
+    mainStages: [
+      '寻找充电桩',
+      '预约',
+      '充电准备',
+      '充电',
+      '充电结束',
+      '完成充电订单'
+    ],
+    mainScenarios: [
+      '查看地图，搜索充电站',
+      '查看充电站',
+      '充电预约',
+      '停车/降锁/无地锁',
+      '插枪/即插即充/启动充电',
+      '充电中',
+      '拔枪/结束充电',
+      '支付充电费用',
+      '支付停车费',
+      '开票',
+      '服务评价',
+      '其他异常场景处理'
+    ],
+    keyTouchpoints: [
+      '包充满App',
+      '充电桩显示屏',
+      '车主App'
+    ],
+    coreFeatures: [
+      '查看充电站地图、导航、第一方尊享充电站和第三方站点支持',
+      '充电预约/违约处理',
+      '停车场地锁控制',
+      '即插即充',
+      '支付充电订单/停车费',
+      '开票',
+      '充电状态实时查询',
+      '关键状态提醒和消息推送',
+      '充电权益购买和使用抵扣'
+    ],
+    additionalDescription: '包含常规的安全需求'
   });
 
   useEffect(() => {

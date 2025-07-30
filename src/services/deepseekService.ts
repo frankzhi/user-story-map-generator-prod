@@ -228,4 +228,62 @@ Return ONLY the JSON object, no additional text or explanations.`;
       return false;
     }
   }
+
+  async generateStoryMapWithFeedback(feedbackPrompt: string): Promise<any> {
+    try {
+      if (!this.apiKey) {
+        throw new Error('DeepSeek API key not found.');
+      }
+
+      const currentLang = i18n.language;
+      const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
+      
+      const systemPrompt = `你是一个专业的用户故事地图分析师。请根据用户提供的反馈意见，修改现有的用户故事地图。
+
+请确保：
+1. 保持原有的故事地图结构
+2. 根据用户反馈调整相关的内容
+3. 确保修改后的故事地图更加符合用户需求
+4. 返回完整的修改后的YAML格式故事地图
+
+请直接返回修改后的YAML格式故事地图，不要包含其他解释文字。
+
+${languageContext}`;
+
+      const messages: DeepSeekMessage[] = [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: feedbackPrompt }
+      ];
+
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 4000
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`DeepSeek API error: ${response.status}`);
+      }
+
+      const data: DeepSeekResponse = await response.json();
+      const content = data.choices[0]?.message?.content;
+      
+      if (!content) {
+        throw new Error('No content received from DeepSeek API');
+      }
+
+      return content;
+    } catch (error) {
+      console.error('Error generating story map with feedback:', error);
+      throw error;
+    }
+  }
 } 
