@@ -213,32 +213,74 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.userStory')}</h4>
                 <div className="bg-gray-50 p-4 rounded-md">
-                  <p className="text-sm">
-                    <span className="font-medium">{t('storyDetail.asA')}</span> {enhancedData.userStory.includes('作为') ? 
-                      enhancedData.userStory.split('作为')[1]?.split('，我希望')[0]?.trim() || enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || '' :
-                      enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || ''}
-                  </p>
-                  <p className="text-sm mt-1">
-                    <span className="font-medium">{t('storyDetail.iWant')}</span> {enhancedData.userStory.includes('我希望') ? 
-                      enhancedData.userStory.split('，我希望')[1]?.split('，以便')[0]?.trim() || enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || '' :
-                      enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || ''}
-                  </p>
-                  <p className="text-sm mt-1">
-                    <span className="font-medium">{t('storyDetail.soThat')}</span> {enhancedData.userStory.includes('以便') ? 
-                      enhancedData.userStory.split('，以便')[1]?.trim() || enhancedData.userStory.split('so that')[1]?.trim() || '' :
-                      enhancedData.userStory.split('so that')[1]?.trim() || ''}
-                  </p>
+                  {isEditing && editableData ? (
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-medium text-sm">{t('storyDetail.asA')}</span>
+                        <input
+                          type="text"
+                          value={editableData.userStory}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.userStory = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="w-full mt-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Complete user story..."
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm">
+                        <span className="font-medium">{t('storyDetail.asA')}</span> {enhancedData.userStory.includes('作为') ? 
+                          enhancedData.userStory.split('作为')[1]?.split('，我希望')[0]?.trim() || enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || '' :
+                          enhancedData.userStory.split('As a')[1]?.split('I want')[0]?.trim() || ''}
+                      </p>
+                      <p className="text-sm mt-1">
+                        <span className="font-medium">{t('storyDetail.iWant')}</span> {enhancedData.userStory.includes('我希望') ? 
+                          enhancedData.userStory.split('，我希望')[1]?.split('，以便')[0]?.trim() || enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || '' :
+                          enhancedData.userStory.split('I want')[1]?.split('so that')[0]?.trim() || ''}
+                      </p>
+                      <p className="text-sm mt-1">
+                        <span className="font-medium">{t('storyDetail.soThat')}</span> {enhancedData.userStory.includes('以便') ? 
+                          enhancedData.userStory.split('，以便')[1]?.trim() || enhancedData.userStory.split('so that')[1]?.trim() || '' :
+                          enhancedData.userStory.split('so that')[1]?.trim() || ''}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
 
               {/* Acceptance Criteria */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.acceptanceCriteria')}</h4>
-                <ul className="list-disc list-inside space-y-1 mb-4">
-                  {enhancedData.acceptanceCriteria.map((criteria, index) => (
-                    <li key={index} className="text-sm text-gray-700">{criteria}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2 mb-4">
+                    {editableData.acceptanceCriteria.map((criteria, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={criteria}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.acceptanceCriteria[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Acceptance criteria..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1 mb-4">
+                    {enhancedData.acceptanceCriteria.map((criteria, index) => (
+                      <li key={index} className="text-sm text-gray-700">{criteria}</li>
+                    ))}
+                  </ul>
+                )}
                 
                 {/* Structured Acceptance Criteria Table */}
                 {enhancedData.structuredAcceptanceCriteria && enhancedData.structuredAcceptanceCriteria.length > 0 && (
@@ -322,83 +364,252 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
               {/* Definition of Done */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.definitionOfDone')}</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {enhancedData.definitionOfDone.map((item, index) => (
-                    <li key={index} className="text-sm text-gray-700">{item}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2">
+                    {editableData.definitionOfDone.map((item, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={item}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.definitionOfDone[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Definition of Done item..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1">
+                    {enhancedData.definitionOfDone.map((item, index) => (
+                      <li key={index} className="text-sm text-gray-700">{item}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Technical Notes */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.technicalNotes')}</h4>
-                <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md">
-                  {enhancedData.technicalNotes}
-                </p>
+                {isEditing && editableData ? (
+                  <textarea
+                    value={editableData.technicalNotes}
+                    onChange={(e) => {
+                      const updated = { ...editableData };
+                      updated.technicalNotes = e.target.value;
+                      setEditableData(updated);
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none"
+                    rows={3}
+                    placeholder="Technical notes..."
+                  />
+                ) : (
+                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md">
+                    {enhancedData.technicalNotes}
+                  </p>
+                )}
               </div>
 
               {/* Business Value */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.businessValue')}</h4>
-                <p className="text-sm text-gray-700">{enhancedData.businessValue}</p>
+                {isEditing && editableData ? (
+                  <input
+                    type="text"
+                    value={editableData.businessValue}
+                    onChange={(e) => {
+                      const updated = { ...editableData };
+                      updated.businessValue = e.target.value;
+                      setEditableData(updated);
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    placeholder="Business value..."
+                  />
+                ) : (
+                  <p className="text-sm text-gray-700">{enhancedData.businessValue}</p>
+                )}
               </div>
 
               {/* Story Points */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.storyPoints')}</h4>
-                <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                  {enhancedData.storyPoints} points
-                </span>
+                {isEditing && editableData ? (
+                  <input
+                    type="number"
+                    value={editableData.storyPoints}
+                    onChange={(e) => {
+                      const updated = { ...editableData };
+                      updated.storyPoints = parseInt(e.target.value) || 0;
+                      setEditableData(updated);
+                    }}
+                    className="w-24 px-3 py-1 border border-gray-300 rounded-md text-sm"
+                    min="1"
+                    max="13"
+                  />
+                ) : (
+                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {enhancedData.storyPoints} points
+                  </span>
+                )}
               </div>
 
               {/* Dependencies */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.dependencies')}</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {enhancedData.dependencies.map((dep, index) => (
-                    <li key={index} className="text-sm text-gray-700">{dep}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2">
+                    {editableData.dependencies.map((dep, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={dep}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.dependencies[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Dependency..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1">
+                    {enhancedData.dependencies.map((dep, index) => (
+                      <li key={index} className="text-sm text-gray-700">{dep}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Assumptions */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.assumptions')}</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {enhancedData.assumptions.map((assumption, index) => (
-                    <li key={index} className="text-sm text-gray-700">{assumption}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2">
+                    {editableData.assumptions.map((assumption, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={assumption}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.assumptions[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Assumption..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1">
+                    {enhancedData.assumptions.map((assumption, index) => (
+                      <li key={index} className="text-sm text-gray-700">{assumption}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Constraints */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.constraints')}</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {enhancedData.constraints.map((constraint, index) => (
-                    <li key={index} className="text-sm text-gray-700">{constraint}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2">
+                    {editableData.constraints.map((constraint, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={constraint}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.constraints[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Constraint..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1">
+                    {enhancedData.constraints.map((constraint, index) => (
+                      <li key={index} className="text-sm text-gray-700">{constraint}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Risks */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.risks')}</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {enhancedData.risks.map((risk, index) => (
-                    <li key={index} className="text-sm text-gray-700">{risk}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2">
+                    {editableData.risks.map((risk, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={risk}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.risks[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Risk..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1">
+                    {enhancedData.risks.map((risk, index) => (
+                      <li key={index} className="text-sm text-gray-700">{risk}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* Test Cases */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.testCases')}</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {enhancedData.testCases.map((testCase, index) => (
-                    <li key={index} className="text-sm text-gray-700">{testCase}</li>
-                  ))}
-                </ul>
+                {isEditing && editableData ? (
+                  <div className="space-y-2">
+                    {editableData.testCases.map((testCase, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <span className="text-sm text-gray-500 mt-1">•</span>
+                        <input
+                          type="text"
+                          value={testCase}
+                          onChange={(e) => {
+                            const updated = { ...editableData };
+                            updated.testCases[index] = e.target.value;
+                            setEditableData(updated);
+                          }}
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                          placeholder="Test case..."
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <ul className="list-disc list-inside space-y-1">
+                    {enhancedData.testCases.map((testCase, index) => (
+                      <li key={index} className="text-sm text-gray-700">{testCase}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           )}

@@ -75,20 +75,8 @@ export class AIService {
   }
 
   private generateMockStoryMap(productDescription: string): StoryMapYAML {
-    const keywords = productDescription.toLowerCase();
-    
-    // Generate different story maps based on keywords
-    if (keywords.includes('ecommerce') || keywords.includes('shop') || keywords.includes('store')) {
-      return this.generateEcommerceStoryMap();
-    } else if (keywords.includes('social') || keywords.includes('network')) {
-      return this.generateSocialNetworkStoryMap();
-    } else if (keywords.includes('task') || keywords.includes('todo')) {
-      return this.generateTaskManagementStoryMap();
-    } else if (keywords.includes('charging') || keywords.includes('station')) {
-      return this.generateChargingStationStoryMap();
-    } else {
-      return this.generateGenericStoryMap(productDescription);
-    }
+    // Always return car rental service for demo
+    return this.generateCarRentalStoryMap();
   }
 
   private generateEcommerceStoryMap(): StoryMapYAML {
@@ -319,6 +307,130 @@ export class AIService {
                     "Users can create new projects",
                     "Projects can have multiple tasks",
                     "Project progress is tracked"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+  }
+
+  private generateCarRentalStoryMap(): StoryMapYAML {
+    return {
+      title: "租车服务需求描述",
+      description: "在线租车平台，提供便捷的车辆租赁服务",
+      epics: [
+        {
+          title: "用户管理模块",
+          description: "用户注册、登录和个人信息管理功能",
+          features: [
+            {
+              title: "用户注册功能",
+              description: "新用户注册和账户创建",
+              tasks: [
+                {
+                  title: "用户注册",
+                  description: "实现用户注册功能，包括基本信息填写和验证",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 用户访问注册页面，When 填写完整信息并提交，Then 应成功创建账户",
+                    "Given 用户输入无效信息，When 提交注册，Then 应显示相应错误提示",
+                    "Given 用户使用已存在邮箱，When 尝试注册，Then 应提示邮箱已被使用"
+                  ]
+                },
+                {
+                  title: "邮箱验证",
+                  description: "注册后发送验证邮件确认用户身份",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 用户完成注册，When 系统发送验证邮件，Then 用户应收到验证链接",
+                    "Given 用户点击验证链接，When 验证成功，Then 账户状态应更新为已验证"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "用户登录功能",
+              description: "已注册用户的登录和身份验证",
+              tasks: [
+                {
+                  title: "用户登录",
+                  description: "实现安全的用户登录功能",
+                  priority: "high",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 用户输入正确凭据，When 点击登录，Then 应成功登录并跳转到主页",
+                    "Given 用户输入错误密码，When 尝试登录，Then 应显示密码错误提示",
+                    "Given 用户连续登录失败，When 超过限制次数，Then 应临时锁定账户"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "车辆管理模块",
+          description: "车辆信息管理和展示功能",
+          features: [
+            {
+              title: "车辆展示功能",
+              description: "展示可用车辆信息和详情",
+              tasks: [
+                {
+                  title: "车辆列表展示",
+                  description: "展示所有可用车辆的列表信息",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 用户浏览车辆列表，When 页面加载完成，Then 应显示所有可用车辆",
+                    "Given 用户选择筛选条件，When 应用筛选，Then 应显示符合条件的车辆",
+                    "Given 用户点击车辆详情，When 查看详情页面，Then 应显示完整的车辆信息"
+                  ]
+                },
+                {
+                  title: "车辆搜索功能",
+                  description: "根据条件搜索特定车辆",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 用户输入搜索关键词，When 执行搜索，Then 应返回相关车辆结果",
+                    "Given 用户选择高级搜索选项，When 应用多个条件，Then 应返回精确匹配的车辆"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "订单管理模块",
+          description: "租车订单的创建和管理功能",
+          features: [
+            {
+              title: "订单创建功能",
+              description: "用户创建租车订单",
+              tasks: [
+                {
+                  title: "选择租车时间",
+                  description: "用户选择租车的开始和结束时间",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 用户选择车辆，When 设置租车时间，Then 应显示可用时间段",
+                    "Given 用户选择无效时间，When 尝试预订，Then 应提示时间冲突"
+                  ]
+                },
+                {
+                  title: "订单确认",
+                  description: "确认订单信息并完成支付",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 用户确认订单信息，When 完成支付，Then 应创建订单并发送确认邮件",
+                    "Given 支付失败，When 系统处理，Then 应保留订单并提示重新支付"
                   ]
                 }
               ]
