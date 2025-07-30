@@ -35,8 +35,8 @@
     "viewAllMaps": "查看所有地图",
     "enterDescription": "请输入产品描述",
     "tryTheseExamples": "试试这些例子：",
-    "carRentalService": "租车服务需求描述",
-    "carRentalDescription": "在线租车平台，提供便捷的车辆租赁服务"
+    "chargingPileService": "家用充电桩管理APP",
+    "chargingPileDescription": "帮助用户查看家用充电桩设备状态、历史充电记录、配对/解绑设备、更改设备配置、管理充电权限的 app 相关功能"
   },
   "storyMap": {
     "title": "故事地图",

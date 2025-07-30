@@ -35,8 +35,8 @@
     "viewAllMaps": "View All Maps",
     "enterDescription": "Please enter a product description",
     "tryTheseExamples": "Try These Examples:",
-    "carRentalService": "Car Rental Service Requirements",
-    "carRentalDescription": "Online car rental platform providing convenient vehicle rental services"
+    "chargingPileService": "Home Charging Pile Management APP",
+    "chargingPileDescription": "Help users view home charging pile device status, historical charging records, pair/unpair devices, change device configurations, and manage charging permissions"
   },
   "storyMap": {
     "title": "Story Map",

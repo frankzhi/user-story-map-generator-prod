@@ -29,10 +29,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
     setRecentMaps(savedMaps.slice(0, 5)); // Show last 5 maps
   }, []);
 
-  // Auto-fill car rental description when mock demo is selected
+  // Auto-fill charging pile description when mock demo is selected
   useEffect(() => {
     if (selectedProvider === 'mock' && !productDescription.trim()) {
-      setProductDescription(t('homepage.carRentalDescription'));
+      setProductDescription(t('homepage.chargingPileDescription'));
     }
   }, [selectedProvider, productDescription, t]);
 
@@ -302,11 +302,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('homepage.tryTheseExamples')}</h3>
           <div className="grid md:grid-cols-1 gap-4">
             <button
-              onClick={() => setProductDescription(t('homepage.carRentalDescription'))}
+              onClick={() => setProductDescription(t('homepage.chargingPileDescription'))}
               className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
             >
-              <h4 className="font-medium text-gray-900">{t('homepage.carRentalService')}</h4>
-              <p className="text-sm text-gray-600">{t('homepage.carRentalDescription')}</p>
+              <h4 className="font-medium text-gray-900">{t('homepage.chargingPileService')}</h4>
+              <p className="text-sm text-gray-600">{t('homepage.chargingPileDescription')}</p>
             </button>
           </div>
         </div>

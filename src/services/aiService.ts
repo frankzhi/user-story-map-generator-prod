@@ -75,12 +75,17 @@ export class AIService {
   }
 
   private generateMockStoryMap(productDescription: string): StoryMapYAML {
-    // For mock demo, always return car rental service
+    // For mock demo, always return charging pile service
     // For other cases, generate based on product description
-    if (productDescription.toLowerCase().includes('租车') || 
-        productDescription.toLowerCase().includes('car rental') ||
-        productDescription.toLowerCase().includes('vehicle') ||
-        productDescription.toLowerCase().includes('车')) {
+    if (productDescription.toLowerCase().includes('充电') || 
+        productDescription.toLowerCase().includes('charging') ||
+        productDescription.toLowerCase().includes('充电桩') ||
+        productDescription.toLowerCase().includes('家用')) {
+      return this.generateChargingPileStoryMap();
+    } else if (productDescription.toLowerCase().includes('租车') || 
+               productDescription.toLowerCase().includes('car rental') ||
+               productDescription.toLowerCase().includes('vehicle') ||
+               productDescription.toLowerCase().includes('车')) {
       return this.generateCarRentalStoryMap();
     } else if (productDescription.toLowerCase().includes('电商') || 
                productDescription.toLowerCase().includes('e-commerce') ||
@@ -93,9 +98,6 @@ export class AIService {
                productDescription.toLowerCase().includes('task') ||
                productDescription.toLowerCase().includes('project')) {
       return this.generateTaskManagementStoryMap();
-    } else if (productDescription.toLowerCase().includes('充电') || 
-               productDescription.toLowerCase().includes('charging')) {
-      return this.generateChargingStationStoryMap();
     } else {
       // Generate a generic story map based on the product description
       return this.generateGenericStoryMap(productDescription);
@@ -454,6 +456,274 @@ export class AIService {
                   acceptance_criteria: [
                     "Given 用户确认订单信息，When 完成支付，Then 应创建订单并发送确认邮件",
                     "Given 支付失败，When 系统处理，Then 应保留订单并提示重新支付"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+  }
+
+  private generateChargingPileStoryMap(): StoryMapYAML {
+    return {
+      title: "家用充电桩管理APP",
+      description: "一款帮助用户查看家用充电桩设备状态、历史充电记录、配对/解绑设备、更改设备配置、管理充电权限的移动应用",
+      epics: [
+        {
+          title: "设备状态监控",
+          description: "实时查看充电桩的工作状态和充电情况",
+          features: [
+            {
+              title: "实时状态显示",
+              description: "展示充电桩当前的工作状态",
+              tasks: [
+                {
+                  title: "显示充电桩连接状态",
+                  description: "实时显示充电桩是否在线",
+                  priority: "high",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 在线状态每30秒自动更新，When 用户查看，Then 应显示最新状态",
+                    "Given 断网时显示离线状态，When 网络恢复，Then 应自动更新为在线",
+                    "Given 支持手动刷新状态，When 用户下拉刷新，Then 应立即更新状态"
+                  ]
+                },
+                {
+                  title: "显示当前充电功率",
+                  description: "实时显示当前充电功率数据",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 功率数据每10秒更新一次，When 用户查看，Then 应显示实时功率",
+                    "Given 显示单位为kW，When 用户查看，Then 应清楚显示单位",
+                    "Given 异常功率值有警示标识，When 功率异常，Then 应显示红色警告"
+                  ]
+                },
+                {
+                  title: "显示充电进度",
+                  description: "展示当前充电进度百分比",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 进度条可视化显示，When 用户查看，Then 应看到进度条",
+                    "Given 显示已充电量和剩余时间，When 充电中，Then 应显示准确信息",
+                    "Given 支持点击查看详情，When 用户点击进度，Then 应显示详细充电信息"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "异常状态提醒",
+              description: "充电桩出现异常时及时通知用户",
+              tasks: [
+                {
+                  title: "实现异常状态检测",
+                  description: "监测充电桩异常状态",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 能检测过载、过热等常见异常，When 异常发生，Then 应立即检测到",
+                    "Given 异常发生时记录日志，When 异常发生，Then 应保存详细日志",
+                    "Given 异常分类明确，When 用户查看，Then 应清楚显示异常类型"
+                  ]
+                },
+                {
+                  title: "推送异常通知",
+                  description: "异常发生时推送通知给用户",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 支持APP内通知和手机推送，When 异常发生，Then 应同时发送两种通知",
+                    "Given 通知包含异常类型和解决建议，When 用户收到通知，Then 应看到详细信息",
+                    "Given 用户可设置通知静音时段，When 在静音时段，Then 应不发送通知"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "充电记录管理",
+          description: "查看和分析历史充电数据",
+          features: [
+            {
+              title: "充电记录列表",
+              description: "展示历史充电记录",
+              tasks: [
+                {
+                  title: "实现记录查询功能",
+                  description: "按时间查询充电记录",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 支持按日/周/月筛选，When 用户选择时间范围，Then 应显示对应记录",
+                    "Given 默认显示最近30条记录，When 用户打开应用，Then 应显示默认记录",
+                    "Given 下拉加载更多历史记录，When 用户下拉，Then 应加载更多记录"
+                  ]
+                },
+                {
+                  title: "设计记录展示样式",
+                  description: "设计充电记录列表UI",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 每条记录显示日期、时长、电量，When 用户查看，Then 应清楚显示信息",
+                    "Given 支持列表和日历两种视图，When 用户切换视图，Then 应正确显示",
+                    "Given 点击可查看详情，When 用户点击记录，Then 应显示详细信息"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "充电数据分析",
+              description: "提供充电数据统计和分析",
+              tasks: [
+                {
+                  title: "实现月度用电统计",
+                  description: "统计每月充电数据",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 显示月度总用电量和费用，When 用户查看统计，Then 应显示准确数据",
+                    "Given 支持与上月数据对比，When 用户查看，Then 应显示对比结果",
+                    "Given 可导出Excel报表，When 用户导出，Then 应生成完整报表"
+                  ]
+                },
+                {
+                  title: "实现充电习惯分析",
+                  description: "分析用户充电习惯",
+                  priority: "low",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 识别高频充电时段，When 分析完成，Then 应显示时段统计",
+                    "Given 提供节能建议，When 用户查看，Then 应显示个性化建议",
+                    "Given 支持自定义分析周期，When 用户设置周期，Then 应按周期分析"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "设备管理",
+          description: "充电桩设备的配对、解绑和配置",
+          features: [
+            {
+              title: "设备配对与解绑",
+              description: "管理充电桩设备连接",
+              tasks: [
+                {
+                  title: "实现蓝牙配对功能",
+                  description: "通过蓝牙连接新设备",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 支持扫描附近设备，When 用户开始配对，Then 应扫描到设备",
+                    "Given 配对过程有明确引导，When 配对中，Then 应显示步骤指引",
+                    "Given 配对成功后有确认提示，When 配对成功，Then 应显示成功提示"
+                  ]
+                },
+                {
+                  title: "实现设备解绑功能",
+                  description: "解除已配对的设备",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 解绑前需二次确认，When 用户解绑，Then 应弹出确认对话框",
+                    "Given 解绑后清除本地缓存，When 解绑成功，Then 应清除相关数据",
+                    "Given 支持远程解绑，When 远程操作，Then 应成功解绑设备"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "设备配置管理",
+              description: "修改充电桩参数设置",
+              tasks: [
+                {
+                  title: "实现基本参数设置",
+                  description: "修改充电桩基本配置",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 可设置充电功率上限，When 用户设置，Then 应保存设置",
+                    "Given 可修改设备名称，When 用户修改，Then 应更新显示",
+                    "Given 设置保存后有反馈，When 保存成功，Then 应显示成功提示"
+                  ]
+                },
+                {
+                  title: "实现定时充电功能",
+                  description: "设置预约充电时间",
+                  priority: "medium",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 支持设置多个时间段，When 用户设置，Then 应保存所有时间段",
+                    "Given 可启用/禁用定时功能，When 用户切换，Then 应正确启用或禁用",
+                    "Given 设置冲突时有提示，When 时间冲突，Then 应显示冲突警告"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "充电权限管理",
+          description: "管理可使用充电桩的人员权限",
+          features: [
+            {
+              title: "用户权限设置",
+              description: "管理可访问充电桩的用户",
+              tasks: [
+                {
+                  title: "实现用户添加功能",
+                  description: "添加新授权用户",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 支持通过手机号添加，When 用户输入手机号，Then 应验证并添加",
+                    "Given 可设置权限有效期，When 用户设置，Then 应保存有效期",
+                    "Given 添加成功发送通知，When 添加成功，Then 应发送通知给新用户"
+                  ]
+                },
+                {
+                  title: "实现权限管理界面",
+                  description: "管理现有用户权限",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 列表显示所有授权用户，When 用户查看，Then 应显示完整列表",
+                    "Given 支持修改权限和有效期，When 用户修改，Then 应保存修改",
+                    "Given 可一键撤销权限，When 用户撤销，Then 应立即生效"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "充电限制设置",
+              description: "设置不同用户的充电限制",
+              tasks: [
+                {
+                  title: "实现充电量限制",
+                  description: "设置用户最大充电量",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 可按度数或百分比设置，When 用户设置，Then 应保存限制值",
+                    "Given 达到限制后自动停止，When 达到限制，Then 应自动停止充电",
+                    "Given 接近限制时有提醒，When 接近限制，Then 应发送提醒通知"
+                  ]
+                },
+                {
+                  title: "实现时间段限制",
+                  description: "限制用户可使用时段",
+                  priority: "low",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 支持设置多个允许时段，When 用户设置，Then 应保存所有时段",
+                    "Given 非允许时段无法启动充电，When 非允许时段，Then 应阻止启动",
+                    "Given 时段冲突时有提示，When 时段冲突，Then 应显示冲突提示"
                   ]
                 }
               ]
