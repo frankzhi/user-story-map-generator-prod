@@ -36,7 +36,32 @@
     "enterDescription": "Please enter a product description",
     "tryTheseExamples": "Try These Examples:",
     "chargingPileService": "Home Charging Pile Management APP",
-    "chargingPileDescription": "Help users view home charging pile device status, historical charging records, pair/unpair devices, change device configurations, and manage charging permissions"
+    "chargingPileDescription": "Help users view home charging pile device status, historical charging records, pair/unpair devices, change device configurations, and manage charging permissions",
+    "inputMode": "Input Mode",
+    "simpleMode": "Simple Mode",
+    "structuredMode": "Structured Mode",
+    "structuredInput": {
+      "productOverview": "Product Overview",
+      "productName": "Product Name",
+      "productNamePlaceholder": "Enter product name",
+      "productPositioning": "Product Positioning",
+      "productPositioningPlaceholder": "Describe the market positioning and core value of the product",
+      "targetUsers": "Target Users",
+      "targetUsersPlaceholder": "Describe the target user groups",
+      "productForm": "Product Form",
+      "productFormPlaceholder": "Describe the product form (e.g., mobile app, web application, mini-program, etc.)",
+      "userJourney": "User Journey Overview",
+      "mainStages": "Main Stage Divisions",
+      "mainStagesPlaceholder": "Enter main stages",
+      "mainScenarios": "Main Scenarios/Activities",
+      "mainScenariosPlaceholder": "Enter main scenarios or activities",
+      "keyTouchpoints": "Key Touchpoints",
+      "keyTouchpointsPlaceholder": "Enter key touchpoints",
+      "coreFeatures": "Core Features",
+      "coreFeaturesPlaceholder": "Enter core features",
+      "additionalDescription": "Additional Description",
+      "additionalDescriptionPlaceholder": "Enter additional description"
+    }
   },
   "storyMap": {
     "title": "Story Map",

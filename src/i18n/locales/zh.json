@@ -36,7 +36,32 @@
     "enterDescription": "请输入产品描述",
     "tryTheseExamples": "试试这些例子：",
     "chargingPileService": "家用充电桩管理APP",
-    "chargingPileDescription": "帮助用户查看家用充电桩设备状态、历史充电记录、配对/解绑设备、更改设备配置、管理充电权限的 app 相关功能"
+    "chargingPileDescription": "帮助用户查看家用充电桩设备状态、历史充电记录、配对/解绑设备、更改设备配置、管理充电权限的 app 相关功能",
+    "inputMode": "输入模式",
+    "simpleMode": "简单模式",
+    "structuredMode": "结构化模式",
+    "structuredInput": {
+      "productOverview": "产品简述",
+      "productName": "产品名称",
+      "productNamePlaceholder": "请输入产品名称",
+      "productPositioning": "产品定位",
+      "productPositioningPlaceholder": "请描述产品的市场定位和核心价值",
+      "targetUsers": "目标用户",
+      "targetUsersPlaceholder": "请描述目标用户群体",
+      "productForm": "产品形态",
+      "productFormPlaceholder": "请描述产品的形态（如：移动APP、Web应用、小程序等）",
+      "userJourney": "用户旅程简述",
+      "mainStages": "主要阶段划分",
+      "mainStagesPlaceholder": "请输入主要阶段",
+      "mainScenarios": "主要场景/活动",
+      "mainScenariosPlaceholder": "请输入主要场景或活动",
+      "keyTouchpoints": "关键触点",
+      "keyTouchpointsPlaceholder": "请输入关键触点",
+      "coreFeatures": "核心功能",
+      "coreFeaturesPlaceholder": "请输入核心功能",
+      "additionalDescription": "其他补充描述",
+      "additionalDescriptionPlaceholder": "请输入其他补充描述"
+    }
   },
   "storyMap": {
     "title": "故事地图",

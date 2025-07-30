@@ -19,6 +19,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
   const [availableProviders, setAvailableProviders] = useState<Array<{ provider: AIProvider; configured: boolean; name: string }>>([]);
   const [recentMaps, setRecentMaps] = useState<StoryMap[]>([]);
   const [showRecentMaps, setShowRecentMaps] = useState(false);
+  const [inputMode, setInputMode] = useState<'simple' | 'structured'>('simple');
+  const [structuredData, setStructuredData] = useState({
+    productName: '',
+    productPositioning: '',
+    targetUsers: '',
+    productForm: '',
+    mainStages: ['', '', ''],
+    mainScenarios: ['', '', ''],
+    keyTouchpoints: ['', '', ''],
+    coreFeatures: ['', '', ''],
+    additionalDescription: ''
+  });
 
   useEffect(() => {
     const aiService = AIService.getInstance();
@@ -37,7 +49,37 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
   }, [selectedProvider, productDescription, t]);
 
   const handleGenerateStoryMap = async () => {
-    if (!productDescription.trim()) {
+    let finalDescription = productDescription;
+    
+    if (inputMode === 'structured') {
+      // Convert structured data to description
+      const stages = structuredData.mainStages.filter(stage => stage.trim()).map((stage, index) => `${index + 1}. ${stage}`).join('\n');
+      const scenarios = structuredData.mainScenarios.filter(scenario => scenario.trim()).map((scenario, index) => `${index + 1}. ${scenario}`).join('\n');
+      const touchpoints = structuredData.keyTouchpoints.filter(touchpoint => touchpoint.trim()).map((touchpoint, index) => `${index + 1}. ${touchpoint}`).join('\n');
+      const features = structuredData.coreFeatures.filter(feature => feature.trim()).map((feature, index) => `${index + 1}. ${feature}`).join('\n');
+      
+      finalDescription = `产品名称：${structuredData.productName}
+产品定位：${structuredData.productPositioning}
+目标用户：${structuredData.targetUsers}
+产品形态：${structuredData.productForm}
+
+用户旅程简述
+主要阶段划分：
+${stages}
+
+主要场景/活动：
+${scenarios}
+
+关键触点：
+${touchpoints}
+
+核心功能：
+${features}
+
+其他补充描述：${structuredData.additionalDescription}`;
+    }
+    
+    if (!finalDescription.trim()) {
       setError(t('homepage.enterDescription'));
       return;
     }
@@ -47,7 +89,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
 
     try {
       const aiService = AIService.getInstance();
-      const yamlData = await aiService.generateStoryMap(productDescription, selectedProvider);
+      const yamlData = await aiService.generateStoryMap(finalDescription, selectedProvider);
       const storyMap = aiService.convertYAMLToStoryMap(yamlData);
       
       // Save to storage
@@ -94,6 +136,26 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
       };
       reader.readAsText(file);
     }
+  };
+
+  const handleStructuredDataChange = (field: string, value: string | string[], index?: number) => {
+    if (typeof value === 'string' && index !== undefined) {
+      const newArray = [...structuredData[field as keyof typeof structuredData] as string[]];
+      newArray[index] = value;
+      setStructuredData({ ...structuredData, [field]: newArray });
+    } else {
+      setStructuredData({ ...structuredData, [field]: value });
+    }
+  };
+
+  const addStructuredItem = (field: 'mainStages' | 'mainScenarios' | 'keyTouchpoints' | 'coreFeatures') => {
+    const newArray = [...structuredData[field], ''];
+    setStructuredData({ ...structuredData, [field]: newArray });
+  };
+
+  const removeStructuredItem = (field: 'mainStages' | 'mainScenarios' | 'keyTouchpoints' | 'coreFeatures', index: number) => {
+    const newArray = structuredData[field].filter((_, i) => i !== index);
+    setStructuredData({ ...structuredData, [field]: newArray });
   };
 
   const getProviderIcon = (provider: AIProvider) => {
@@ -187,19 +249,285 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
 
         {/* Main Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+          {/* Input Mode Selection */}
           <div className="mb-6">
-            <label htmlFor="product-description" className="block text-lg font-semibold text-gray-900 mb-3">
-              {t('homepage.productDescription')}
+            <label className="block text-lg font-semibold text-gray-900 mb-3">
+              {t('homepage.inputMode')}
             </label>
-            <textarea
-              id="product-description"
-              value={productDescription}
-              onChange={(e) => setProductDescription(e.target.value)}
-              placeholder={t('homepage.productDescriptionPlaceholder')}
-              className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              disabled={isGenerating}
-            />
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setInputMode('simple')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  inputMode === 'simple'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {t('homepage.simpleMode')}
+              </button>
+              <button
+                onClick={() => setInputMode('structured')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  inputMode === 'structured'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {t('homepage.structuredMode')}
+              </button>
+            </div>
           </div>
+
+          {/* Simple Input Mode */}
+          {inputMode === 'simple' && (
+            <div className="mb-6">
+              <label htmlFor="product-description" className="block text-lg font-semibold text-gray-900 mb-3">
+                {t('homepage.productDescription')}
+              </label>
+              <textarea
+                id="product-description"
+                value={productDescription}
+                onChange={(e) => setProductDescription(e.target.value)}
+                placeholder={t('homepage.productDescriptionPlaceholder')}
+                className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                disabled={isGenerating}
+              />
+            </div>
+          )}
+
+          {/* Structured Input Mode */}
+          {inputMode === 'structured' && (
+            <div className="space-y-6">
+              {/* Product Overview */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('homepage.structuredInput.productOverview')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('homepage.structuredInput.productName')}
+                    </label>
+                    <input
+                      type="text"
+                      value={structuredData.productName}
+                      onChange={(e) => handleStructuredDataChange('productName', e.target.value)}
+                      placeholder={t('homepage.structuredInput.productNamePlaceholder')}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isGenerating}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('homepage.structuredInput.productForm')}
+                    </label>
+                    <input
+                      type="text"
+                      value={structuredData.productForm}
+                      onChange={(e) => handleStructuredDataChange('productForm', e.target.value)}
+                      placeholder={t('homepage.structuredInput.productFormPlaceholder')}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      disabled={isGenerating}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('homepage.structuredInput.productPositioning')}
+                    </label>
+                    <textarea
+                      value={structuredData.productPositioning}
+                      onChange={(e) => handleStructuredDataChange('productPositioning', e.target.value)}
+                      placeholder={t('homepage.structuredInput.productPositioningPlaceholder')}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows={2}
+                      disabled={isGenerating}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('homepage.structuredInput.targetUsers')}
+                    </label>
+                    <textarea
+                      value={structuredData.targetUsers}
+                      onChange={(e) => handleStructuredDataChange('targetUsers', e.target.value)}
+                      placeholder={t('homepage.structuredInput.targetUsersPlaceholder')}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows={2}
+                      disabled={isGenerating}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* User Journey */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('homepage.structuredInput.userJourney')}</h3>
+                
+                {/* Main Stages */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('homepage.structuredInput.mainStages')}
+                  </label>
+                  <div className="space-y-2">
+                    {structuredData.mainStages.map((stage, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500 w-6">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={stage}
+                          onChange={(e) => handleStructuredDataChange('mainStages', e.target.value, index)}
+                          placeholder={t('homepage.structuredInput.mainStagesPlaceholder')}
+                          className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          disabled={isGenerating}
+                        />
+                        {structuredData.mainStages.length > 1 && (
+                          <button
+                            onClick={() => removeStructuredItem('mainStages', index)}
+                            className="text-red-500 hover:text-red-700"
+                            disabled={isGenerating}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addStructuredItem('mainStages')}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                      disabled={isGenerating}
+                    >
+                      + 添加阶段
+                    </button>
+                  </div>
+                </div>
+
+                {/* Main Scenarios */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('homepage.structuredInput.mainScenarios')}
+                  </label>
+                  <div className="space-y-2">
+                    {structuredData.mainScenarios.map((scenario, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500 w-6">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={scenario}
+                          onChange={(e) => handleStructuredDataChange('mainScenarios', e.target.value, index)}
+                          placeholder={t('homepage.structuredInput.mainScenariosPlaceholder')}
+                          className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          disabled={isGenerating}
+                        />
+                        {structuredData.mainScenarios.length > 1 && (
+                          <button
+                            onClick={() => removeStructuredItem('mainScenarios', index)}
+                            className="text-red-500 hover:text-red-700"
+                            disabled={isGenerating}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addStructuredItem('mainScenarios')}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                      disabled={isGenerating}
+                    >
+                      + 添加场景
+                    </button>
+                  </div>
+                </div>
+
+                {/* Key Touchpoints */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('homepage.structuredInput.keyTouchpoints')}
+                  </label>
+                  <div className="space-y-2">
+                    {structuredData.keyTouchpoints.map((touchpoint, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500 w-6">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={touchpoint}
+                          onChange={(e) => handleStructuredDataChange('keyTouchpoints', e.target.value, index)}
+                          placeholder={t('homepage.structuredInput.keyTouchpointsPlaceholder')}
+                          className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          disabled={isGenerating}
+                        />
+                        {structuredData.keyTouchpoints.length > 1 && (
+                          <button
+                            onClick={() => removeStructuredItem('keyTouchpoints', index)}
+                            className="text-red-500 hover:text-red-700"
+                            disabled={isGenerating}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addStructuredItem('keyTouchpoints')}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                      disabled={isGenerating}
+                    >
+                      + 添加触点
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Core Features */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('homepage.structuredInput.coreFeatures')}</h3>
+                <div className="space-y-2">
+                  {structuredData.coreFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-500 w-6">{index + 1}.</span>
+                      <input
+                        type="text"
+                        value={feature}
+                        onChange={(e) => handleStructuredDataChange('coreFeatures', e.target.value, index)}
+                        placeholder={t('homepage.structuredInput.coreFeaturesPlaceholder')}
+                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        disabled={isGenerating}
+                      />
+                      {structuredData.coreFeatures.length > 1 && (
+                        <button
+                          onClick={() => removeStructuredItem('coreFeatures', index)}
+                          className="text-red-500 hover:text-red-700"
+                          disabled={isGenerating}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => addStructuredItem('coreFeatures')}
+                    className="text-blue-600 hover:text-blue-800 text-sm"
+                    disabled={isGenerating}
+                  >
+                    + 添加功能
+                  </button>
+                </div>
+              </div>
+
+              {/* Additional Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('homepage.structuredInput.additionalDescription')}
+                </label>
+                <textarea
+                  value={structuredData.additionalDescription}
+                  onChange={(e) => handleStructuredDataChange('additionalDescription', e.target.value)}
+                  placeholder={t('homepage.structuredInput.additionalDescriptionPlaceholder')}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  rows={3}
+                  disabled={isGenerating}
+                />
+              </div>
+            </div>
+          )}
 
           {/* AI Provider Selection */}
           <div className="mb-6">
