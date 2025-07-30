@@ -347,10 +347,10 @@ export class AIService {
                   priority: "high",
                   effort: "5 days",
                   acceptance_criteria: [
-                    "扫描有效QR码时能正确识别设备信息",
-                    "扫描无效QR码时显示适当错误信息",
-                    "扫描过程在5秒内完成",
-                    "支持多种QR码格式和加密内容"
+                    "Given 有效设备QR码，When 用户扫描成功，Then 系统应识别设备信息",
+                    "Given 无效QR码，When 用户扫描，Then 应显示适当错误信息",
+                    "Given 扫描请求，When 处理完成，Then 扫描过程应在5秒内完成",
+                    "Given 不同格式QR码，When 系统处理，Then 应支持多种QR码格式和加密内容"
                   ]
                 },
                 {
@@ -359,10 +359,10 @@ export class AIService {
                   priority: "high",
                   effort: "4 days",
                   acceptance_criteria: [
-                    "验证设备是否已在系统中注册",
-                    "检查设备是否已被其他用户绑定",
-                    "验证设备状态是否可用",
-                    "API响应时间小于2秒"
+                    "Given 设备ID，When 系统验证，Then 应返回设备详细信息",
+                    "Given 已注册设备，When 检查绑定状态，Then 应确认设备可用性",
+                    "Given 设备验证请求，When API处理，Then 响应时间应小于2秒",
+                    "Given 设备状态检查，When 系统查询，Then 应返回准确的设备状态"
                   ]
                 },
                 {
@@ -371,10 +371,10 @@ export class AIService {
                   priority: "high",
                   effort: "3 days",
                   acceptance_criteria: [
-                    "成功创建用户-设备绑定记录",
-                    "绑定过程使用事务处理确保数据一致性",
-                    "绑定成功率大于99.5%",
-                    "支持绑定记录的查询和管理"
+                    "Given 可用设备，When 用户确认绑定，Then 应创建绑定记录",
+                    "Given 绑定请求，When 系统处理，Then 应使用事务处理确保数据一致性",
+                    "Given 绑定操作，When 完成处理，Then 成功率应大于99.5%",
+                    "Given 绑定记录，When 用户查询，Then 应支持记录的查询和管理"
                   ]
                 },
                 {
@@ -383,10 +383,10 @@ export class AIService {
                   priority: "medium",
                   effort: "2 days",
                   acceptance_criteria: [
-                    "显示绑定成功的确认信息",
-                    "提供设备使用指南和注意事项",
-                    "支持返回设备列表查看新增设备",
-                    "通知信息清晰易懂"
+                    "Given 绑定成功，When 系统响应，Then 应显示确认信息",
+                    "Given 新绑定设备，When 用户查看，Then 应提供使用指南",
+                    "Given 绑定完成，When 用户操作，Then 应支持返回设备列表",
+                    "Given 通知信息，When 用户阅读，Then 应清晰易懂"
                   ]
                 }
               ]

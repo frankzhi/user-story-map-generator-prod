@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Sparkles, Save, Edit, Trash2 } from 'lucide-react';
 import type { Task } from '../types/story';
 import { AIService } from '../services/aiService';
+import i18n from '../i18n';
 
 interface EnhancedStoryDetailProps {
   task: Task;
@@ -41,6 +42,63 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
     try {
       const aiService = AIService.getInstance();
       const enhancedStory = await aiService.enhanceStory(task);
+      
+      // Translate the enhanced story based on current language
+      const currentLang = i18n.language;
+      if (currentLang === 'zh') {
+        enhancedStory.userStory = enhancedStory.userStory.replace(/As a (.+?), I want (.+?) so that (.+?)/, '作为$1，我希望$2，以便$3');
+        enhancedStory.acceptanceCriteria = enhancedStory.acceptanceCriteria.map((criteria: string) => 
+          criteria.replace(/Given (.+?), When (.+?), Then (.+?)/, 'Given $1，When $2，Then $3')
+        );
+        enhancedStory.definitionOfDone = enhancedStory.definitionOfDone.map((item: string) => {
+          if (item.includes('Code is written')) return '代码已编写并通过审查';
+          if (item.includes('Unit tests')) return '单元测试已实现并通过';
+          if (item.includes('Integration tests')) return '集成测试已实现并通过';
+          if (item.includes('Documentation')) return '文档已更新';
+          if (item.includes('Feature is deployed')) return '功能已部署到测试环境';
+          return item;
+        });
+        enhancedStory.technicalNotes = enhancedStory.technicalNotes.replace(
+          'This feature requires proper error handling, logging, and monitoring.',
+          '此功能需要适当的错误处理、日志记录和监控。'
+        );
+        enhancedStory.businessValue = enhancedStory.businessValue.replace(
+          'This feature will improve user experience and increase operational efficiency',
+          '此功能将改善用户体验并提高运营效率'
+        );
+        enhancedStory.dependencies = enhancedStory.dependencies.map((dep: string) => {
+          if (dep.includes('User authentication')) return '用户认证系统';
+          if (dep.includes('Database schema')) return '数据库架构更新';
+          if (dep.includes('API endpoint')) return 'API端点开发';
+          return dep;
+        });
+        enhancedStory.assumptions = enhancedStory.assumptions.map((assumption: string) => {
+          if (assumption.includes('Users have basic')) return '用户具备基本技术知识';
+          if (assumption.includes('System has sufficient')) return '系统具备足够的性能容量';
+          if (assumption.includes('No major infrastructure')) return '无需重大基础设施变更';
+          return assumption;
+        });
+        enhancedStory.constraints = enhancedStory.constraints.map((constraint: string) => {
+          if (constraint.includes('existing system architecture')) return '必须在现有系统架构内工作';
+          if (constraint.includes('Budget and timeline')) return '预算和时间限制适用';
+          if (constraint.includes('security policies')) return '必须遵守安全政策';
+          return constraint;
+        });
+        enhancedStory.risks = enhancedStory.risks.map((risk: string) => {
+          if (risk.includes('performance impact')) return '可能对现有功能产生性能影响';
+          if (risk.includes('User adoption')) return '用户采用可能比预期慢';
+          if (risk.includes('Integration complexity')) return '与现有系统的集成复杂性';
+          return risk;
+        });
+        enhancedStory.testCases = enhancedStory.testCases.map((testCase: string) => {
+          if (testCase.includes('successful completion')) return '测试主要工作流程的成功完成';
+          if (testCase.includes('error handling')) return '测试无效输入的错误处理';
+          if (testCase.includes('performance under normal')) return '测试正常负载下的性能';
+          if (testCase.includes('integration with dependent')) return '测试与依赖系统的集成';
+          return testCase;
+        });
+      }
+      
       setEnhancedData(enhancedStory);
     } catch (error) {
       console.error('Failed to enhance story:', error);
