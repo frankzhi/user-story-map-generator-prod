@@ -209,7 +209,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           {/* Map Content */}
           <div className="overflow-x-auto">
             <div className="min-w-max">
-              {/* Hierarchical Map Layout */}
+              {/* Hierarchical Map Layout with Clear Alignment */}
               <div className="overflow-x-auto">
                 <div className="min-w-max">
                   {/* Phases Row */}
@@ -217,17 +217,23 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                       {t('storyMap.phases')}
                     </div>
-                    <div className="flex-1 flex gap-4">
-                      {mapLayout.map((phaseGroup, phaseIndex) => (
-                        <div
-                          key={phaseIndex}
-                          className="bg-blue-600 text-white px-6 py-4 rounded-lg text-center font-semibold flex-shrink-0"
-                          style={{ minWidth: '200px' }}
-                        >
-                          <div className="text-lg">{phaseGroup.phase.title}</div>
-                          <div className="text-xs text-blue-100 mt-1">{phaseGroup.phase.description}</div>
-                        </div>
-                      ))}
+                    <div className="flex-1 flex">
+                      {mapLayout.map((phaseGroup, phaseIndex) => {
+                        // Calculate total width for this phase based on its activities
+                        const totalActivities = phaseGroup.activities.length;
+                        const phaseWidth = Math.max(300, totalActivities * 200); // Minimum 300px, 200px per activity
+                        
+                        return (
+                          <div
+                            key={phaseIndex}
+                            className="bg-blue-600 text-white px-6 py-4 rounded-lg text-center font-semibold flex-shrink-0 border-r border-blue-500"
+                            style={{ width: `${phaseWidth}px` }}
+                          >
+                            <div className="text-lg">{phaseGroup.phase.title}</div>
+                            <div className="text-xs text-blue-100 mt-1">{phaseGroup.phase.description}</div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -236,21 +242,27 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                       {t('storyMap.activities')}
                     </div>
-                    <div className="flex-1 flex gap-4">
-                      {mapLayout.map((phaseGroup, phaseIndex) => (
-                        <div key={phaseIndex} className="flex gap-2">
-                          {phaseGroup.activities.map((activity, activityIndex) => (
-                            <div
-                              key={activityIndex}
-                              className="bg-blue-500 text-white px-4 py-3 rounded-md text-sm font-medium text-center flex-shrink-0"
-                              style={{ minWidth: '160px' }}
-                            >
-                              <div className="text-sm">{activity.title}</div>
-                              <div className="text-xs text-blue-100 mt-1">{activity.description}</div>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
+                    <div className="flex-1 flex">
+                      {mapLayout.map((phaseGroup, phaseIndex) => {
+                        const totalActivities = phaseGroup.activities.length;
+                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const activityWidth = phaseWidth / totalActivities;
+                        
+                        return (
+                          <div key={phaseIndex} className="flex" style={{ width: `${phaseWidth}px` }}>
+                            {phaseGroup.activities.map((activity, activityIndex) => (
+                              <div
+                                key={activityIndex}
+                                className="bg-blue-500 text-white px-4 py-3 rounded-md text-sm font-medium text-center flex-shrink-0 border-r border-blue-400"
+                                style={{ width: `${activityWidth}px` }}
+                              >
+                                <div className="text-sm">{activity.title}</div>
+                                <div className="text-xs text-blue-100 mt-1">{activity.description}</div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -259,30 +271,39 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                       {t('storyMap.touchpoints')}
                     </div>
-                    <div className="flex-1 flex gap-4">
-                      {mapLayout.map((phaseGroup, phaseIndex) => (
-                        <div key={phaseIndex} className="flex gap-2">
-                          {phaseGroup.activities.map((activity, activityIndex) => (
-                            <div key={activityIndex} className="flex flex-col gap-2">
-                              {activity.touchpoints.map((item, touchpointIndex) => (
-                                <div
-                                  key={touchpointIndex}
-                                  className="bg-white border border-gray-200 rounded-md p-3 shadow-sm flex-shrink-0"
-                                  style={{ minWidth: '160px' }}
-                                >
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                      {t('storyMap.potentialCustomer')}
-                                    </span>
-                                    {getTouchpointIcon(item.touchpoint)}
+                    <div className="flex-1 flex">
+                      {mapLayout.map((phaseGroup, phaseIndex) => {
+                        const totalActivities = phaseGroup.activities.length;
+                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const activityWidth = phaseWidth / totalActivities;
+                        
+                        return (
+                          <div key={phaseIndex} className="flex" style={{ width: `${phaseWidth}px` }}>
+                            {phaseGroup.activities.map((activity, activityIndex) => (
+                              <div 
+                                key={activityIndex} 
+                                className="flex flex-col gap-2 border-r border-gray-200"
+                                style={{ width: `${activityWidth}px` }}
+                              >
+                                {activity.touchpoints.map((item, touchpointIndex) => (
+                                  <div
+                                    key={touchpointIndex}
+                                    className="bg-white border border-gray-200 rounded-md p-3 shadow-sm flex-shrink-0 mx-2"
+                                  >
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                        {t('storyMap.potentialCustomer')}
+                                      </span>
+                                      {getTouchpointIcon(item.touchpoint)}
+                                    </div>
+                                    <p className="text-xs text-gray-700">{item.touchpoint}</p>
                                   </div>
-                                  <p className="text-xs text-gray-700">{item.touchpoint}</p>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -291,31 +312,40 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                       {t('storyMap.userStories')}
                     </div>
-                    <div className="flex-1 flex gap-4">
-                      {mapLayout.map((phaseGroup, phaseIndex) => (
-                        <div key={phaseIndex} className="flex gap-2">
-                          {phaseGroup.activities.map((activity, activityIndex) => (
-                            <div key={activityIndex} className="flex flex-col gap-2">
-                              {activity.userStories.map((story, storyIndex) => (
-                                <div
-                                  key={storyIndex}
-                                  className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-3 shadow-sm hover:shadow-md transition-shadow flex-shrink-0"
-                                  style={{ minWidth: '160px' }}
-                                  onClick={() => handleStoryClick(story)}
-                                >
-                                  <div className="flex items-start justify-between mb-2">
-                                    <User className="w-4 h-4 text-gray-500" />
-                                    {getStatusIcon(story.status)}
+                    <div className="flex-1 flex">
+                      {mapLayout.map((phaseGroup, phaseIndex) => {
+                        const totalActivities = phaseGroup.activities.length;
+                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const activityWidth = phaseWidth / totalActivities;
+                        
+                        return (
+                          <div key={phaseIndex} className="flex" style={{ width: `${phaseWidth}px` }}>
+                            {phaseGroup.activities.map((activity, activityIndex) => (
+                              <div 
+                                key={activityIndex} 
+                                className="flex flex-col gap-2 border-r border-gray-200"
+                                style={{ width: `${activityWidth}px` }}
+                              >
+                                {activity.userStories.map((story, storyIndex) => (
+                                  <div
+                                    key={storyIndex}
+                                    className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-3 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-2"
+                                    onClick={() => handleStoryClick(story)}
+                                  >
+                                    <div className="flex items-start justify-between mb-2">
+                                      <User className="w-4 h-4 text-gray-500" />
+                                      {getStatusIcon(story.status)}
+                                    </div>
+                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                      {story.description}
+                                    </p>
                                   </div>
-                                  <p className="text-sm text-gray-700 leading-relaxed">
-                                    {story.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -324,29 +354,38 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                     <div className="w-24 flex-shrink-0 flex items-center justify-center font-semibold text-gray-700 bg-gray-200 rounded-l-lg">
                       {t('storyMap.supportingNeeds')}
                     </div>
-                    <div className="flex-1 flex gap-4">
-                      {mapLayout.map((phaseGroup, phaseIndex) => (
-                        <div key={phaseIndex} className="flex gap-2">
-                          {phaseGroup.activities.map((activity, activityIndex) => (
-                            <div key={activityIndex} className="flex flex-col gap-2">
-                              {activity.supportingNeeds.map((item, needIndex) => (
-                                <div
-                                  key={needIndex}
-                                  className="bg-white border border-gray-200 rounded-md p-3 shadow-sm flex-shrink-0"
-                                  style={{ minWidth: '160px' }}
-                                >
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                                      {t('storyMap.supportingNeed')}
-                                    </span>
+                    <div className="flex-1 flex">
+                      {mapLayout.map((phaseGroup, phaseIndex) => {
+                        const totalActivities = phaseGroup.activities.length;
+                        const phaseWidth = Math.max(300, totalActivities * 200);
+                        const activityWidth = phaseWidth / totalActivities;
+                        
+                        return (
+                          <div key={phaseIndex} className="flex" style={{ width: `${phaseWidth}px` }}>
+                            {phaseGroup.activities.map((activity, activityIndex) => (
+                              <div 
+                                key={activityIndex} 
+                                className="flex flex-col gap-2 border-r border-gray-200"
+                                style={{ width: `${activityWidth}px` }}
+                              >
+                                {activity.supportingNeeds.map((item, needIndex) => (
+                                  <div
+                                    key={needIndex}
+                                    className="bg-white border border-gray-200 rounded-md p-3 shadow-sm flex-shrink-0 mx-2"
+                                  >
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                                        {t('storyMap.supportingNeed')}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-gray-700">{item.need}</p>
                                   </div>
-                                  <p className="text-xs text-gray-700">{item.need}</p>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
