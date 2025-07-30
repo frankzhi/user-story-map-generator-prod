@@ -199,11 +199,54 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
               {/* Acceptance Criteria */}
               <div>
                 <h4 className="font-semibold mb-2">{t('storyDetail.acceptanceCriteria')}</h4>
-                <ul className="list-disc list-inside space-y-1">
+                <ul className="list-disc list-inside space-y-1 mb-4">
                   {enhancedData.acceptanceCriteria.map((criteria, index) => (
                     <li key={index} className="text-sm text-gray-700">{criteria}</li>
                   ))}
                 </ul>
+                
+                {/* Structured Acceptance Criteria Table */}
+                <div className="mt-6">
+                  <h5 className="font-semibold mb-3 text-gray-800">结构化验收标准</h5>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border border-gray-200 rounded-lg">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">场景</th>
+                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">验收点</th>
+                          <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">Given-When-Then</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white">
+                        <tr className="border-b">
+                          <td className="px-4 py-2 text-sm text-gray-700">成功配对</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">QR码扫描</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">Given 有效设备QR码，When 用户扫描成功，Then 系统应识别设备信息</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="px-4 py-2 text-sm text-gray-700">成功配对</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">设备验证</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">Given 识别到设备ID，When 系统验证，Then 应返回设备详细信息</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="px-4 py-2 text-sm text-gray-700">成功配对</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">绑定确认</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">Given 可用设备，When 用户确认绑定，Then 应创建绑定记录</td>
+                        </tr>
+                        <tr className="border-b">
+                          <td className="px-4 py-2 text-sm text-gray-700">无效QR码</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">错误处理</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">Given 无效QR码，When 用户扫描，Then 应显示适当错误信息</td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-2 text-sm text-gray-700">设备冲突</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">冲突处理</td>
+                          <td className="px-4 py-2 text-sm text-gray-700">Given 已绑定设备，When 用户尝试绑定，Then 应提示冲突信息</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
 
               {/* Definition of Done */}

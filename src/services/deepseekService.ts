@@ -1,4 +1,5 @@
 import type { StoryMapYAML } from '../types/story';
+import i18n from '../i18n';
 
 interface DeepSeekMessage {
   role: 'system' | 'user' | 'assistant';
@@ -166,8 +167,12 @@ Return ONLY the JSON object, no additional text or explanations.`;
       throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
     }
 
+    // Add language context to the prompt
+    const currentLang = i18n.language;
+    const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
+    
     const messages: DeepSeekMessage[] = [
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: systemPrompt + '\n\n' + languageContext },
       { role: 'user', content: userPrompt }
     ];
 

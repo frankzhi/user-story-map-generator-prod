@@ -1,6 +1,7 @@
 import type { StoryMapYAML, Task } from '../types/story';
 import { DeepSeekService } from './deepseekService';
 import { GeminiService } from './geminiService';
+import i18n from '../i18n';
 
 export type AIProvider = 'deepseek' | 'gemini' | 'mock';
 
@@ -603,50 +604,99 @@ Focus on making the story more detailed, actionable, and comprehensive.`;
   }
 
   private generateMockEnhancedStory(task: Task): any {
-    return {
-      userStory: `As a ${task.title.toLowerCase().includes('user') ? 'user' : 'stakeholder'}, I want ${task.description.toLowerCase()} so that I can achieve better outcomes and improve efficiency.`,
-      acceptanceCriteria: [
-        `Given ${task.title}, When the feature is implemented, Then it should work as described`,
-        `Given the user interacts with the feature, When they perform the action, Then the expected result should occur`,
-        `Given the system processes the request, When validation passes, Then the operation should complete successfully`
-      ],
-      definitionOfDone: [
-        "Code is written and reviewed",
-        "Unit tests are implemented and passing",
-        "Integration tests are implemented and passing",
-        "Documentation is updated",
-        "Feature is deployed to staging environment"
-      ],
-      technicalNotes: "This feature requires proper error handling, logging, and monitoring. Consider performance implications and security best practices.",
-      businessValue: "This feature will improve user experience and increase operational efficiency, contributing to overall business goals.",
-      storyPoints: 5,
-      dependencies: [
-        "User authentication system",
-        "Database schema updates",
-        "API endpoint development"
-      ],
-      assumptions: [
-        "Users have basic technical knowledge",
-        "System has sufficient performance capacity",
-        "No major infrastructure changes required"
-      ],
-      constraints: [
-        "Must work within existing system architecture",
-        "Budget and timeline constraints apply",
-        "Must comply with security policies"
-      ],
-      risks: [
-        "Potential performance impact on existing features",
-        "User adoption may be slower than expected",
-        "Integration complexity with existing systems"
-      ],
-      testCases: [
-        "Test successful completion of the main workflow",
-        "Test error handling for invalid inputs",
-        "Test performance under normal load",
-        "Test integration with dependent systems"
-      ]
-    };
+    const currentLang = i18n.language;
+    
+    if (currentLang === 'zh') {
+      return {
+        userStory: `作为${task.title.toLowerCase().includes('用户') ? '用户' : '利益相关者'}，我希望${task.description.toLowerCase()}，以便实现更好的结果并提高效率。`,
+        acceptanceCriteria: [
+          `Given ${task.title}，When 功能实现时，Then 应该按描述工作`,
+          `Given 用户与功能交互，When 他们执行操作时，Then 应该产生预期结果`,
+          `Given 系统处理请求，When 验证通过时，Then 操作应该成功完成`
+        ],
+        definitionOfDone: [
+          "代码已编写并通过审查",
+          "单元测试已实现并通过",
+          "集成测试已实现并通过",
+          "文档已更新",
+          "功能已部署到测试环境"
+        ],
+        technicalNotes: "此功能需要适当的错误处理、日志记录和监控。考虑性能影响和安全最佳实践。",
+        businessValue: "此功能将改善用户体验并提高运营效率，为整体业务目标做出贡献。",
+        storyPoints: 5,
+        dependencies: [
+          "用户认证系统",
+          "数据库架构更新",
+          "API端点开发"
+        ],
+        assumptions: [
+          "用户具备基本技术知识",
+          "系统具备足够的性能容量",
+          "无需重大基础设施变更"
+        ],
+        constraints: [
+          "必须在现有系统架构内工作",
+          "预算和时间限制适用",
+          "必须遵守安全政策"
+        ],
+        risks: [
+          "可能对现有功能产生性能影响",
+          "用户采用可能比预期慢",
+          "与现有系统的集成复杂性"
+        ],
+        testCases: [
+          "测试主要工作流程的成功完成",
+          "测试无效输入的错误处理",
+          "测试正常负载下的性能",
+          "测试与依赖系统的集成"
+        ]
+      };
+    } else {
+      return {
+        userStory: `As a ${task.title.toLowerCase().includes('user') ? 'user' : 'stakeholder'}, I want ${task.description.toLowerCase()} so that I can achieve better outcomes and improve efficiency.`,
+        acceptanceCriteria: [
+          `Given ${task.title}, When the feature is implemented, Then it should work as described`,
+          `Given the user interacts with the feature, When they perform the action, Then the expected result should occur`,
+          `Given the system processes the request, When validation passes, Then the operation should complete successfully`
+        ],
+        definitionOfDone: [
+          "Code is written and reviewed",
+          "Unit tests are implemented and passing",
+          "Integration tests are implemented and passing",
+          "Documentation is updated",
+          "Feature is deployed to staging environment"
+        ],
+        technicalNotes: "This feature requires proper error handling, logging, and monitoring. Consider performance implications and security best practices.",
+        businessValue: "This feature will improve user experience and increase operational efficiency, contributing to overall business goals.",
+        storyPoints: 5,
+        dependencies: [
+          "User authentication system",
+          "Database schema updates",
+          "API endpoint development"
+        ],
+        assumptions: [
+          "Users have basic technical knowledge",
+          "System has sufficient performance capacity",
+          "No major infrastructure changes required"
+        ],
+        constraints: [
+          "Must work within existing system architecture",
+          "Budget and timeline constraints apply",
+          "Must comply with security policies"
+        ],
+        risks: [
+          "Potential performance impact on existing features",
+          "User adoption may be slower than expected",
+          "Integration complexity with existing systems"
+        ],
+        testCases: [
+          "Test successful completion of the main workflow",
+          "Test error handling for invalid inputs",
+          "Test performance under normal load",
+          "Test integration with dependent systems"
+        ]
+      };
+    }
   }
 
   private generateId(): string {
