@@ -81,6 +81,7 @@ Guidelines:
 - Effort should be realistic (1-5 days per task)
 - Acceptance criteria should be clear and measurable
 - Focus on user value and business outcomes
+- For supporting needs generation, focus on specific technical requirements related to the business domain, avoid generic infrastructure needs like "ensure system stability", "optimize response time", "implement load balancing" unless they are specifically relevant to the business context
 
 Return ONLY the JSON object, no additional text or explanations.`;
 

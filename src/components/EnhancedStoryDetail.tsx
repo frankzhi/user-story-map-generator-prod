@@ -359,6 +359,11 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
                         </tbody>
                       </table>
                     </div>
+                    
+                    {/* Debug Info - Remove after fixing */}
+                    <div className="mt-4 p-2 bg-yellow-100 rounded text-xs">
+                      <p>Debug: enhancedData.structuredAcceptanceCriteria = {JSON.stringify(enhancedData.structuredAcceptanceCriteria)}</p>
+                    </div>
                   </div>
                 )}
               </div>
