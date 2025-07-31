@@ -237,33 +237,77 @@ Return ONLY the JSON object, no additional text or explanations.`;
     }
   }
 
-  async generateStoryMapWithFeedback(feedbackPrompt: string): Promise<any> {
+  async generateStoryMapWithFeedback(currentStoryMap: any, feedbackPrompt: string): Promise<StoryMapYAML> {
     try {
       if (!this.apiKey) {
         throw new Error('DeepSeek API key not found.');
       }
 
       const currentLang = i18n.language;
-      const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
+      const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese). All content including titles, descriptions, and acceptance criteria should be in Chinese.' : 'Please respond in English.';
       
-      const systemPrompt = `你是一个专业的用户故事地图分析师。请根据用户提供的反馈意见，修改现有的用户故事地图。
+      const systemPrompt = `You are an expert product manager and user story mapping specialist. 
 
-请确保：
-1. 保持原有的故事地图结构
-2. 根据用户反馈调整相关的内容
-3. 确保修改后的故事地图更加符合用户需求
-4. 返回完整的修改后的JSON格式故事地图
+Your task is to modify an existing user story map based on user feedback. 
 
-请直接返回修改后的JSON格式故事地图，不要包含其他解释文字。JSON格式应该包含：
-- title: 故事地图标题
-- description: 故事地图描述
-- epics: 阶段数组，每个阶段包含features数组，每个feature包含tasks数组
+IMPORTANT: Return ONLY a valid JSON object with the following structure, no additional text or explanations:
+
+{
+  "title": "Product Title",
+  "description": "Product Description", 
+  "epics": [
+    {
+      "title": "Epic Title",
+      "description": "Epic Description",
+      "features": [
+        {
+          "title": "Feature Title", 
+          "description": "Feature Description",
+          "tasks": [
+            {
+              "title": "Task Title",
+              "description": "Task Description", 
+              "priority": "high|medium|low",
+              "effort": "X days",
+              "acceptance_criteria": [
+                "Criteria 1",
+                "Criteria 2", 
+                "Criteria 3"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Guidelines for modification:
+- Understand the user's feedback and modify the story map accordingly
+- If user wants to add new stages/epics, create them with complete features and tasks
+- If user wants to modify existing content, update it based on feedback
+- If user wants to complete missing content (activities, touchpoints, user stories, supporting needs), add them appropriately
+- Maintain the overall structure and quality of the story map
+- Ensure all tasks have proper priority, effort estimates, and acceptance criteria
+- For supporting needs, focus on specific technical requirements that are directly related to the user stories and business functionality
+- Each supporting need should be specific to the business domain and provide concrete technical know-how
 
 ${languageContext}`;
 
+      // Convert current story map to a readable format for AI
+      const currentStoryMapText = JSON.stringify(currentStoryMap, null, 2);
+
+      const userPrompt = `Current User Story Map:
+${currentStoryMapText}
+
+User Feedback:
+${feedbackPrompt}
+
+Please modify the story map based on the user feedback and return the complete updated story map in JSON format.`;
+
       const messages: DeepSeekMessage[] = [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: feedbackPrompt }
+        { role: 'user', content: userPrompt }
       ];
 
       const response = await fetch(this.apiUrl, {
@@ -281,17 +325,25 @@ ${languageContext}`;
       });
 
       if (!response.ok) {
-        throw new Error(`DeepSeek API error: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`DeepSeek API error: ${response.status} - ${errorText}`);
       }
 
       const data: DeepSeekResponse = await response.json();
       const content = data.choices[0]?.message?.content;
-      
+
       if (!content) {
-        throw new Error('No content received from DeepSeek API');
+        throw new Error('No response content from DeepSeek API');
       }
 
-      return content;
+      // Try to extract JSON from the response
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('No valid JSON found in DeepSeek response');
+      }
+
+      return JSON.parse(jsonMatch[0]);
+
     } catch (error) {
       console.error('Error generating story map with feedback:', error);
       throw error;

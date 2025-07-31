@@ -1196,23 +1196,12 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
 
   async generateStoryMapWithFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): Promise<StoryMapYAML> {
     try {
-      if (this.deepseekService.isConfigured()) {
+      if (this.deepseekService.isConfigured() && currentStoryMap) {
         // Use DeepSeek to process feedback and modify story map
-        const response = await this.deepseekService.generateStoryMapWithFeedback(feedbackPrompt);
-        
-        // Try to parse the response as JSON first
-        try {
-          const parsedResponse = JSON.parse(response);
-          return parsedResponse;
-        } catch (parseError) {
-          console.error('Failed to parse AI response as JSON:', parseError);
-          console.log('Raw AI response:', response);
-          
-          // If parsing fails, return a modified version based on feedback and current story map
-          return this.generateModifiedStoryMapFromFeedback(feedbackPrompt, currentStoryMap);
-        }
+        const response = await this.deepseekService.generateStoryMapWithFeedback(currentStoryMap, feedbackPrompt);
+        return response;
       } else {
-        // For mock mode, return a modified version based on feedback and current story map
+        // For mock mode or when no current story map, return a modified version based on feedback
         return this.generateModifiedStoryMapFromFeedback(feedbackPrompt, currentStoryMap);
       }
     } catch (error) {

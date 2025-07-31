@@ -22,81 +22,20 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ storyMap, onClose,
     try {
       const aiService = AIService.getInstance();
       
-      // Convert current story map to YAML for AI processing
-      const currentYAML = aiService.convertStoryMapToYAML(storyMap);
+      // Simply pass the feedback and current story map to AI
+      const modifiedStoryMap = await aiService.generateStoryMapWithFeedback(feedback, storyMap);
       
-      // Create a comprehensive prompt for AI modification
-      const modificationPrompt = `
-当前故事地图：
-${currentYAML}
-
-用户反馈：
-${feedback}
-
-请根据用户的反馈意见修改故事地图。修改要求：
-1. 保持原有的故事地图结构
-2. 根据用户反馈调整相关的内容
-3. 确保修改后的故事地图更加符合用户需求
-4. 返回完整的修改后的YAML格式故事地图
-
-请直接返回修改后的YAML格式故事地图，不要包含其他解释文字。
-`;
-
-      // Use DeepSeek to modify the story map
-      const modifiedYAML = await aiService.generateStoryMapWithFeedback(modificationPrompt, storyMap);
+      // Convert the AI response back to StoryMap format
+      const updatedStoryMap = aiService.convertYAMLToStoryMap(modifiedStoryMap);
+      onUpdate(updatedStoryMap);
+      onClose();
       
-      try {
-        const updatedStoryMap = aiService.convertYAMLToStoryMap(modifiedYAML);
-        onUpdate(updatedStoryMap);
-        onClose();
-      } catch (parseError) {
-        console.error('Error parsing AI response:', parseError);
-        console.log('AI Response:', modifiedYAML);
-        
-        // Fallback: return the original story map with a modification
-        const fallbackStoryMap = { ...storyMap };
-        if (feedback.toLowerCase().includes('增加') || feedback.toLowerCase().includes('add')) {
-          // Add a new epic based on feedback
-          fallbackStoryMap.epics.push({
-            id: `epic-feedback-${Date.now()}`,
-            title: '基于反馈的新功能',
-            description: `根据用户反馈"${feedback}"新增的功能模块`,
-            features: [{
-              id: `feature-feedback-${Date.now()}`,
-              title: '反馈功能实现',
-              description: '实现用户反馈中提到的功能',
-              tasks: [{
-                id: `task-feedback-${Date.now()}`,
-                title: '处理用户反馈',
-                description: `根据反馈"${feedback}"实现相应功能`,
-                priority: 'high',
-                estimatedEffort: '3 days',
-                acceptanceCriteria: [
-                  'Given 用户提供反馈，When 系统处理，Then 应记录反馈内容',
-                  'Given 反馈处理完成，When 用户查看，Then 应显示处理结果',
-                  'Given 反馈涉及功能修改，When 系统更新，Then 应通知相关用户'
-                ],
-                status: 'todo',
-                type: 'task',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-              }],
-              order: 0
-            }],
-            order: fallbackStoryMap.epics.length
-          });
-        }
-        
-        onUpdate(fallbackStoryMap);
-        onClose();
-      }
-          } catch (error) {
-        console.error('Error processing feedback:', error);
-        // Show error message to user
-        alert('处理反馈时出现错误，但系统已根据您的反馈添加了相应的功能模块。请查看更新后的故事地图。');
-      } finally {
-        setIsProcessing(false);
-      }
+    } catch (error) {
+      console.error('Error processing feedback:', error);
+      alert('处理反馈时出现错误，请重试。');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
