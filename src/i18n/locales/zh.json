@@ -77,7 +77,8 @@
     "priority": {
       "high": "高",
       "medium": "中",
-      "low": "低"
+      "low": "低",
+      "changePriority": "修改优先级"
     },
     "status": {
       "todo": "待办",
