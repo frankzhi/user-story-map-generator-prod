@@ -159,179 +159,135 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     const taskTitle = task.title.toLowerCase();
     const taskDescription = task.description.toLowerCase();
     
-    // 通用的功能类型识别和对应的支撑性需求
-    const functionTypeNeeds = {
-      // 数据相关功能
-      'data': {
-        keywords: ['数据', '记录', '历史', '统计', '分析', '报表', '导出', '导入', '同步', '备份'],
-        needs: [
-          '设计数据表结构',
-          '开发数据查询API接口',
-          '实现数据统计分析功能',
-          '建立数据导出服务',
-          '实现数据同步机制',
-          '建立数据备份策略'
-        ]
-      },
-      // 用户相关功能
-      'user': {
-        keywords: ['用户', '登录', '注册', '认证', '权限', '角色', '个人', '账户', '密码'],
-        needs: [
-          '开发用户认证API接口',
-          '集成第三方登录服务',
-          '实现用户信息管理',
-          '建立用户会话管理',
-          '开发权限控制接口',
-          '实现角色权限分配'
-        ]
-      },
-      // 搜索相关功能
-      'search': {
-        keywords: ['搜索', '查找', '查询', '筛选', '过滤', '排序', '推荐'],
-        needs: [
-          '开发搜索API接口',
-          '集成搜索引擎服务',
-          '实现智能推荐算法',
-          '建立搜索历史记录',
-          '实现搜索结果缓存',
-          '开发搜索建议功能'
-        ]
-      },
-      // 支付相关功能
-      'payment': {
-        keywords: ['支付', '付款', '订单', '交易', '发票', '退款', '结算', '账单'],
-        needs: [
-          '集成支付网关服务',
-          '开发订单管理API接口',
-          '实现支付状态同步',
-          '建立退款处理机制',
-          '开发发票生成服务',
-          '实现交易安全验证'
-        ]
-      },
-      // 通知相关功能
-      'notification': {
-        keywords: ['通知', '消息', '提醒', '推送', '邮件', '短信', '公告'],
-        needs: [
-          '集成推送通知服务',
-          '开发消息管理API接口',
-          '实现消息模板管理',
-          '建立消息发送队列',
-          '实现消息状态跟踪',
-          '开发消息过滤机制'
-        ]
-      },
-      // 地图位置相关功能
-      'location': {
-        keywords: ['地图', '位置', '地址', '导航', '定位', '地理', '坐标'],
-        needs: [
-          '集成地图服务API',
-          '开发地理位置搜索接口',
-          '实现实时位置更新',
-          '建立位置缓存机制',
-          '开发路径规划服务',
-          '实现地理围栏功能'
-        ]
-      },
-      // 文件上传下载功能
-      'file': {
-        keywords: ['文件', '上传', '下载', '图片', '视频', '文档', '附件'],
-        needs: [
-          '开发文件上传API接口',
-          '集成云存储服务',
-          '实现文件格式验证',
-          '建立文件访问控制',
-          '开发文件压缩服务',
-          '实现文件预览功能'
-        ]
-      },
-      // 实时通信功能
-      'realtime': {
-        keywords: ['实时', '直播', '聊天', '消息', 'socket', '推送', '在线'],
-        needs: [
-          '集成WebSocket服务',
-          '开发实时通信API接口',
-          '实现消息推送机制',
-          '建立连接状态管理',
-          '开发消息历史记录',
-          '实现在线状态跟踪'
-        ]
-      },
-      // 配置管理功能
-      'config': {
-        keywords: ['配置', '设置', '参数', '选项', '偏好', '自定义'],
-        needs: [
-          '开发配置管理API接口',
-          '实现配置版本控制',
-          '建立配置变更审计',
-          '开发配置同步服务',
-          '实现配置模板管理',
-          '建立配置备份机制'
-        ]
-      },
-      // 监控告警功能
-      'monitor': {
-        keywords: ['监控', '告警', '状态', '性能', '日志', '错误', '故障'],
-        needs: [
-          '建立系统监控服务',
-          '开发告警通知机制',
-          '实现性能指标收集',
-          '建立日志分析系统',
-          '开发故障诊断工具',
-          '实现监控面板展示'
-        ]
-      }
-    };
+    // 根据用户故事内容生成具体的业务相关支撑性需求
+    // 这些需求应该直接支持用户故事的功能实现
     
-    // 根据任务内容识别功能类型并生成相应的支撑性需求
-    const matchedTypes: string[] = [];
-    
-    for (const [type, config] of Object.entries(functionTypeNeeds)) {
-      const hasKeyword = config.keywords.some(keyword => 
-        taskTitle.includes(keyword) || taskDescription.includes(keyword)
-      );
-      if (hasKeyword) {
-        matchedTypes.push(type);
-        // 为每个匹配的功能类型添加2-3个相关需求
-        const selectedNeeds = config.needs.slice(0, 3);
-        needs.push(...selectedNeeds);
-      }
+    // 搜索和查询相关
+    if (taskTitle.includes('搜索') || taskTitle.includes('查找') || taskDescription.includes('搜索') || taskDescription.includes('查找')) {
+      needs.push('实现智能搜索算法优化');
+      needs.push('建立搜索索引数据库');
+      needs.push('开发搜索建议和自动完成功能');
+      needs.push('实现搜索结果排序和过滤机制');
     }
     
-    // 如果没有匹配到特定功能类型，根据任务的一般性质生成需求
-    if (matchedTypes.length === 0) {
-      // 分析任务的一般性质
-      if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
-        needs.push('开发管理后台API接口');
-        needs.push('实现数据管理功能');
-        needs.push('建立操作审计日志');
-      } else if (taskTitle.includes('查看') || taskDescription.includes('查看')) {
-        needs.push('开发数据展示API接口');
-        needs.push('实现数据缓存机制');
-        needs.push('建立访问权限控制');
-      } else if (taskTitle.includes('创建') || taskDescription.includes('创建')) {
-        needs.push('开发数据创建API接口');
-        needs.push('实现数据验证机制');
-        needs.push('建立创建权限控制');
-      } else if (taskTitle.includes('编辑') || taskDescription.includes('编辑')) {
-        needs.push('开发数据编辑API接口');
-        needs.push('实现数据变更追踪');
-        needs.push('建立编辑权限控制');
-      } else if (taskTitle.includes('删除') || taskDescription.includes('删除')) {
-        needs.push('开发数据删除API接口');
-        needs.push('实现软删除机制');
-        needs.push('建立删除权限控制');
-      } else {
-        // 通用业务需求
-        needs.push('开发相关业务API接口');
-        needs.push('实现数据持久化服务');
-        needs.push('建立业务逻辑处理');
-      }
+    // 用户认证和权限
+    if (taskTitle.includes('登录') || taskTitle.includes('注册') || taskTitle.includes('认证') || taskDescription.includes('登录') || taskDescription.includes('注册')) {
+      needs.push('实现多因子身份验证系统');
+      needs.push('建立用户权限分级管理');
+      needs.push('开发第三方登录集成服务');
+      needs.push('实现会话管理和安全控制');
     }
     
-    // 添加核心安全需求（如果还没有的话）
-    if (!needs.some(need => need.includes('认证') || need.includes('权限'))) {
-      needs.push('实现用户身份验证');
+    // 支付和交易
+    if (taskTitle.includes('支付') || taskTitle.includes('付款') || taskTitle.includes('订单') || taskDescription.includes('支付') || taskDescription.includes('订单')) {
+      needs.push('实现PCI DSS合规的支付处理系统');
+      needs.push('建立订单状态跟踪机制');
+      needs.push('开发退款和争议处理流程');
+      needs.push('实现支付安全审计和监控');
+    }
+    
+    // 数据管理和分析
+    if (taskTitle.includes('数据') || taskTitle.includes('统计') || taskTitle.includes('分析') || taskDescription.includes('数据') || taskDescription.includes('统计')) {
+      needs.push('建立实时数据采集和处理管道');
+      needs.push('实现数据可视化和报表生成');
+      needs.push('开发数据导出和API接口');
+      needs.push('建立数据备份和恢复机制');
+    }
+    
+    // 通知和消息
+    if (taskTitle.includes('通知') || taskTitle.includes('消息') || taskTitle.includes('提醒') || taskDescription.includes('通知') || taskDescription.includes('消息')) {
+      needs.push('实现多渠道消息推送系统');
+      needs.push('建立消息模板和个性化引擎');
+      needs.push('开发消息发送状态跟踪');
+      needs.push('实现消息过滤和防垃圾机制');
+    }
+    
+    // 地图和位置服务
+    if (taskTitle.includes('地图') || taskTitle.includes('位置') || taskTitle.includes('导航') || taskDescription.includes('地图') || taskDescription.includes('位置')) {
+      needs.push('集成高德地图API和地理编码服务');
+      needs.push('实现实时位置追踪和路径规划');
+      needs.push('建立地理围栏和位置缓存机制');
+      needs.push('开发位置数据分析和可视化');
+    }
+    
+    // 文件处理
+    if (taskTitle.includes('文件') || taskTitle.includes('上传') || taskTitle.includes('下载') || taskDescription.includes('文件') || taskDescription.includes('上传')) {
+      needs.push('实现文件上传和云存储集成');
+      needs.push('建立文件格式验证和安全扫描');
+      needs.push('开发文件压缩和优化处理');
+      needs.push('实现文件访问权限控制');
+    }
+    
+    // 实时通信
+    if (taskTitle.includes('实时') || taskTitle.includes('聊天') || taskTitle.includes('直播') || taskDescription.includes('实时') || taskDescription.includes('聊天')) {
+      needs.push('实现WebSocket实时通信服务');
+      needs.push('建立消息队列和推送机制');
+      needs.push('开发在线状态和用户活跃度跟踪');
+      needs.push('实现消息历史记录和搜索');
+    }
+    
+    // 配置和设置
+    if (taskTitle.includes('配置') || taskTitle.includes('设置') || taskTitle.includes('参数') || taskDescription.includes('配置') || taskDescription.includes('设置')) {
+      needs.push('实现配置管理和版本控制');
+      needs.push('建立配置变更审计和回滚机制');
+      needs.push('开发配置模板和批量操作');
+      needs.push('实现配置同步和备份策略');
+    }
+    
+    // 监控和告警
+    if (taskTitle.includes('监控') || taskTitle.includes('告警') || taskTitle.includes('状态') || taskDescription.includes('监控') || taskDescription.includes('告警')) {
+      needs.push('建立系统性能监控和指标收集');
+      needs.push('实现智能告警和故障诊断');
+      needs.push('开发监控面板和报表展示');
+      needs.push('建立日志分析和异常检测');
+    }
+    
+    // 管理功能
+    if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
+      needs.push('实现管理后台和权限控制');
+      needs.push('建立操作审计和日志记录');
+      needs.push('开发数据导入导出和批量操作');
+      needs.push('实现系统配置和参数管理');
+    }
+    
+    // 查看和展示
+    if (taskTitle.includes('查看') || taskTitle.includes('显示') || taskDescription.includes('查看') || taskDescription.includes('显示')) {
+      needs.push('实现数据展示和可视化组件');
+      needs.push('建立数据缓存和加载优化');
+      needs.push('开发响应式界面和用户体验优化');
+      needs.push('实现数据分页和搜索过滤');
+    }
+    
+    // 创建和添加
+    if (taskTitle.includes('创建') || taskTitle.includes('添加') || taskDescription.includes('创建') || taskDescription.includes('添加')) {
+      needs.push('实现数据验证和业务规则检查');
+      needs.push('建立创建权限和审批流程');
+      needs.push('开发数据关联和依赖处理');
+      needs.push('实现创建成功通知和状态更新');
+    }
+    
+    // 编辑和修改
+    if (taskTitle.includes('编辑') || taskTitle.includes('修改') || taskDescription.includes('编辑') || taskDescription.includes('修改')) {
+      needs.push('实现数据变更追踪和版本控制');
+      needs.push('建立编辑权限和并发控制');
+      needs.push('开发数据同步和冲突解决');
+      needs.push('实现变更通知和状态同步');
+    }
+    
+    // 删除和移除
+    if (taskTitle.includes('删除') || taskTitle.includes('移除') || taskDescription.includes('删除') || taskDescription.includes('移除')) {
+      needs.push('实现软删除和数据归档机制');
+      needs.push('建立删除权限和确认流程');
+      needs.push('开发关联数据清理和依赖处理');
+      needs.push('实现删除审计和恢复机制');
+    }
+    
+    // 如果没有匹配到特定功能，生成通用的业务相关需求
+    if (needs.length === 0) {
+      needs.push('实现核心业务逻辑处理');
+      needs.push('建立数据持久化和缓存机制');
+      needs.push('开发API接口和前端交互');
+      needs.push('实现用户权限和访问控制');
     }
     
     // 去重并返回，限制最多6个需求

@@ -81,7 +81,12 @@ Guidelines:
 - Effort should be realistic (1-5 days per task)
 - Acceptance criteria should be clear and measurable
 - Focus on user value and business outcomes
-- For supporting needs generation, focus on specific technical requirements related to the business domain, avoid generic infrastructure needs like "ensure system stability", "optimize response time", "implement load balancing" unless they are specifically relevant to the business context
+- For supporting needs generation, focus on specific technical requirements that are directly related to the user stories and business functionality. Each supporting need should be:
+  * Specific to the business domain and user story context
+  * Concrete and actionable (e.g., "Implement WeChat Mini Program search optimization strategy", "Establish vehicle information database", "Implement PCI DSS compliant payment processing system")
+  * Avoid generic infrastructure needs like "ensure system stability", "optimize response time", "implement load balancing" unless specifically relevant
+  * Should directly support the user stories above it in the story map
+  * Include specific technologies, platforms, or compliance requirements when relevant
 
 Return ONLY the JSON object, no additional text or explanations.`;
 
