@@ -1222,7 +1222,46 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
   }
 
   private generateModifiedStoryMapFromFeedback(feedbackPrompt: string): StoryMapYAML {
-    const baseStoryMap = this.generateChargingPileStoryMap();
+    // 根据反馈内容动态生成故事地图，而不是总是返回充电桩数据
+    let baseStoryMap: StoryMapYAML;
+    
+    // 根据反馈内容判断应该生成什么类型的故事地图
+    if (feedbackPrompt.toLowerCase().includes('充电') || feedbackPrompt.toLowerCase().includes('charging')) {
+      baseStoryMap = this.generateChargingPileStoryMap();
+    } else if (feedbackPrompt.toLowerCase().includes('租车') || feedbackPrompt.toLowerCase().includes('car rental')) {
+      baseStoryMap = this.generateCarRentalStoryMap();
+    } else if (feedbackPrompt.toLowerCase().includes('电商') || feedbackPrompt.toLowerCase().includes('e-commerce')) {
+      baseStoryMap = this.generateEcommerceStoryMap();
+    } else if (feedbackPrompt.toLowerCase().includes('社交') || feedbackPrompt.toLowerCase().includes('social')) {
+      baseStoryMap = this.generateSocialNetworkStoryMap();
+    } else if (feedbackPrompt.toLowerCase().includes('任务') || feedbackPrompt.toLowerCase().includes('task')) {
+      baseStoryMap = this.generateTaskManagementStoryMap();
+    } else {
+      // 默认生成一个通用的故事地图
+      baseStoryMap = {
+        title: "基于反馈的产品故事地图",
+        description: "根据用户反馈生成的产品功能规划",
+        epics: [{
+          title: "核心功能模块",
+          description: "产品的主要功能模块",
+          features: [{
+            title: "基础功能",
+            description: "产品的基础功能实现",
+            tasks: [{
+              title: "实现核心功能",
+              description: "根据用户反馈实现核心功能",
+              priority: "high",
+              effort: "5 days",
+              acceptance_criteria: [
+                "Given 用户需求，When 功能实现，Then 应满足用户期望",
+                "Given 功能完成，When 用户测试，Then 应正常工作",
+                "Given 用户反馈，When 系统更新，Then 应体现改进"
+              ]
+            }]
+          }]
+        }]
+      };
+    }
     
     // Modify based on feedback keywords
     if (feedbackPrompt.toLowerCase().includes('增加') || feedbackPrompt.toLowerCase().includes('add')) {

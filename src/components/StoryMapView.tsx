@@ -207,6 +207,12 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         needs.push('开发消息管理API接口');
         needs.push('实现消息模板管理');
         needs.push('建立消息发送队列');
+      } else {
+        // 为充电桩相关的其他任务生成通用但相关的需求
+        needs.push('开发充电桩管理API接口');
+        needs.push('集成设备通信协议');
+        needs.push('实现数据采集服务');
+        needs.push('建立设备状态监控');
       }
     }
     // 租车相关业务需求
@@ -231,6 +237,12 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         needs.push('集成车辆状态管理系统');
         needs.push('实现取车码验证');
         needs.push('建立车辆交接流程');
+      } else {
+        // 为租车相关的其他任务生成通用但相关的需求
+        needs.push('开发租车业务API接口');
+        needs.push('集成车辆管理系统');
+        needs.push('实现订单处理服务');
+        needs.push('建立用户管理平台');
       }
     }
     // 包充满App相关业务需求
@@ -249,6 +261,17 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       needs.push('开发停车费计算接口');
       needs.push('实现车位状态查询');
       needs.push('建立停车费支付服务');
+    } else if (taskTitle.includes('支付') || taskTitle.includes('payment')) {
+      needs.push('集成多种支付方式');
+      needs.push('开发订单支付接口');
+      needs.push('实现支付状态同步');
+      needs.push('建立发票生成服务');
+    } else {
+      // 为包充满App相关的其他任务生成通用但相关的需求
+      needs.push('开发充电服务API接口');
+      needs.push('集成充电桩管理系统');
+      needs.push('实现用户服务功能');
+      needs.push('建立订单处理服务');
     }
     
     // 如果还没有足够的业务相关需求，添加一些通用的但仍然是业务相关的技术需求
