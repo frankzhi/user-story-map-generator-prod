@@ -159,134 +159,178 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     const taskTitle = task.title.toLowerCase();
     const taskDescription = task.description.toLowerCase();
     
-    // 根据任务内容生成具体的业务相关需求
-    // 充电桩相关业务需求
-    if (taskTitle.includes('充电') || taskDescription.includes('充电')) {
-      if (taskTitle.includes('状态') || taskTitle.includes('监控')) {
-        needs.push('开发充电桩状态监控API接口');
-        needs.push('集成WebSocket实时数据推送服务');
-        needs.push('建立设备故障检测机制');
-        needs.push('实现充电状态实时同步');
-      } else if (taskTitle.includes('记录') || taskTitle.includes('record')) {
-        needs.push('设计充电记录数据库表结构');
-        needs.push('开发充电历史查询API接口');
-        needs.push('实现数据统计分析功能');
-        needs.push('建立数据导出服务');
-      } else if (taskTitle.includes('配对') || taskTitle.includes('pair')) {
-        needs.push('集成蓝牙BLE通信协议');
-        needs.push('开发设备配对验证API接口');
-        needs.push('实现设备安全认证机制');
-        needs.push('建立设备管理平台');
-      } else if (taskTitle.includes('配置') || taskTitle.includes('config')) {
-        needs.push('开发设备参数设置API接口');
-        needs.push('集成设备配置同步服务');
-        needs.push('实现配置版本管理');
-        needs.push('建立配置变更审计');
-      } else if (taskTitle.includes('权限') || taskTitle.includes('permission')) {
-        needs.push('开发用户权限管理API接口');
-        needs.push('集成权限验证中间件服务');
-        needs.push('实现角色权限分配机制');
-        needs.push('建立权限变更通知');
-      } else if (taskTitle.includes('电量') || taskTitle.includes('统计')) {
-        needs.push('开发电量数据采集API接口');
-        needs.push('集成数据可视化图表库');
-        needs.push('实现电量数据统计分析');
-        needs.push('建立数据导出CSV服务');
-      } else if (taskTitle.includes('地图') || taskTitle.includes('位置')) {
-        needs.push('集成高德地图API服务');
-        needs.push('开发地理位置搜索接口');
-        needs.push('实现实时位置更新');
-        needs.push('建立位置缓存机制');
-      } else if (taskTitle.includes('用户') || taskTitle.includes('登录')) {
-        needs.push('开发用户认证API接口');
-        needs.push('集成第三方登录服务');
-        needs.push('实现用户信息管理');
-        needs.push('建立用户会话管理');
-      } else if (taskTitle.includes('通知') || taskTitle.includes('消息')) {
-        needs.push('集成推送通知服务');
-        needs.push('开发消息管理API接口');
-        needs.push('实现消息模板管理');
-        needs.push('建立消息发送队列');
-      } else {
-        // 为充电桩相关的其他任务生成通用但相关的需求
-        needs.push('开发充电桩管理API接口');
-        needs.push('集成设备通信协议');
-        needs.push('实现数据采集服务');
-        needs.push('建立设备状态监控');
+    // 通用的功能类型识别和对应的支撑性需求
+    const functionTypeNeeds = {
+      // 数据相关功能
+      'data': {
+        keywords: ['数据', '记录', '历史', '统计', '分析', '报表', '导出', '导入', '同步', '备份'],
+        needs: [
+          '设计数据表结构',
+          '开发数据查询API接口',
+          '实现数据统计分析功能',
+          '建立数据导出服务',
+          '实现数据同步机制',
+          '建立数据备份策略'
+        ]
+      },
+      // 用户相关功能
+      'user': {
+        keywords: ['用户', '登录', '注册', '认证', '权限', '角色', '个人', '账户', '密码'],
+        needs: [
+          '开发用户认证API接口',
+          '集成第三方登录服务',
+          '实现用户信息管理',
+          '建立用户会话管理',
+          '开发权限控制接口',
+          '实现角色权限分配'
+        ]
+      },
+      // 搜索相关功能
+      'search': {
+        keywords: ['搜索', '查找', '查询', '筛选', '过滤', '排序', '推荐'],
+        needs: [
+          '开发搜索API接口',
+          '集成搜索引擎服务',
+          '实现智能推荐算法',
+          '建立搜索历史记录',
+          '实现搜索结果缓存',
+          '开发搜索建议功能'
+        ]
+      },
+      // 支付相关功能
+      'payment': {
+        keywords: ['支付', '付款', '订单', '交易', '发票', '退款', '结算', '账单'],
+        needs: [
+          '集成支付网关服务',
+          '开发订单管理API接口',
+          '实现支付状态同步',
+          '建立退款处理机制',
+          '开发发票生成服务',
+          '实现交易安全验证'
+        ]
+      },
+      // 通知相关功能
+      'notification': {
+        keywords: ['通知', '消息', '提醒', '推送', '邮件', '短信', '公告'],
+        needs: [
+          '集成推送通知服务',
+          '开发消息管理API接口',
+          '实现消息模板管理',
+          '建立消息发送队列',
+          '实现消息状态跟踪',
+          '开发消息过滤机制'
+        ]
+      },
+      // 地图位置相关功能
+      'location': {
+        keywords: ['地图', '位置', '地址', '导航', '定位', '地理', '坐标'],
+        needs: [
+          '集成地图服务API',
+          '开发地理位置搜索接口',
+          '实现实时位置更新',
+          '建立位置缓存机制',
+          '开发路径规划服务',
+          '实现地理围栏功能'
+        ]
+      },
+      // 文件上传下载功能
+      'file': {
+        keywords: ['文件', '上传', '下载', '图片', '视频', '文档', '附件'],
+        needs: [
+          '开发文件上传API接口',
+          '集成云存储服务',
+          '实现文件格式验证',
+          '建立文件访问控制',
+          '开发文件压缩服务',
+          '实现文件预览功能'
+        ]
+      },
+      // 实时通信功能
+      'realtime': {
+        keywords: ['实时', '直播', '聊天', '消息', 'socket', '推送', '在线'],
+        needs: [
+          '集成WebSocket服务',
+          '开发实时通信API接口',
+          '实现消息推送机制',
+          '建立连接状态管理',
+          '开发消息历史记录',
+          '实现在线状态跟踪'
+        ]
+      },
+      // 配置管理功能
+      'config': {
+        keywords: ['配置', '设置', '参数', '选项', '偏好', '自定义'],
+        needs: [
+          '开发配置管理API接口',
+          '实现配置版本控制',
+          '建立配置变更审计',
+          '开发配置同步服务',
+          '实现配置模板管理',
+          '建立配置备份机制'
+        ]
+      },
+      // 监控告警功能
+      'monitor': {
+        keywords: ['监控', '告警', '状态', '性能', '日志', '错误', '故障'],
+        needs: [
+          '建立系统监控服务',
+          '开发告警通知机制',
+          '实现性能指标收集',
+          '建立日志分析系统',
+          '开发故障诊断工具',
+          '实现监控面板展示'
+        ]
+      }
+    };
+    
+    // 根据任务内容识别功能类型并生成相应的支撑性需求
+    const matchedTypes: string[] = [];
+    
+    for (const [type, config] of Object.entries(functionTypeNeeds)) {
+      const hasKeyword = config.keywords.some(keyword => 
+        taskTitle.includes(keyword) || taskDescription.includes(keyword)
+      );
+      if (hasKeyword) {
+        matchedTypes.push(type);
+        // 为每个匹配的功能类型添加2-3个相关需求
+        const selectedNeeds = config.needs.slice(0, 3);
+        needs.push(...selectedNeeds);
       }
     }
-    // 租车相关业务需求
-    else if (taskTitle.includes('租车') || taskTitle.includes('car') || taskDescription.includes('租车')) {
-      if (taskTitle.includes('搜索') || taskTitle.includes('search')) {
-        needs.push('开发车辆搜索API接口');
-        needs.push('集成Elasticsearch搜索引擎');
-        needs.push('实现地理位置搜索');
-        needs.push('建立搜索历史记录');
-      } else if (taskTitle.includes('预订') || taskTitle.includes('booking')) {
-        needs.push('开发订单管理API接口');
-        needs.push('集成库存管理系统');
-        needs.push('实现预订冲突检测');
-        needs.push('建立订单状态跟踪');
-      } else if (taskTitle.includes('支付') || taskTitle.includes('payment')) {
-        needs.push('集成微信支付API接口');
-        needs.push('开发订单支付状态同步服务');
-        needs.push('实现支付安全验证');
-        needs.push('建立退款处理机制');
-      } else if (taskTitle.includes('取车') || taskTitle.includes('pickup')) {
-        needs.push('开发取车验证API接口');
-        needs.push('集成车辆状态管理系统');
-        needs.push('实现取车码验证');
-        needs.push('建立车辆交接流程');
+    
+    // 如果没有匹配到特定功能类型，根据任务的一般性质生成需求
+    if (matchedTypes.length === 0) {
+      // 分析任务的一般性质
+      if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
+        needs.push('开发管理后台API接口');
+        needs.push('实现数据管理功能');
+        needs.push('建立操作审计日志');
+      } else if (taskTitle.includes('查看') || taskDescription.includes('查看')) {
+        needs.push('开发数据展示API接口');
+        needs.push('实现数据缓存机制');
+        needs.push('建立访问权限控制');
+      } else if (taskTitle.includes('创建') || taskDescription.includes('创建')) {
+        needs.push('开发数据创建API接口');
+        needs.push('实现数据验证机制');
+        needs.push('建立创建权限控制');
+      } else if (taskTitle.includes('编辑') || taskDescription.includes('编辑')) {
+        needs.push('开发数据编辑API接口');
+        needs.push('实现数据变更追踪');
+        needs.push('建立编辑权限控制');
+      } else if (taskTitle.includes('删除') || taskDescription.includes('删除')) {
+        needs.push('开发数据删除API接口');
+        needs.push('实现软删除机制');
+        needs.push('建立删除权限控制');
       } else {
-        // 为租车相关的其他任务生成通用但相关的需求
-        needs.push('开发租车业务API接口');
-        needs.push('集成车辆管理系统');
-        needs.push('实现订单处理服务');
-        needs.push('建立用户管理平台');
+        // 通用业务需求
+        needs.push('开发相关业务API接口');
+        needs.push('实现数据持久化服务');
+        needs.push('建立业务逻辑处理');
       }
     }
-    // 包充满App相关业务需求
-    else if (taskTitle.includes('充电站') || taskTitle.includes('station') || taskDescription.includes('充电站')) {
-      needs.push('集成地图服务API');
-      needs.push('开发充电站搜索接口');
-      needs.push('实现实时可用性查询');
-      needs.push('建立充电站评价系统');
-    } else if (taskTitle.includes('预约') || taskTitle.includes('reservation')) {
-      needs.push('开发预约管理API');
-      needs.push('集成时间槽位管理');
-      needs.push('实现预约冲突检测');
-      needs.push('建立预约提醒服务');
-    } else if (taskTitle.includes('停车') || taskTitle.includes('parking')) {
-      needs.push('集成停车场管理系统');
-      needs.push('开发停车费计算接口');
-      needs.push('实现车位状态查询');
-      needs.push('建立停车费支付服务');
-    } else if (taskTitle.includes('支付') || taskTitle.includes('payment')) {
-      needs.push('集成多种支付方式');
-      needs.push('开发订单支付接口');
-      needs.push('实现支付状态同步');
-      needs.push('建立发票生成服务');
-    } else {
-      // 为包充满App相关的其他任务生成通用但相关的需求
-      needs.push('开发充电服务API接口');
-      needs.push('集成充电桩管理系统');
-      needs.push('实现用户服务功能');
-      needs.push('建立订单处理服务');
-    }
     
-    // 如果还没有足够的业务相关需求，添加一些通用的但仍然是业务相关的技术需求
-    if (needs.length < 3) {
-      const businessTechnicalNeeds = [
-        '开发相关业务API接口',
-        '实现数据同步机制',
-        '建立业务监控告警',
-        '实现业务日志记录'
-      ];
-      needs.push(...businessTechnicalNeeds.slice(0, 3 - needs.length));
-    }
-    
-    // 只添加一个核心安全需求
-    if (needs.length < 5) {
+    // 添加核心安全需求（如果还没有的话）
+    if (!needs.some(need => need.includes('认证') || need.includes('权限'))) {
       needs.push('实现用户身份验证');
     }
     
