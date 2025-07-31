@@ -524,15 +524,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     }));
     
     setCurrentStoryMap(updatedStoryMap);
+    
+    // Save the updated story map to localStorage immediately
+    localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
   };
 
   const handleStoryMapUpdate = (updatedStoryMap: StoryMap) => {
     setCurrentStoryMap(updatedStoryMap);
+    localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
     setShowEditor(false);
   };
 
   const handleFeedbackUpdate = (updatedStoryMap: StoryMap) => {
     setCurrentStoryMap(updatedStoryMap);
+    localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
     setShowFeedback(false);
   };
 
@@ -863,6 +868,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                 }))
               }));
               setCurrentStoryMap(updatedStoryMap);
+              
+              // Save the updated story map to localStorage immediately
+              localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
             }
             closeModal();
           }}
