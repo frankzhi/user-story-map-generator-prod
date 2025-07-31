@@ -1,18 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { HomePage } from './components/HomePage';
 import { StoryMapView } from './components/StoryMapView';
 import type { StoryMap } from './types/story';
 
-function App() {
+// Component to handle story map view with routing
+const StoryMapViewWithRouting = ({ storyMap }: { storyMap: StoryMap }) => {
+  const navigate = useNavigate();
+  
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
+  return (
+    <StoryMapView
+      storyMap={storyMap}
+      onBack={handleBackToHome}
+    />
+  );
+};
+
+// Main App component with routing
+function AppContent() {
   const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Load story map from localStorage on component mount
+  useEffect(() => {
+    const savedStoryMap = localStorage.getItem('currentStoryMap');
+    if (savedStoryMap) {
+      try {
+        const parsedStoryMap = JSON.parse(savedStoryMap);
+        setCurrentStoryMap(parsedStoryMap);
+      } catch (e) {
+        console.error('Failed to parse saved story map:', e);
+        localStorage.removeItem('currentStoryMap');
+      }
+    }
+  }, []);
+
+  // Save story map to localStorage whenever it changes
+  useEffect(() => {
+    if (currentStoryMap) {
+      localStorage.setItem('currentStoryMap', JSON.stringify(currentStoryMap));
+    } else {
+      localStorage.removeItem('currentStoryMap');
+    }
+  }, [currentStoryMap]);
 
   const handleStoryMapGenerated = (storyMap: StoryMap) => {
     setCurrentStoryMap(storyMap);
+    navigate('/story-map');
   };
 
   const handleBackToHome = () => {
     setCurrentStoryMap(null);
+    navigate('/');
   };
 
   // Simple error boundary
@@ -36,14 +81,19 @@ function App() {
   return (
     <div className="App">
       {currentStoryMap ? (
-        <StoryMapView
-          storyMap={currentStoryMap}
-          onBack={handleBackToHome}
-        />
+        <StoryMapViewWithRouting storyMap={currentStoryMap} />
       ) : (
         <HomePage onStoryMapGenerated={handleStoryMapGenerated} />
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

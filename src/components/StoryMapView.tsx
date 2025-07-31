@@ -853,6 +853,17 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           }}
           onDelete={() => {
             // Handle story deletion
+            if (selectedStory) {
+              const updatedStoryMap = { ...currentStoryMap };
+              updatedStoryMap.epics = updatedStoryMap.epics.map(epic => ({
+                ...epic,
+                features: epic.features.map(feature => ({
+                  ...feature,
+                  tasks: feature.tasks.filter(task => task.id !== selectedStory.id)
+                }))
+              }));
+              setCurrentStoryMap(updatedStoryMap);
+            }
             closeModal();
           }}
         />
