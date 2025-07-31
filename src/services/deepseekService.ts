@@ -83,10 +83,12 @@ Guidelines:
 - Focus on user value and business outcomes
 - For supporting needs generation, focus on specific technical requirements that are directly related to the user stories and business functionality. Each supporting need should be:
   * Specific to the business domain and user story context
-  * Concrete and actionable (e.g., "Implement WeChat Mini Program search optimization strategy", "Establish vehicle information database", "Implement PCI DSS compliant payment processing system")
-  * Avoid generic infrastructure needs like "ensure system stability", "optimize response time", "implement load balancing" unless specifically relevant
+  * Concrete and actionable with specific technical know-how (e.g., "Implement WeChat Mini Program search optimization strategy", "Establish vehicle information database", "Implement PCI DSS compliant payment processing system")
+  * Provide unknown technical knowledge that product managers and teams need to understand
   * Should directly support the user stories above it in the story map
-  * Include specific technologies, platforms, or compliance requirements when relevant
+  * Include specific technologies, platforms, protocols, or compliance requirements when relevant
+  * Avoid generic infrastructure needs like "ensure system stability", "optimize response time", "implement load balancing", "develop API interfaces", "establish data persistence" unless specifically relevant
+  * Focus on domain-specific technical challenges and solutions
 
 Return ONLY the JSON object, no additional text or explanations.`;
 

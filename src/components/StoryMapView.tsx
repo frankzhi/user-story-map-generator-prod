@@ -160,134 +160,125 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     const taskDescription = task.description.toLowerCase();
     
     // 根据用户故事内容生成具体的业务相关支撑性需求
-    // 这些需求应该直接支持用户故事的功能实现
+    // 这些需求应该提供未知的技术知识，直接支持用户故事的功能实现
     
-    // 搜索和查询相关
-    if (taskTitle.includes('搜索') || taskTitle.includes('查找') || taskDescription.includes('搜索') || taskDescription.includes('查找')) {
-      needs.push('实现智能搜索算法优化');
-      needs.push('建立搜索索引数据库');
-      needs.push('开发搜索建议和自动完成功能');
-      needs.push('实现搜索结果排序和过滤机制');
-    }
-    
-    // 用户认证和权限
-    if (taskTitle.includes('登录') || taskTitle.includes('注册') || taskTitle.includes('认证') || taskDescription.includes('登录') || taskDescription.includes('注册')) {
-      needs.push('实现多因子身份验证系统');
-      needs.push('建立用户权限分级管理');
-      needs.push('开发第三方登录集成服务');
-      needs.push('实现会话管理和安全控制');
-    }
-    
-    // 支付和交易
-    if (taskTitle.includes('支付') || taskTitle.includes('付款') || taskTitle.includes('订单') || taskDescription.includes('支付') || taskDescription.includes('订单')) {
-      needs.push('实现PCI DSS合规的支付处理系统');
-      needs.push('建立订单状态跟踪机制');
-      needs.push('开发退款和争议处理流程');
-      needs.push('实现支付安全审计和监控');
-    }
-    
-    // 数据管理和分析
-    if (taskTitle.includes('数据') || taskTitle.includes('统计') || taskTitle.includes('分析') || taskDescription.includes('数据') || taskDescription.includes('统计')) {
-      needs.push('建立实时数据采集和处理管道');
-      needs.push('实现数据可视化和报表生成');
-      needs.push('开发数据导出和API接口');
-      needs.push('建立数据备份和恢复机制');
-    }
-    
-    // 通知和消息
-    if (taskTitle.includes('通知') || taskTitle.includes('消息') || taskTitle.includes('提醒') || taskDescription.includes('通知') || taskDescription.includes('消息')) {
-      needs.push('实现多渠道消息推送系统');
-      needs.push('建立消息模板和个性化引擎');
-      needs.push('开发消息发送状态跟踪');
-      needs.push('实现消息过滤和防垃圾机制');
+    // 设备连接和管理相关
+    if (taskTitle.includes('连接') || taskTitle.includes('设备') || taskTitle.includes('蓝牙') || taskTitle.includes('wifi') || taskDescription.includes('连接') || taskDescription.includes('设备')) {
+      needs.push('实现BLE设备发现和配对协议');
+      needs.push('建立Wi-Fi设备连接状态管理');
+      needs.push('开发设备固件版本检测和升级机制');
+      needs.push('实现设备分组和批量管理功能');
     }
     
     // 地图和位置服务
-    if (taskTitle.includes('地图') || taskTitle.includes('位置') || taskTitle.includes('导航') || taskDescription.includes('地图') || taskDescription.includes('位置')) {
-      needs.push('集成高德地图API和地理编码服务');
-      needs.push('实现实时位置追踪和路径规划');
-      needs.push('建立地理围栏和位置缓存机制');
-      needs.push('开发位置数据分析和可视化');
+    if (taskTitle.includes('地图') || taskTitle.includes('位置') || taskTitle.includes('区域') || taskTitle.includes('清扫') || taskDescription.includes('地图') || taskDescription.includes('位置')) {
+      needs.push('建立SLAM算法地图构建和定位系统');
+      needs.push('实现地理围栏和虚拟墙技术');
+      needs.push('开发路径规划和避障算法');
+      needs.push('建立地图数据压缩和同步机制');
     }
     
-    // 文件处理
-    if (taskTitle.includes('文件') || taskTitle.includes('上传') || taskTitle.includes('下载') || taskDescription.includes('文件') || taskDescription.includes('上传')) {
-      needs.push('实现文件上传和云存储集成');
-      needs.push('建立文件格式验证和安全扫描');
-      needs.push('开发文件压缩和优化处理');
-      needs.push('实现文件访问权限控制');
+    // 清扫控制相关
+    if (taskTitle.includes('清扫') || taskTitle.includes('吸力') || taskTitle.includes('控制') || taskDescription.includes('清扫') || taskDescription.includes('控制')) {
+      needs.push('实现多档位吸力控制系统');
+      needs.push('建立清扫模式智能切换算法');
+      needs.push('开发清扫面积和效率统计');
+      needs.push('实现清扫路径优化算法');
     }
     
-    // 实时通信
-    if (taskTitle.includes('实时') || taskTitle.includes('聊天') || taskTitle.includes('直播') || taskDescription.includes('实时') || taskDescription.includes('聊天')) {
-      needs.push('实现WebSocket实时通信服务');
-      needs.push('建立消息队列和推送机制');
-      needs.push('开发在线状态和用户活跃度跟踪');
-      needs.push('实现消息历史记录和搜索');
+    // 任务调度和计划
+    if (taskTitle.includes('任务') || taskTitle.includes('计划') || taskTitle.includes('定时') || taskDescription.includes('任务') || taskDescription.includes('计划')) {
+      needs.push('实现多任务优先级调度系统');
+      needs.push('建立任务冲突检测和解决机制');
+      needs.push('开发任务执行状态实时监控');
+      needs.push('实现任务历史记录和回放功能');
     }
     
-    // 配置和设置
-    if (taskTitle.includes('配置') || taskTitle.includes('设置') || taskTitle.includes('参数') || taskDescription.includes('配置') || taskDescription.includes('设置')) {
-      needs.push('实现配置管理和版本控制');
-      needs.push('建立配置变更审计和回滚机制');
-      needs.push('开发配置模板和批量操作');
-      needs.push('实现配置同步和备份策略');
+    // 电量管理
+    if (taskTitle.includes('电量') || taskTitle.includes('电池') || taskDescription.includes('电量') || taskDescription.includes('电池')) {
+      needs.push('实现电池健康度监测算法');
+      needs.push('建立智能充电策略和电池保护');
+      needs.push('开发电量预测和低电量提醒');
+      needs.push('实现充电桩自动对接和充电管理');
     }
     
-    // 监控和告警
-    if (taskTitle.includes('监控') || taskTitle.includes('告警') || taskTitle.includes('状态') || taskDescription.includes('监控') || taskDescription.includes('告警')) {
-      needs.push('建立系统性能监控和指标收集');
-      needs.push('实现智能告警和故障诊断');
-      needs.push('开发监控面板和报表展示');
-      needs.push('建立日志分析和异常检测');
+    // 耗材管理
+    if (taskTitle.includes('耗材') || taskTitle.includes('滤网') || taskTitle.includes('边刷') || taskDescription.includes('耗材') || taskDescription.includes('滤网')) {
+      needs.push('建立耗材使用量智能监测系统');
+      needs.push('实现耗材寿命预测算法');
+      needs.push('开发耗材更换提醒和购买推荐');
+      needs.push('建立耗材真伪识别和防伪验证');
     }
     
-    // 管理功能
-    if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
-      needs.push('实现管理后台和权限控制');
-      needs.push('建立操作审计和日志记录');
-      needs.push('开发数据导入导出和批量操作');
-      needs.push('实现系统配置和参数管理');
+    // 故障诊断和告警
+    if (taskTitle.includes('故障') || taskTitle.includes('告警') || taskTitle.includes('错误') || taskDescription.includes('故障') || taskDescription.includes('告警')) {
+      needs.push('实现设备故障自诊断系统');
+      needs.push('建立故障代码分类和处理机制');
+      needs.push('开发远程故障诊断和修复功能');
+      needs.push('实现故障预测和预防性维护');
     }
     
-    // 查看和展示
-    if (taskTitle.includes('查看') || taskTitle.includes('显示') || taskDescription.includes('查看') || taskDescription.includes('显示')) {
-      needs.push('实现数据展示和可视化组件');
-      needs.push('建立数据缓存和加载优化');
-      needs.push('开发响应式界面和用户体验优化');
-      needs.push('实现数据分页和搜索过滤');
+    // 实时监控和状态
+    if (taskTitle.includes('监控') || taskTitle.includes('状态') || taskTitle.includes('实时') || taskDescription.includes('监控') || taskDescription.includes('状态')) {
+      needs.push('实现设备状态实时同步机制');
+      needs.push('建立传感器数据采集和处理管道');
+      needs.push('开发设备工作模式智能识别');
+      needs.push('实现异常状态检测和自动处理');
     }
     
-    // 创建和添加
-    if (taskTitle.includes('创建') || taskTitle.includes('添加') || taskDescription.includes('创建') || taskDescription.includes('添加')) {
-      needs.push('实现数据验证和业务规则检查');
-      needs.push('建立创建权限和审批流程');
-      needs.push('开发数据关联和依赖处理');
-      needs.push('实现创建成功通知和状态更新');
+    // 用户界面和交互
+    if (taskTitle.includes('界面') || taskTitle.includes('显示') || taskTitle.includes('按钮') || taskDescription.includes('界面') || taskDescription.includes('显示')) {
+      needs.push('实现响应式UI组件和动画效果');
+      needs.push('建立手势识别和触摸控制');
+      needs.push('开发语音控制和智能助手集成');
+      needs.push('实现多语言界面和本地化支持');
     }
     
-    // 编辑和修改
-    if (taskTitle.includes('编辑') || taskTitle.includes('修改') || taskDescription.includes('编辑') || taskDescription.includes('修改')) {
-      needs.push('实现数据变更追踪和版本控制');
-      needs.push('建立编辑权限和并发控制');
-      needs.push('开发数据同步和冲突解决');
-      needs.push('实现变更通知和状态同步');
+    // 数据同步和备份
+    if (taskTitle.includes('同步') || taskTitle.includes('备份') || taskTitle.includes('数据') || taskDescription.includes('同步') || taskDescription.includes('备份')) {
+      needs.push('实现云端数据同步和冲突解决');
+      needs.push('建立本地数据加密和隐私保护');
+      needs.push('开发数据迁移和版本兼容性');
+      needs.push('实现多设备数据一致性保证');
     }
     
-    // 删除和移除
-    if (taskTitle.includes('删除') || taskTitle.includes('移除') || taskDescription.includes('删除') || taskDescription.includes('移除')) {
-      needs.push('实现软删除和数据归档机制');
-      needs.push('建立删除权限和确认流程');
-      needs.push('开发关联数据清理和依赖处理');
-      needs.push('实现删除审计和恢复机制');
+    // 安全和隐私
+    if (taskTitle.includes('安全') || taskTitle.includes('隐私') || taskTitle.includes('加密') || taskDescription.includes('安全') || taskDescription.includes('隐私')) {
+      needs.push('实现设备身份认证和授权机制');
+      needs.push('建立数据传输加密和完整性校验');
+      needs.push('开发用户隐私数据保护策略');
+      needs.push('实现安全审计和合规性检查');
     }
     
-    // 如果没有匹配到特定功能，生成通用的业务相关需求
+    // 如果没有匹配到特定功能，根据业务领域生成相关需求
     if (needs.length === 0) {
-      needs.push('实现核心业务逻辑处理');
-      needs.push('建立数据持久化和缓存机制');
-      needs.push('开发API接口和前端交互');
-      needs.push('实现用户权限和访问控制');
+      // 分析任务的一般性质，生成更具体的需求
+      if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
+        needs.push('实现设备生命周期管理平台');
+        needs.push('建立用户权限和角色管理系统');
+        needs.push('开发设备配置模板和批量部署');
+      } else if (taskTitle.includes('查看') || taskDescription.includes('查看')) {
+        needs.push('实现实时数据可视化仪表板');
+        needs.push('建立历史数据查询和分析引擎');
+        needs.push('开发自定义报表生成器');
+      } else if (taskTitle.includes('创建') || taskDescription.includes('创建')) {
+        needs.push('实现业务规则引擎和验证机制');
+        needs.push('建立工作流引擎和审批流程');
+        needs.push('开发模板管理和快速配置');
+      } else if (taskTitle.includes('编辑') || taskDescription.includes('编辑')) {
+        needs.push('实现版本控制和变更追踪');
+        needs.push('建立并发控制和冲突解决');
+        needs.push('开发实时协作编辑功能');
+      } else if (taskTitle.includes('删除') || taskDescription.includes('删除')) {
+        needs.push('实现软删除和回收站机制');
+        needs.push('建立级联删除和依赖检查');
+        needs.push('开发数据恢复和撤销功能');
+      } else {
+        // 生成领域特定的技术需求
+        needs.push('实现业务领域特定的算法优化');
+        needs.push('建立领域数据模型和关系管理');
+        needs.push('开发领域特定的API和集成接口');
+      }
     }
     
     // 去重并返回，限制最多6个需求
