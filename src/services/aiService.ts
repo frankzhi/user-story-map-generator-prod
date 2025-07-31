@@ -960,47 +960,67 @@ export class AIService {
     return storyMap;
   }
 
-  async enhanceStory(task: Task): Promise<any> {
+  async enhanceStory(task: Task, storyMapContext?: any): Promise<any> {
     try {
-      const systemPrompt = `You are an expert user story analyst and technical writer. 
+      const currentLang = i18n.language;
+      const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
       
-Your task is to enhance a user story with comprehensive details including:
-- Complete user story format (As a... I want... so that...)
-- Detailed acceptance criteria
-- Definition of Done
-- Technical notes and considerations
-- Business value assessment
-- Story point estimation
-- Dependencies and assumptions
-- Risk assessment
-- Test cases
-- Structured acceptance criteria table with Given-When-Then format
+      const systemPrompt = `你是一个专业的用户故事分析师和技术文档编写者。
 
-Return a JSON object with the following structure:
+你的任务是增强用户故事，包含以下详细内容：
+- 完整的用户故事格式（As a... I want... so that...）- 明确具体用户角色
+- 详细的验收标准
+- 完成定义
+- 技术注意事项和考虑
+- 业务价值评估
+- 故事点数估算
+- 依赖关系和假设 - 考虑与其他故事的关联
+- 风险评估
+- 测试用例
+- 结构化验收标准表格（Given-When-Then格式）
+
+返回JSON对象，包含以下结构：
 {
-  "userStory": "Complete user story in proper format",
-  "acceptanceCriteria": ["Criteria 1", "Criteria 2", ...],
-  "definitionOfDone": ["DoD item 1", "DoD item 2", ...],
-  "technicalNotes": "Technical considerations and implementation notes",
-  "businessValue": "Business value and impact assessment",
+  "userStory": "完整的用户故事格式",
+  "acceptanceCriteria": ["标准1", "标准2", ...],
+  "definitionOfDone": ["完成项1", "完成项2", ...],
+  "technicalNotes": "技术考虑和实现注意事项",
+  "businessValue": "业务价值和影响评估",
   "storyPoints": 5,
-  "dependencies": ["Dependency 1", "Dependency 2", ...],
-  "assumptions": ["Assumption 1", "Assumption 2", ...],
-  "constraints": ["Constraint 1", "Constraint 2", ...],
-  "risks": ["Risk 1", "Risk 2", ...],
-  "testCases": ["Test case 1", "Test case 2", ...],
+  "dependencies": ["依赖1", "依赖2", ...],
+  "assumptions": ["假设1", "假设2", ...],
+  "constraints": ["约束1", "约束2", ...],
+  "risks": ["风险1", "风险2", ...],
+  "testCases": ["测试用例1", "测试用例2", ...],
   "structuredAcceptanceCriteria": [
     {
-      "scenario": "Scenario name",
-      "acceptancePoint": "Acceptance point name", 
-      "givenWhenThen": "Given [condition], When [action], Then [expected result]"
+      "given": "Given条件",
+      "when": "When条件", 
+      "then": "Then结果"
     }
   ]
 }
 
-Focus on making the story more detailed, actionable, and comprehensive. Generate 3-5 structured acceptance criteria scenarios based on the story content.`;
+专注于使故事更详细、可操作和全面。根据故事内容生成3-5个结构化验收标准场景。
 
-      const userPrompt = `Enhance this user story: ${task.title} - ${task.description}`;
+${languageContext}`;
+
+      // 构建包含上下文信息的用户提示
+      let userPrompt = `增强这个用户故事：${task.title} - ${task.description}`;
+
+      // 如果提供了故事地图上下文，添加相关信息
+      if (storyMapContext) {
+        userPrompt += `\n\n故事地图上下文：
+标题：${storyMapContext.title}
+描述：${storyMapContext.description}
+
+相关阶段和活动：
+${storyMapContext.epics?.map((epic: any, index: number) => 
+  `${index + 1}. ${epic.title} - ${epic.description}
+   活动：${epic.features?.map((feature: any) => feature.title).join(', ')}`
+).join('\n')}
+
+请考虑这个任务与其他故事的关系，确保生成的依赖关系和关联关系准确。`;
 
       // Use DeepSeek if available, otherwise fall back to mock data
       if (this.deepseekService.isConfigured()) {
@@ -1008,20 +1028,43 @@ Focus on making the story more detailed, actionable, and comprehensive. Generate
         return response;
       } else {
         // Return mock enhanced data
-        return this.generateMockEnhancedStory(task);
+        return this.generateMockEnhancedStory(task, storyMapContext);
       }
     } catch (error) {
       console.error('Error enhancing story:', error);
-      return this.generateMockEnhancedStory(task);
+      return this.generateMockEnhancedStory(task, storyMapContext);
     }
   }
 
-  private generateMockEnhancedStory(task: Task): any {
+  private generateMockEnhancedStory(task: Task, storyMapContext?: any): any {
     const currentLang = i18n.language;
+    
+    // 根据任务内容确定具体的用户角色
+    const getUserRole = (taskTitle: string, taskDescription: string) => {
+      if (taskTitle.includes('充电') || taskDescription.includes('充电')) {
+        return '电车车主';
+      } else if (taskTitle.includes('租车') || taskDescription.includes('租车')) {
+        return '租车用户';
+      } else if (taskTitle.includes('支付') || taskDescription.includes('支付')) {
+        return '付费用户';
+      } else if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
+        return '系统管理员';
+      } else if (taskTitle.includes('查看') || taskDescription.includes('查看')) {
+        return '普通用户';
+      } else if (taskTitle.includes('配置') || taskDescription.includes('配置')) {
+        return '设备管理员';
+      } else if (taskTitle.includes('权限') || taskDescription.includes('权限')) {
+        return '权限管理员';
+      } else {
+        return '用户';
+      }
+    };
+    
+    const userRole = getUserRole(task.title, task.description);
     
     if (currentLang === 'zh') {
       return {
-        userStory: `作为${task.title.toLowerCase().includes('用户') ? '用户' : '利益相关者'}，我希望${task.description.toLowerCase()}，以便实现更好的结果并提高效率。`,
+        userStory: `作为${userRole}，我希望${task.description.toLowerCase()}，以便实现更好的结果并提高效率。`,
         acceptanceCriteria: [
           `Given ${task.title}，When 功能实现时，Then 应该按描述工作`,
           `Given 用户与功能交互，When 他们执行操作时，Then 应该产生预期结果`,

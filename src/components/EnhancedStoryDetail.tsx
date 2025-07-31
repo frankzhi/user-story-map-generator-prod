@@ -7,6 +7,7 @@ import i18n from '../i18n';
 
 interface EnhancedStoryDetailProps {
   task: Task;
+  storyMap?: any; // 添加故事地图上下文
   onClose: () => void;
   onUpdate: (updatedTask: Task) => void;
   onDelete: () => void;
@@ -33,6 +34,7 @@ interface EnhancedStoryData {
 
 const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
   task,
+  storyMap,
   onClose,
   onUpdate,
   onDelete
@@ -57,7 +59,7 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
     setIsLoading(true);
     try {
       const aiService = AIService.getInstance();
-      const enhancedStory = await aiService.enhanceStory(task);
+      const enhancedStory = await aiService.enhanceStory(task, storyMap);
       
       // Translate the enhanced story based on current language
       const currentLang = i18n.language;

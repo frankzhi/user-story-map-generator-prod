@@ -154,45 +154,138 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   };
 
   const generateSupportingNeeds = (task: UserStory) => {
-    // Generate specific supporting needs based on task content
-    const needs = [];
+    // Generate comprehensive supporting needs based on task content
+    const needs: string[] = [];
+    
+    // 基础技术需求
+    const technicalNeeds = [
+      '实现数据同步机制',
+      '开发相关API接口',
+      '优化用户体验',
+      '确保系统稳定性',
+      '实现数据备份机制',
+      '建立监控告警系统',
+      '实现日志记录功能',
+      '优化数据库性能',
+      '实现缓存机制',
+      '建立错误处理机制'
+    ];
+    
+    // 安全需求
+    const securityNeeds = [
+      '实现用户身份验证',
+      '建立权限控制系统',
+      '实现数据加密传输',
+      '建立安全审计日志',
+      '实现防SQL注入机制',
+      '建立数据访问控制'
+    ];
+    
+    // 性能需求
+    const performanceNeeds = [
+      '优化响应时间',
+      '实现负载均衡',
+      '建立CDN加速',
+      '优化数据库查询',
+      '实现异步处理机制'
+    ];
+    
+    // 集成需求
+    const integrationNeeds = [
+      '第三方系统集成',
+      '支付网关集成',
+      '消息推送服务集成',
+      '地图服务集成',
+      '短信服务集成'
+    ];
     
     // For charging pile management app
     if (task.title.includes('充电') || task.title.includes('charging')) {
       if (task.title.includes('状态') || task.title.includes('status')) {
         needs.push('开发充电桩状态监控API接口');
         needs.push('集成WebSocket实时数据推送服务');
+        needs.push('建立设备故障检测机制');
+        needs.push('实现充电状态实时同步');
       } else if (task.title.includes('记录') || task.title.includes('record')) {
         needs.push('设计充电记录数据库表结构');
         needs.push('开发充电历史查询API接口');
+        needs.push('实现数据统计分析功能');
+        needs.push('建立数据导出服务');
       } else if (task.title.includes('配对') || task.title.includes('pair')) {
         needs.push('集成蓝牙BLE通信协议');
         needs.push('开发设备配对验证API接口');
+        needs.push('实现设备安全认证机制');
+        needs.push('建立设备管理平台');
       } else if (task.title.includes('配置') || task.title.includes('config')) {
         needs.push('开发设备参数设置API接口');
         needs.push('集成设备配置同步服务');
+        needs.push('实现配置版本管理');
+        needs.push('建立配置变更审计');
       } else if (task.title.includes('权限') || task.title.includes('permission')) {
         needs.push('开发用户权限管理API接口');
         needs.push('集成权限验证中间件服务');
+        needs.push('实现角色权限分配机制');
+        needs.push('建立权限变更通知');
       }
     }
     // For car rental app
     else if (task.title.includes('搜索') || task.title.includes('search')) {
       needs.push('开发车辆搜索API接口');
       needs.push('集成Elasticsearch搜索引擎');
+      needs.push('实现地理位置搜索');
+      needs.push('建立搜索历史记录');
     } else if (task.title.includes('预订') || task.title.includes('booking')) {
       needs.push('开发订单管理API接口');
       needs.push('集成库存管理系统');
+      needs.push('实现预订冲突检测');
+      needs.push('建立订单状态跟踪');
     } else if (task.title.includes('支付') || task.title.includes('payment')) {
       needs.push('集成微信支付API接口');
       needs.push('开发订单支付状态同步服务');
+      needs.push('实现支付安全验证');
+      needs.push('建立退款处理机制');
     } else if (task.title.includes('取车') || task.title.includes('pickup')) {
       needs.push('开发取车验证API接口');
       needs.push('集成车辆状态管理系统');
+      needs.push('实现取车码验证');
+      needs.push('建立车辆交接流程');
+    }
+    // For BaoChongMan app
+    else if (task.title.includes('充电站') || task.title.includes('station')) {
+      needs.push('集成地图服务API');
+      needs.push('开发充电站搜索接口');
+      needs.push('实现实时可用性查询');
+      needs.push('建立充电站评价系统');
+    } else if (task.title.includes('预约') || task.title.includes('reservation')) {
+      needs.push('开发预约管理API');
+      needs.push('集成时间槽位管理');
+      needs.push('实现预约冲突检测');
+      needs.push('建立预约提醒服务');
+    } else if (task.title.includes('支付') || task.title.includes('payment')) {
+      needs.push('集成多种支付方式');
+      needs.push('开发订单支付接口');
+      needs.push('实现支付状态同步');
+      needs.push('建立发票生成服务');
+    } else if (task.title.includes('停车') || task.title.includes('parking')) {
+      needs.push('集成停车场管理系统');
+      needs.push('开发停车费计算接口');
+      needs.push('实现车位状态查询');
+      needs.push('建立停车费支付服务');
     }
     
-    // Only return specific needs, avoid generic ones
-    return needs.length > 0 ? needs : [];
+    // 添加通用技术需求
+    if (needs.length < 4) {
+      needs.push(...technicalNeeds.slice(0, 4 - needs.length));
+    }
+    
+    // 添加安全需求
+    needs.push(...securityNeeds.slice(0, 2));
+    
+    // 添加性能需求
+    needs.push(...performanceNeeds.slice(0, 2));
+    
+    // 去重并返回
+    return [...new Set(needs)].slice(0, 8);
   };
 
   const getStatusIcon = (status: string) => {
@@ -477,6 +570,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       {showModal && selectedStory && (
         <EnhancedStoryDetail
           task={selectedStory as Task}
+          storyMap={currentStoryMap}
           onClose={closeModal}
           onUpdate={(updatedTask) => {
             // Update the story in the story map
