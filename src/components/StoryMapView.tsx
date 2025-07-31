@@ -250,34 +250,78 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       needs.push('实现安全审计和合规性检查');
     }
     
-    // 如果没有匹配到特定功能，根据业务领域生成相关需求
+    // 如果没有匹配到特定功能，根据任务内容生成更具体的需求
     if (needs.length === 0) {
-      // 分析任务的一般性质，生成更具体的需求
-      if (taskTitle.includes('管理') || taskDescription.includes('管理')) {
-        needs.push('实现设备生命周期管理平台');
-        needs.push('建立用户权限和角色管理系统');
-        needs.push('开发设备配置模板和批量部署');
-      } else if (taskTitle.includes('查看') || taskDescription.includes('查看')) {
-        needs.push('实现实时数据可视化仪表板');
-        needs.push('建立历史数据查询和分析引擎');
-        needs.push('开发自定义报表生成器');
-      } else if (taskTitle.includes('创建') || taskDescription.includes('创建')) {
-        needs.push('实现业务规则引擎和验证机制');
-        needs.push('建立工作流引擎和审批流程');
-        needs.push('开发模板管理和快速配置');
-      } else if (taskTitle.includes('编辑') || taskDescription.includes('编辑')) {
-        needs.push('实现版本控制和变更追踪');
-        needs.push('建立并发控制和冲突解决');
-        needs.push('开发实时协作编辑功能');
-      } else if (taskTitle.includes('删除') || taskDescription.includes('删除')) {
-        needs.push('实现软删除和回收站机制');
-        needs.push('建立级联删除和依赖检查');
-        needs.push('开发数据恢复和撤销功能');
+      // 分析任务的具体内容，生成相关的技术需求
+      if (taskTitle.includes('验证') || taskTitle.includes('status') || taskDescription.includes('验证') || taskDescription.includes('status')) {
+        needs.push('实现用户状态验证和权限检查机制');
+        needs.push('建立会员等级和权益管理系统');
+        needs.push('开发实时状态同步和缓存策略');
+      } else if (taskTitle.includes('引导') || taskTitle.includes('guide') || taskDescription.includes('引导') || taskDescription.includes('guide')) {
+        needs.push('实现用户引导流程和进度跟踪');
+        needs.push('建立新手教程和帮助文档系统');
+        needs.push('开发个性化引导和推荐算法');
+      } else if (taskTitle.includes('更新') || taskTitle.includes('update') || taskDescription.includes('更新') || taskDescription.includes('update')) {
+        needs.push('实现数据变更追踪和版本控制');
+        needs.push('建立用户信息验证和更新机制');
+        needs.push('开发实时数据同步和冲突解决');
+      } else if (taskTitle.includes('重置') || taskTitle.includes('reset') || taskDescription.includes('重置') || taskDescription.includes('reset')) {
+        needs.push('实现安全密码重置和验证流程');
+        needs.push('建立多因子身份验证机制');
+        needs.push('开发密码强度检测和安全策略');
+      } else if (taskTitle.includes('过滤') || taskTitle.includes('filter') || taskDescription.includes('过滤') || taskDescription.includes('filter')) {
+        needs.push('实现智能搜索和过滤算法');
+        needs.push('建立多维度数据索引和查询优化');
+        needs.push('开发实时过滤和动态排序功能');
+      } else if (taskTitle.includes('显示') || taskTitle.includes('show') || taskDescription.includes('显示') || taskDescription.includes('show')) {
+        needs.push('实现数据展示和可视化组件');
+        needs.push('建立数据缓存和加载优化机制');
+        needs.push('开发响应式界面和用户体验优化');
+      } else if (taskTitle.includes('组织') || taskTitle.includes('organize') || taskDescription.includes('组织') || taskDescription.includes('organize')) {
+        needs.push('实现数据分类和标签管理系统');
+        needs.push('建立智能推荐和排序算法');
+        needs.push('开发批量操作和批量管理功能');
+      } else if (taskTitle.includes('突出') || taskTitle.includes('highlight') || taskDescription.includes('突出') || taskDescription.includes('highlight')) {
+        needs.push('实现优先级显示和突出展示机制');
+        needs.push('建立时间敏感内容管理系统');
+        needs.push('开发智能提醒和过期处理功能');
+      } else if (taskTitle.includes('积分') || taskTitle.includes('points') || taskDescription.includes('积分') || taskDescription.includes('points')) {
+        needs.push('实现积分计算和兑换规则引擎');
+        needs.push('建立积分历史记录和审计系统');
+        needs.push('开发积分过期和清理机制');
+      } else if (taskTitle.includes('兑换') || taskTitle.includes('redeem') || taskDescription.includes('兑换') || taskDescription.includes('redeem')) {
+        needs.push('实现权益兑换和库存管理系统');
+        needs.push('建立兑换验证和防欺诈机制');
+        needs.push('开发兑换流程和状态跟踪');
+      } else if (taskTitle.includes('通知') || taskTitle.includes('notify') || taskDescription.includes('通知') || taskDescription.includes('notify')) {
+        needs.push('实现多渠道消息推送系统');
+        needs.push('建立消息模板和个性化引擎');
+        needs.push('开发消息发送状态跟踪和重试机制');
+      } else if (taskTitle.includes('管理') || taskTitle.includes('manage') || taskDescription.includes('管理') || taskDescription.includes('manage')) {
+        needs.push('实现用户偏好设置和个性化配置');
+        needs.push('建立权限控制和访问管理');
+        needs.push('开发批量操作和批量管理功能');
+      } else if (taskTitle.includes('发送') || taskTitle.includes('send') || taskDescription.includes('发送') || taskDescription.includes('send')) {
+        needs.push('实现智能消息调度和发送引擎');
+        needs.push('建立消息队列和负载均衡机制');
+        needs.push('开发消息发送失败处理和重试策略');
       } else {
-        // 生成领域特定的技术需求
-        needs.push('实现业务领域特定的算法优化');
-        needs.push('建立领域数据模型和关系管理');
-        needs.push('开发领域特定的API和集成接口');
+        // 根据任务标题和描述的关键词生成更具体的需求
+        const keywords = [...taskTitle.split(' '), ...taskDescription.split(' ')].filter(word => word.length > 2);
+        const uniqueKeywords = [...new Set(keywords)];
+        
+        if (uniqueKeywords.length > 0) {
+          // 基于关键词生成相关的技术需求
+          const keyword = uniqueKeywords[0];
+          needs.push(`实现${keyword}相关的业务逻辑处理`);
+          needs.push(`建立${keyword}数据模型和关系管理`);
+          needs.push(`开发${keyword}相关的API接口和集成服务`);
+        } else {
+          // 最后的fallback，生成通用的但更具体的需求
+          needs.push('实现核心业务逻辑和数据处理');
+          needs.push('建立数据持久化和缓存机制');
+          needs.push('开发用户界面和交互功能');
+        }
       }
     }
     
