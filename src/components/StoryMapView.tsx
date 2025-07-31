@@ -695,6 +695,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                       key={storyIndex}
                                       className={`story-card cursor-pointer bg-white ${getPriorityBorderColor(story.priority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
                                       onClick={() => handleStoryClick(story)}
+                                      style={{ borderLeftWidth: '4px', borderLeftColor: story.priority === 'high' ? '#ef4444' : story.priority === 'medium' ? '#eab308' : story.priority === 'low' ? '#22c55e' : '#e5e7eb' }}
                                     >
                                       <div className="flex items-start justify-between mb-1">
                                         <User className="w-4 h-4 text-gray-500" />
