@@ -43,7 +43,7 @@ ${feedback}
 `;
 
       // Use DeepSeek to modify the story map
-      const modifiedYAML = await aiService.generateStoryMapWithFeedback(modificationPrompt);
+      const modifiedYAML = await aiService.generateStoryMapWithFeedback(modificationPrompt, storyMap);
       
       try {
         const updatedStoryMap = aiService.convertYAMLToStoryMap(modifiedYAML);

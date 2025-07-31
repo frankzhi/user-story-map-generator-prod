@@ -1194,7 +1194,7 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
     return Math.random().toString(36).substr(2, 9);
   }
 
-  async generateStoryMapWithFeedback(feedbackPrompt: string): Promise<StoryMapYAML> {
+  async generateStoryMapWithFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): Promise<StoryMapYAML> {
     try {
       if (this.deepseekService.isConfigured()) {
         // Use DeepSeek to process feedback and modify story map
@@ -1208,59 +1208,84 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
           console.error('Failed to parse AI response as JSON:', parseError);
           console.log('Raw AI response:', response);
           
-          // If parsing fails, return a modified version based on feedback
-          return this.generateModifiedStoryMapFromFeedback(feedbackPrompt);
+          // If parsing fails, return a modified version based on feedback and current story map
+          return this.generateModifiedStoryMapFromFeedback(feedbackPrompt, currentStoryMap);
         }
       } else {
-        // For mock mode, return a modified version based on feedback
-        return this.generateModifiedStoryMapFromFeedback(feedbackPrompt);
+        // For mock mode, return a modified version based on feedback and current story map
+        return this.generateModifiedStoryMapFromFeedback(feedbackPrompt, currentStoryMap);
       }
     } catch (error) {
       console.error('Error generating story map with feedback:', error);
-      return this.generateModifiedStoryMapFromFeedback(feedbackPrompt);
+      return this.generateModifiedStoryMapFromFeedback(feedbackPrompt, currentStoryMap);
     }
   }
 
-  private generateModifiedStoryMapFromFeedback(feedbackPrompt: string): StoryMapYAML {
-    // 根据反馈内容动态生成故事地图，而不是总是返回充电桩数据
+  private generateModifiedStoryMapFromFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): StoryMapYAML {
+    // 如果有当前故事地图，基于它进行修改；否则根据反馈内容生成新的故事地图
     let baseStoryMap: StoryMapYAML;
     
-    // 根据反馈内容判断应该生成什么类型的故事地图
-    if (feedbackPrompt.toLowerCase().includes('充电') || feedbackPrompt.toLowerCase().includes('charging')) {
-      baseStoryMap = this.generateChargingPileStoryMap();
-    } else if (feedbackPrompt.toLowerCase().includes('租车') || feedbackPrompt.toLowerCase().includes('car rental')) {
-      baseStoryMap = this.generateCarRentalStoryMap();
-    } else if (feedbackPrompt.toLowerCase().includes('电商') || feedbackPrompt.toLowerCase().includes('e-commerce')) {
-      baseStoryMap = this.generateEcommerceStoryMap();
-    } else if (feedbackPrompt.toLowerCase().includes('社交') || feedbackPrompt.toLowerCase().includes('social')) {
-      baseStoryMap = this.generateSocialNetworkStoryMap();
-    } else if (feedbackPrompt.toLowerCase().includes('任务') || feedbackPrompt.toLowerCase().includes('task')) {
-      baseStoryMap = this.generateTaskManagementStoryMap();
-    } else {
-      // 默认生成一个通用的故事地图
+    if (currentStoryMap) {
+      // 基于当前故事地图进行修改
       baseStoryMap = {
-        title: "基于反馈的产品故事地图",
-        description: "根据用户反馈生成的产品功能规划",
-        epics: [{
-          title: "核心功能模块",
-          description: "产品的主要功能模块",
-          features: [{
-            title: "基础功能",
-            description: "产品的基础功能实现",
-            tasks: [{
-              title: "实现核心功能",
-              description: "根据用户反馈实现核心功能",
-              priority: "high",
-              effort: "5 days",
-              acceptance_criteria: [
-                "Given 用户需求，When 功能实现，Then 应满足用户期望",
-                "Given 功能完成，When 用户测试，Then 应正常工作",
-                "Given 用户反馈，When 系统更新，Then 应体现改进"
+        title: currentStoryMap.title,
+        description: currentStoryMap.description,
+        epics: currentStoryMap.epics.map(epic => ({
+          title: epic.title,
+          description: epic.description,
+          features: epic.features.map(feature => ({
+            title: feature.title,
+            description: feature.description,
+            tasks: feature.tasks.map(task => ({
+              title: task.title,
+              description: task.description,
+              priority: task.priority || "medium",
+              effort: task.estimatedEffort || "3 days",
+              acceptance_criteria: task.acceptanceCriteria || [
+                "Given 用户需求，When 功能实现，Then 应满足用户期望"
               ]
+            }))
+          }))
+        }))
+      };
+    } else {
+      // 根据反馈内容判断应该生成什么类型的故事地图
+      if (feedbackPrompt.toLowerCase().includes('充电') || feedbackPrompt.toLowerCase().includes('charging')) {
+        baseStoryMap = this.generateChargingPileStoryMap();
+      } else if (feedbackPrompt.toLowerCase().includes('租车') || feedbackPrompt.toLowerCase().includes('car rental')) {
+        baseStoryMap = this.generateCarRentalStoryMap();
+      } else if (feedbackPrompt.toLowerCase().includes('电商') || feedbackPrompt.toLowerCase().includes('e-commerce')) {
+        baseStoryMap = this.generateEcommerceStoryMap();
+      } else if (feedbackPrompt.toLowerCase().includes('社交') || feedbackPrompt.toLowerCase().includes('social')) {
+        baseStoryMap = this.generateSocialNetworkStoryMap();
+      } else if (feedbackPrompt.toLowerCase().includes('任务') || feedbackPrompt.toLowerCase().includes('task')) {
+        baseStoryMap = this.generateTaskManagementStoryMap();
+      } else {
+        // 默认生成一个通用的故事地图
+        baseStoryMap = {
+          title: "基于反馈的产品故事地图",
+          description: "根据用户反馈生成的产品功能规划",
+          epics: [{
+            title: "核心功能模块",
+            description: "产品的主要功能模块",
+            features: [{
+              title: "基础功能",
+              description: "产品的基础功能实现",
+              tasks: [{
+                title: "实现核心功能",
+                description: "根据用户反馈实现核心功能",
+                priority: "high",
+                effort: "5 days",
+                acceptance_criteria: [
+                  "Given 用户需求，When 功能实现，Then 应满足用户期望",
+                  "Given 功能完成，When 用户测试，Then 应正常工作",
+                  "Given 用户反馈，When 系统更新，Then 应体现改进"
+                ]
+              }]
             }]
           }]
-        }]
-      };
+        };
+      }
     }
     
     // Modify based on feedback keywords
