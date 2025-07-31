@@ -148,6 +148,7 @@
     "constraints": "Constraints",
     "risks": "Risks",
     "testCases": "Test Cases",
+    "structuredAcceptanceCriteria": "Structured Acceptance Criteria",
     "polishWithAI": "Polish with AI",
     "polishDescription": "Use AI to enhance this story with more details, acceptance criteria, and technical considerations",
     "generating": "Generating enhanced story...",

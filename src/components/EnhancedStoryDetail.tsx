@@ -287,7 +287,7 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
                 {/* Structured Acceptance Criteria Table */}
                 {enhancedData.structuredAcceptanceCriteria && enhancedData.structuredAcceptanceCriteria.length > 0 && (
                   <div className="mt-6">
-                    <h5 className="font-semibold mb-3 text-gray-800">结构化验收标准</h5>
+                    <h5 className="font-semibold mb-3 text-gray-800">{t('storyDetail.structuredAcceptanceCriteria')}</h5>
                     <div className="overflow-x-auto">
                       <table className="min-w-full border border-gray-200 rounded-lg">
                         <thead className="bg-gray-50">

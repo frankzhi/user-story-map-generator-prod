@@ -148,6 +148,7 @@
     "constraints": "约束",
     "risks": "风险",
     "testCases": "测试用例",
+    "structuredAcceptanceCriteria": "结构化验收标准",
     "polishWithAI": "AI优化",
     "polishDescription": "使用AI增强此故事的详细信息、验收标准和技术考虑",
     "generating": "正在生成增强故事...",

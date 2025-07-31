@@ -994,9 +994,9 @@ export class AIService {
   "testCases": ["测试用例1", "测试用例2", ...],
   "structuredAcceptanceCriteria": [
     {
-      "given": "Given条件",
-      "when": "When条件", 
-      "then": "Then结果"
+      "scenario": "场景描述",
+      "acceptancePoint": "验收点",
+      "givenWhenThen": "Given 条件，When 操作，Then 结果"
     }
   ]
 }
@@ -1021,6 +1021,7 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
 ).join('\n')}
 
 请考虑这个任务与其他故事的关系，确保生成的依赖关系和关联关系准确。`;
+      }
 
       // Use DeepSeek if available, otherwise fall back to mock data
       if (this.deepseekService.isConfigured()) {

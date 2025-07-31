@@ -157,12 +157,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     // Generate comprehensive supporting needs based on task content
     const needs: string[] = [];
     
-    // 基础技术需求
+    // 基础技术需求 - 只保留业务相关的具体需求
     const technicalNeeds = [
       '实现数据同步机制',
       '开发相关API接口',
-      '优化用户体验',
-      '确保系统稳定性',
       '实现数据备份机制',
       '建立监控告警系统',
       '实现日志记录功能',
@@ -171,7 +169,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       '建立错误处理机制'
     ];
     
-    // 安全需求
+    // 安全需求 - 保留核心安全需求
     const securityNeeds = [
       '实现用户身份验证',
       '建立权限控制系统',
@@ -181,11 +179,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       '建立数据访问控制'
     ];
     
-    // 性能需求
+    // 性能需求 - 移除过于通用的内容
     const performanceNeeds = [
-      '优化响应时间',
-      '实现负载均衡',
-      '建立CDN加速',
       '优化数据库查询',
       '实现异步处理机制'
     ];
@@ -273,16 +268,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       needs.push('建立停车费支付服务');
     }
     
-    // 添加通用技术需求
-    if (needs.length < 4) {
-      needs.push(...technicalNeeds.slice(0, 4 - needs.length));
+    // 添加通用技术需求 - 只添加业务相关的
+    if (needs.length < 2) {
+      needs.push(...technicalNeeds.slice(0, 2 - needs.length));
     }
     
-    // 添加安全需求
-    needs.push(...securityNeeds.slice(0, 2));
+    // 添加安全需求 - 只添加核心安全需求
+    if (needs.length < 4) {
+      needs.push(...securityNeeds.slice(0, 1));
+    }
     
-    // 添加性能需求
-    needs.push(...performanceNeeds.slice(0, 2));
+    // 添加性能需求 - 只添加具体的性能需求
+    if (needs.length < 5) {
+      needs.push(...performanceNeeds.slice(0, 1));
+    }
     
     // 去重并返回
     return [...new Set(needs)].slice(0, 8);
