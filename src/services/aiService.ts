@@ -1222,6 +1222,8 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
   }
 
   private generateModifiedStoryMapFromFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): StoryMapYAML {
+    const feedbackLower = feedbackPrompt.toLowerCase();
+    
     // 如果有当前故事地图，基于它进行修改；否则根据反馈内容生成新的故事地图
     let baseStoryMap: StoryMapYAML;
     
@@ -1248,17 +1250,204 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
           }))
         }))
       };
+      
+      // 智能分析反馈内容并修改故事地图
+      if (feedbackLower.includes('增加') || feedbackLower.includes('add') || feedbackLower.includes('新增')) {
+        // 分析反馈中提到的具体功能
+        let newEpicTitle = "新增功能模块";
+        let newEpicDescription = "根据用户反馈新增的功能模块";
+        
+        if (feedbackLower.includes('阶段') || feedbackLower.includes('phase')) {
+          newEpicTitle = "新增阶段";
+          newEpicDescription = "根据用户反馈新增的产品阶段";
+        } else if (feedbackLower.includes('设备') || feedbackLower.includes('device')) {
+          newEpicTitle = "设备管理";
+          newEpicDescription = "设备连接、配置和管理功能";
+        } else if (feedbackLower.includes('用户') || feedbackLower.includes('user')) {
+          newEpicTitle = "用户管理";
+          newEpicDescription = "用户注册、登录和权限管理";
+        } else if (feedbackLower.includes('数据') || feedbackLower.includes('data')) {
+          newEpicTitle = "数据分析";
+          newEpicDescription = "数据收集、分析和报告功能";
+        } else if (feedbackLower.includes('通知') || feedbackLower.includes('notification')) {
+          newEpicTitle = "通知系统";
+          newEpicDescription = "消息推送和通知管理";
+        }
+        
+        // 添加新的Epic
+        baseStoryMap.epics.push({
+          title: newEpicTitle,
+          description: newEpicDescription,
+          features: [{
+            title: "核心功能",
+            description: `${newEpicTitle}的核心功能实现`,
+            tasks: [{
+              title: `实现${newEpicTitle}基础功能`,
+              description: `根据用户反馈实现${newEpicTitle}的基础功能`,
+              priority: "high",
+              effort: "5 days",
+              acceptance_criteria: [
+                "Given 用户需求明确，When 功能开发完成，Then 应满足基本使用要求",
+                "Given 功能测试通过，When 用户使用，Then 应正常工作",
+                "Given 用户反馈问题，When 系统修复，Then 应解决相关问题"
+              ]
+            }, {
+              title: `优化${newEpicTitle}用户体验`,
+              description: `基于用户反馈优化${newEpicTitle}的用户体验`,
+              priority: "medium",
+              effort: "3 days",
+              acceptance_criteria: [
+                "Given 用户使用反馈，When 界面优化，Then 应提升用户体验",
+                "Given 性能问题存在，When 系统优化，Then 应提升响应速度",
+                "Given 功能复杂，When 简化流程，Then 应降低使用门槛"
+              ]
+            }]
+          }]
+        });
+      }
+      
+      if (feedbackLower.includes('补充') || feedbackLower.includes('完善') || feedbackLower.includes('complete')) {
+        // 为现有阶段补充内容
+        if (baseStoryMap.epics.length > 0) {
+          const lastEpic = baseStoryMap.epics[baseStoryMap.epics.length - 1];
+          
+          // 检查是否需要补充活动
+          if (feedbackLower.includes('活动') || feedbackLower.includes('activity')) {
+            if (!lastEpic.features.some(f => f.title.includes('活动'))) {
+              lastEpic.features.push({
+                title: "用户活动管理",
+                description: "管理用户的各种活动功能",
+                tasks: [{
+                  title: "实现活动创建功能",
+                  description: "允许用户创建和管理活动",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 用户创建活动，When 填写信息，Then 应成功创建",
+                    "Given 活动已创建，When 用户查看，Then 应显示完整信息",
+                    "Given 活动需要修改，When 用户编辑，Then 应成功更新"
+                  ]
+                }, {
+                  title: "实现活动参与功能",
+                  description: "允许用户参与和跟踪活动",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 用户参与活动，When 点击参与，Then 应成功加入",
+                    "Given 活动进行中，When 用户查看，Then 应显示进度",
+                    "Given 活动结束，When 用户查看，Then 应显示结果"
+                  ]
+                }]
+              });
+            }
+          }
+          
+          // 检查是否需要补充触点
+          if (feedbackLower.includes('触点') || feedbackLower.includes('touchpoint')) {
+            if (!lastEpic.features.some(f => f.title.includes('触点'))) {
+              lastEpic.features.push({
+                title: "触点管理",
+                description: "管理用户与产品的接触点",
+                tasks: [{
+                  title: "实现触点配置",
+                  description: "配置和管理用户触点",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 触点需要配置，When 管理员设置，Then 应成功配置",
+                    "Given 触点已配置，When 用户使用，Then 应正常工作",
+                    "Given 触点需要调整，When 系统更新，Then 应及时生效"
+                  ]
+                }]
+              });
+            }
+          }
+          
+          // 检查是否需要补充用户故事
+          if (feedbackLower.includes('用户故事') || feedbackLower.includes('story')) {
+            lastEpic.features.forEach(feature => {
+              if (feature.tasks.length === 0) {
+                feature.tasks.push({
+                  title: "实现基础用户故事",
+                  description: "根据用户反馈实现基础功能",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 用户需求明确，When 功能实现，Then 应满足用户期望",
+                    "Given 功能完成，When 用户测试，Then 应正常工作",
+                    "Given 用户反馈问题，When 系统修复，Then 应解决问题"
+                  ]
+                });
+              }
+            });
+          }
+          
+          // 检查是否需要补充支撑性需求
+          if (feedbackLower.includes('支撑性需求') || feedbackLower.includes('supporting')) {
+            lastEpic.features.forEach(feature => {
+              if (feature.tasks.length > 0) {
+                feature.tasks.push({
+                  title: "实现支撑性需求",
+                  description: "实现支撑核心功能的辅助需求",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 核心功能需要支撑，When 支撑功能实现，Then 应提供必要支持",
+                    "Given 支撑功能完成，When 系统运行，Then 应稳定可靠",
+                    "Given 支撑功能需要优化，When 系统改进，Then 应提升性能"
+                  ]
+                });
+              }
+            });
+          }
+        }
+      }
+      
+      if (feedbackLower.includes('修改') || feedbackLower.includes('change') || feedbackLower.includes('调整')) {
+        // 修改现有内容
+        if (baseStoryMap.epics.length > 0) {
+          const firstEpic = baseStoryMap.epics[0];
+          firstEpic.title = "修改后的" + firstEpic.title;
+          firstEpic.description += "（根据用户反馈进行了修改）";
+          
+          // 为修改的Epic添加更多详细内容
+          if (firstEpic.features.length === 0) {
+            firstEpic.features.push({
+              title: "优化功能",
+              description: "根据用户反馈优化的功能",
+              tasks: [{
+                title: "实现功能优化",
+                description: "基于用户反馈优化现有功能",
+                priority: "high",
+                effort: "4 days",
+                acceptance_criteria: [
+                  "Given 用户反馈问题，When 功能优化，Then 应解决问题",
+                  "Given 优化完成，When 用户使用，Then 应体验更好",
+                  "Given 新需求出现，When 功能扩展，Then 应满足需求"
+                ]
+              }]
+            });
+          }
+        }
+      }
+      
+      if (feedbackLower.includes('删除') || feedbackLower.includes('remove')) {
+        // 删除一些内容
+        if (baseStoryMap.epics.length > 1) {
+          baseStoryMap.epics.pop();
+        }
+      }
     } else {
       // 根据反馈内容判断应该生成什么类型的故事地图
-      if (feedbackPrompt.toLowerCase().includes('充电') || feedbackPrompt.toLowerCase().includes('charging')) {
+      if (feedbackLower.includes('充电') || feedbackLower.includes('charging')) {
         baseStoryMap = this.generateChargingPileStoryMap();
-      } else if (feedbackPrompt.toLowerCase().includes('租车') || feedbackPrompt.toLowerCase().includes('car rental')) {
+      } else if (feedbackLower.includes('租车') || feedbackLower.includes('car rental')) {
         baseStoryMap = this.generateCarRentalStoryMap();
-      } else if (feedbackPrompt.toLowerCase().includes('电商') || feedbackPrompt.toLowerCase().includes('e-commerce')) {
+      } else if (feedbackLower.includes('电商') || feedbackLower.includes('e-commerce')) {
         baseStoryMap = this.generateEcommerceStoryMap();
-      } else if (feedbackPrompt.toLowerCase().includes('社交') || feedbackPrompt.toLowerCase().includes('social')) {
+      } else if (feedbackLower.includes('社交') || feedbackLower.includes('social')) {
         baseStoryMap = this.generateSocialNetworkStoryMap();
-      } else if (feedbackPrompt.toLowerCase().includes('任务') || feedbackPrompt.toLowerCase().includes('task')) {
+      } else if (feedbackLower.includes('任务') || feedbackLower.includes('task')) {
         baseStoryMap = this.generateTaskManagementStoryMap();
       } else {
         // 默认生成一个通用的故事地图
@@ -1285,45 +1474,6 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
             }]
           }]
         };
-      }
-    }
-    
-    // Modify based on feedback keywords
-    if (feedbackPrompt.toLowerCase().includes('增加') || feedbackPrompt.toLowerCase().includes('add')) {
-      // Add a new epic
-      baseStoryMap.epics.push({
-        title: "新增功能模块",
-        description: "根据用户反馈新增的功能模块",
-        features: [{
-          title: "反馈功能",
-          description: "基于用户反馈实现的功能",
-          tasks: [{
-            title: "实现反馈处理",
-            description: "处理用户反馈并更新系统",
-            priority: "high",
-            effort: "3 days",
-            acceptance_criteria: [
-              "Given 用户提交反馈，When 系统处理，Then 应记录反馈内容",
-              "Given 反馈处理完成，When 用户查看，Then 应显示处理结果",
-              "Given 反馈涉及功能修改，When 系统更新，Then 应通知相关用户"
-            ]
-          }]
-        }]
-      });
-    }
-    
-    if (feedbackPrompt.toLowerCase().includes('修改') || feedbackPrompt.toLowerCase().includes('change')) {
-      // Modify existing epics
-      if (baseStoryMap.epics.length > 0) {
-        baseStoryMap.epics[0].title = "修改后的" + baseStoryMap.epics[0].title;
-        baseStoryMap.epics[0].description += "（根据用户反馈进行了修改）";
-      }
-    }
-    
-    if (feedbackPrompt.toLowerCase().includes('删除') || feedbackPrompt.toLowerCase().includes('remove')) {
-      // Remove some epics
-      if (baseStoryMap.epics.length > 1) {
-        baseStoryMap.epics.pop();
       }
     }
     
