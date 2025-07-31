@@ -122,35 +122,142 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   };
 
   const getTouchpointForTask = (task: UserStory) => {
-    // Generate appropriate touchpoint based on task content
-    // For charging pile management app
-    if (task.title.includes('充电') || task.title.includes('charging')) {
-      if (task.title.includes('状态') || task.title.includes('status') || task.title.includes('监控')) {
+    const taskTitle = task.title.toLowerCase();
+    const taskDescription = task.description.toLowerCase();
+    
+    // 智能门锁应用触点
+    if (taskTitle.includes('门锁') || taskTitle.includes('lock') || taskDescription.includes('门锁')) {
+      if (taskTitle.includes('开锁') || taskTitle.includes('unlock') || taskTitle.includes('远程')) {
+        return '移动APP/远程开锁页面';
+      } else if (taskTitle.includes('状态') || taskTitle.includes('监控') || taskTitle.includes('status')) {
+        return '移动APP/门锁状态页面';
+      } else if (taskTitle.includes('记录') || taskTitle.includes('历史') || taskTitle.includes('record')) {
+        return '移动APP/开锁记录页面';
+      } else if (taskTitle.includes('设置') || taskTitle.includes('配置') || taskTitle.includes('config')) {
+        return '移动APP/门锁设置页面';
+      } else if (taskTitle.includes('权限') || taskTitle.includes('permission')) {
+        return '移动APP/权限管理页面';
+      } else if (taskTitle.includes('通知') || taskTitle.includes('notification')) {
+        return '移动APP/通知设置页面';
+      } else if (taskTitle.includes('日志') || taskTitle.includes('分析') || taskTitle.includes('log')) {
+        return '移动APP/日志分析页面';
+      }
+    }
+    
+    // 充电桩管理应用触点
+    else if (taskTitle.includes('充电') || taskTitle.includes('charging') || taskDescription.includes('充电')) {
+      if (taskTitle.includes('状态') || taskTitle.includes('status') || taskTitle.includes('监控')) {
         return '移动APP/设备状态页面';
-      } else if (task.title.includes('记录') || task.title.includes('record') || task.title.includes('历史')) {
+      } else if (taskTitle.includes('记录') || taskTitle.includes('record') || taskTitle.includes('历史')) {
         return '移动APP/充电记录页面';
-      } else if (task.title.includes('配对') || task.title.includes('pair') || task.title.includes('绑定')) {
+      } else if (taskTitle.includes('配对') || taskTitle.includes('pair') || taskTitle.includes('绑定')) {
         return '移动APP/设备管理页面';
-      } else if (task.title.includes('配置') || task.title.includes('config') || task.title.includes('设置')) {
+      } else if (taskTitle.includes('配置') || taskTitle.includes('config') || taskTitle.includes('设置')) {
         return '移动APP/设备配置页面';
-      } else if (task.title.includes('权限') || task.title.includes('permission') || task.title.includes('管理')) {
+      } else if (taskTitle.includes('权限') || taskTitle.includes('permission') || taskTitle.includes('管理')) {
         return '移动APP/权限管理页面';
       }
     }
-    // For car rental app
-    else if (task.title.includes('搜索') || task.title.includes('search')) {
-      return '微信小程序/搜索页面';
-    } else if (task.title.includes('浏览') || task.title.includes('browse')) {
-      return '微信小程序/车辆列表页';
-    } else if (task.title.includes('预订') || task.title.includes('booking')) {
-      return '微信小程序/预订页面';
-    } else if (task.title.includes('支付') || task.title.includes('payment')) {
-      return '微信小程序/支付页面';
-    } else if (task.title.includes('取车') || task.title.includes('pickup')) {
-      return '车辆服务机构端小程序/交车页面';
-    } else if (task.title.includes('用车') || task.title.includes('usage')) {
-      return '微信小程序/用车指南页';
+    
+    // 租车应用触点
+    else if (taskTitle.includes('租车') || taskTitle.includes('car') || taskTitle.includes('车') || taskDescription.includes('租车')) {
+      if (taskTitle.includes('搜索') || taskTitle.includes('search')) {
+        return '微信小程序/搜索页面';
+      } else if (taskTitle.includes('浏览') || taskTitle.includes('browse') || taskTitle.includes('列表')) {
+        return '微信小程序/车辆列表页';
+      } else if (taskTitle.includes('预订') || taskTitle.includes('booking') || taskTitle.includes('预约')) {
+        return '微信小程序/预订页面';
+      } else if (taskTitle.includes('支付') || taskTitle.includes('payment')) {
+        return '微信小程序/支付页面';
+      } else if (taskTitle.includes('取车') || taskTitle.includes('pickup')) {
+        return '车辆服务机构端小程序/交车页面';
+      } else if (taskTitle.includes('用车') || taskTitle.includes('usage')) {
+        return '微信小程序/用车指南页';
+      }
     }
+    
+    // 电商应用触点
+    else if (taskTitle.includes('电商') || taskTitle.includes('购物') || taskTitle.includes('商品') || taskDescription.includes('电商')) {
+      if (taskTitle.includes('搜索') || taskTitle.includes('search')) {
+        return '移动APP/商品搜索页面';
+      } else if (taskTitle.includes('浏览') || taskTitle.includes('browse') || taskTitle.includes('列表')) {
+        return '移动APP/商品列表页面';
+      } else if (taskTitle.includes('详情') || taskTitle.includes('detail')) {
+        return '移动APP/商品详情页面';
+      } else if (taskTitle.includes('购物车') || taskTitle.includes('cart')) {
+        return '移动APP/购物车页面';
+      } else if (taskTitle.includes('支付') || taskTitle.includes('payment')) {
+        return '移动APP/支付页面';
+      } else if (taskTitle.includes('订单') || taskTitle.includes('order')) {
+        return '移动APP/订单页面';
+      }
+    }
+    
+    // 社交应用触点
+    else if (taskTitle.includes('社交') || taskTitle.includes('聊天') || taskTitle.includes('消息') || taskDescription.includes('社交')) {
+      if (taskTitle.includes('聊天') || taskTitle.includes('chat') || taskTitle.includes('消息')) {
+        return '移动APP/聊天页面';
+      } else if (taskTitle.includes('好友') || taskTitle.includes('friend')) {
+        return '移动APP/好友列表页面';
+      } else if (taskTitle.includes('动态') || taskTitle.includes('post') || taskTitle.includes('发布')) {
+        return '移动APP/动态发布页面';
+      } else if (taskTitle.includes('个人') || taskTitle.includes('profile')) {
+        return '移动APP/个人资料页面';
+      } else if (taskTitle.includes('设置') || taskTitle.includes('setting')) {
+        return '移动APP/设置页面';
+      }
+    }
+    
+    // 任务管理应用触点
+    else if (taskTitle.includes('任务') || taskTitle.includes('项目') || taskTitle.includes('管理') || taskDescription.includes('任务')) {
+      if (taskTitle.includes('创建') || taskTitle.includes('create')) {
+        return '移动APP/任务创建页面';
+      } else if (taskTitle.includes('列表') || taskTitle.includes('list')) {
+        return '移动APP/任务列表页面';
+      } else if (taskTitle.includes('详情') || taskTitle.includes('detail')) {
+        return '移动APP/任务详情页面';
+      } else if (taskTitle.includes('编辑') || taskTitle.includes('edit')) {
+        return '移动APP/任务编辑页面';
+      } else if (taskTitle.includes('统计') || taskTitle.includes('report')) {
+        return '移动APP/任务统计页面';
+      }
+    }
+    
+    // 用户认证相关触点
+    else if (taskTitle.includes('注册') || taskTitle.includes('登录') || taskTitle.includes('认证') || taskDescription.includes('注册') || taskDescription.includes('登录')) {
+      if (taskTitle.includes('注册') || taskTitle.includes('register')) {
+        return '移动APP/注册页面';
+      } else if (taskTitle.includes('登录') || taskTitle.includes('login')) {
+        return '移动APP/登录页面';
+      } else if (taskTitle.includes('忘记密码') || taskTitle.includes('reset')) {
+        return '移动APP/密码重置页面';
+      } else if (taskTitle.includes('个人') || taskTitle.includes('profile')) {
+        return '移动APP/个人资料页面';
+      }
+    }
+    
+    // 支付相关触点
+    else if (taskTitle.includes('支付') || taskTitle.includes('付款') || taskTitle.includes('订单') || taskDescription.includes('支付')) {
+      if (taskTitle.includes('支付') || taskTitle.includes('payment')) {
+        return '移动APP/支付页面';
+      } else if (taskTitle.includes('订单') || taskTitle.includes('order')) {
+        return '移动APP/订单页面';
+      } else if (taskTitle.includes('发票') || taskTitle.includes('invoice')) {
+        return '移动APP/发票页面';
+      }
+    }
+    
+    // 通知设置触点
+    else if (taskTitle.includes('通知') || taskTitle.includes('消息') || taskTitle.includes('提醒') || taskDescription.includes('通知')) {
+      return '移动APP/通知设置页面';
+    }
+    
+    // 设置相关触点
+    else if (taskTitle.includes('设置') || taskTitle.includes('配置') || taskTitle.includes('偏好') || taskDescription.includes('设置')) {
+      return '移动APP/设置页面';
+    }
+    
+    // 默认触点
     return '移动APP/主页面';
   };
 
@@ -573,20 +680,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   const getPriorityBorderColor = (priority: Priority) => {
                                     switch (priority) {
                                       case 'high':
-                                        return 'border-red-400';
+                                        return 'border-l-4 border-l-red-500 border-r border-t border-b border-gray-200';
                                       case 'medium':
-                                        return 'border-yellow-400';
+                                        return 'border-l-4 border-l-yellow-500 border-r border-t border-b border-gray-200';
                                       case 'low':
-                                        return 'border-green-400';
+                                        return 'border-l-4 border-l-green-500 border-r border-t border-b border-gray-200';
                                       default:
-                                        return 'border-gray-200';
+                                        return 'border border-gray-200';
                                     }
                                   };
 
                                   return (
                                     <div
                                       key={storyIndex}
-                                      className={`story-card cursor-pointer bg-white border-2 ${getPriorityBorderColor(story.priority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
+                                      className={`story-card cursor-pointer bg-white ${getPriorityBorderColor(story.priority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
                                       onClick={() => handleStoryClick(story)}
                                     >
                                       <div className="flex items-start justify-between mb-1">
@@ -633,20 +740,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   const getPriorityBorderColor = (priority: Priority) => {
                                     switch (priority) {
                                       case 'high':
-                                        return 'border-red-400';
+                                        return 'border-l-4 border-l-red-500 border-r border-t border-b border-gray-200';
                                       case 'medium':
-                                        return 'border-yellow-400';
+                                        return 'border-l-4 border-l-yellow-500 border-r border-t border-b border-gray-200';
                                       case 'low':
-                                        return 'border-green-400';
+                                        return 'border-l-4 border-l-green-500 border-r border-t border-b border-gray-200';
                                       default:
-                                        return 'border-gray-200';
+                                        return 'border border-gray-200';
                                     }
                                   };
 
                                   return (
                                     <div
                                       key={needIndex}
-                                      className={`bg-white border-2 ${getPriorityBorderColor(item.priority)} rounded-md p-2 shadow-sm flex-shrink-0 mx-1`}
+                                      className={`bg-white ${getPriorityBorderColor(item.priority)} rounded-md p-2 shadow-sm flex-shrink-0 mx-1`}
                                     >
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
