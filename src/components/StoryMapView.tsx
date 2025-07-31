@@ -569,33 +569,36 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                 className="flex flex-col gap-1 border-r border-gray-200"
                                 style={{ width: `${activityWidth}px` }}
                               >
-                                {(sortByPriority ? activity.userStories.sort(sortByPriorityOrder) : activity.userStories).map((story, storyIndex) => (
-                                  <div
-                                    key={storyIndex}
-                                    className="story-card cursor-pointer bg-white border border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1"
-                                    onClick={() => handleStoryClick(story)}
-                                  >
-                                    <div className="flex items-start justify-between mb-1">
-                                      <div className="flex items-center gap-1">
+                                {(sortByPriority ? activity.userStories.sort(sortByPriorityOrder) : activity.userStories).map((story, storyIndex) => {
+                                  const getPriorityBorderColor = (priority: Priority) => {
+                                    switch (priority) {
+                                      case 'high':
+                                        return 'border-red-400';
+                                      case 'medium':
+                                        return 'border-yellow-400';
+                                      case 'low':
+                                        return 'border-green-400';
+                                      default:
+                                        return 'border-gray-200';
+                                    }
+                                  };
+
+                                  return (
+                                    <div
+                                      key={storyIndex}
+                                      className={`story-card cursor-pointer bg-white border-2 ${getPriorityBorderColor(story.priority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
+                                      onClick={() => handleStoryClick(story)}
+                                    >
+                                      <div className="flex items-start justify-between mb-1">
                                         <User className="w-4 h-4 text-gray-500" />
-                                        <PriorityBadge priority={story.priority} className="text-xs" />
+                                        {getStatusIcon(story.status)}
                                       </div>
-                                      {getStatusIcon(story.status)}
+                                      <p className="text-sm text-gray-700 leading-relaxed">
+                                        {story.description}
+                                      </p>
                                     </div>
-                                    <p className="text-sm text-gray-700 leading-relaxed">
-                                      {story.description}
-                                    </p>
-                                    <div className="mt-2 flex justify-end">
-                                      <div onClick={(e) => e.stopPropagation()}>
-                                        <PrioritySelector
-                                          priority={story.priority}
-                                          onPriorityChange={(newPriority) => handlePriorityChange(story.id, newPriority)}
-                                          className="text-xs"
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </div>
                             ))}
                           </div>
@@ -626,20 +629,34 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                 {(sortByPriority ? activity.supportingNeeds.sort((a, b) => {
                                   const priorityOrder = { high: 3, medium: 2, low: 1 };
                                   return priorityOrder[b.priority] - priorityOrder[a.priority];
-                                }) : activity.supportingNeeds).map((item, needIndex) => (
-                                  <div
-                                    key={needIndex}
-                                    className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1"
-                                  >
-                                    <div className="flex items-center justify-between mb-1">
-                                      <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                                        {t('storyMap.supportingNeed')}
-                                      </span>
-                                      <PriorityBadge priority={item.priority} className="text-xs" />
+                                }) : activity.supportingNeeds).map((item, needIndex) => {
+                                  const getPriorityBorderColor = (priority: Priority) => {
+                                    switch (priority) {
+                                      case 'high':
+                                        return 'border-red-400';
+                                      case 'medium':
+                                        return 'border-yellow-400';
+                                      case 'low':
+                                        return 'border-green-400';
+                                      default:
+                                        return 'border-gray-200';
+                                    }
+                                  };
+
+                                  return (
+                                    <div
+                                      key={needIndex}
+                                      className={`bg-white border-2 ${getPriorityBorderColor(item.priority)} rounded-md p-2 shadow-sm flex-shrink-0 mx-1`}
+                                    >
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                                          {t('storyMap.supportingNeed')}
+                                        </span>
+                                      </div>
+                                      <p className="text-xs text-gray-700">{item.need}</p>
                                     </div>
-                                    <p className="text-xs text-gray-700">{item.need}</p>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </div>
                             ))}
                           </div>
