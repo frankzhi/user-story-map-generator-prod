@@ -724,6 +724,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   // Debug: Log story priority for troubleshooting
                                   console.log(`Story: ${story.title}, Priority: ${story.priority}, Type: ${typeof story.priority}`);
                                   
+                                  // Force priority to be a valid value if it's undefined or null
+                                  const validPriority = story.priority || 'medium';
+                                  console.log(`Valid Priority: ${validPriority}`);
+                                  
                                   const getPriorityBorderColor = (priority: Priority) => {
                                     switch (priority) {
                                       case 'high':
@@ -731,7 +735,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                       case 'medium':
                                         return 'border-l-4 border-l-yellow-500 border-r border-t border-b border-gray-200';
                                       case 'low':
-                                        return 'border-l-4 border-l-green-500 border-r border-t border-b border-gray-200';
+                                        return 'border-l-4 border-l-blue-500 border-r border-t border-b border-gray-200';
                                       default:
                                         return 'border border-gray-200';
                                     }
@@ -740,9 +744,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   return (
                                     <div
                                       key={storyIndex}
-                                      className={`story-card cursor-pointer bg-white ${getPriorityBorderColor(story.priority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
+                                      className={`story-card cursor-pointer bg-white ${getPriorityBorderColor(validPriority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
                                       onClick={() => handleStoryClick(story)}
-                                      style={{ borderLeftWidth: '4px', borderLeftColor: story.priority === 'high' ? '#ef4444' : story.priority === 'medium' ? '#eab308' : story.priority === 'low' ? '#22c55e' : '#e5e7eb' }}
+                                      style={{ borderLeftWidth: '4px', borderLeftColor: validPriority === 'high' ? '#ef4444' : validPriority === 'medium' ? '#eab308' : validPriority === 'low' ? '#3b82f6' : '#e5e7eb' }}
                                     >
                                       <div className="flex items-start justify-between mb-1">
                                         <User className="w-4 h-4 text-gray-500" />
@@ -792,7 +796,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                       case 'medium':
                                         return 'border-l-4 border-l-yellow-500 border-r border-t border-b border-gray-200';
                                       case 'low':
-                                        return 'border-l-4 border-l-green-500 border-r border-t border-b border-gray-200';
+                                        return 'border-l-4 border-l-blue-500 border-r border-t border-b border-gray-200';
                                       default:
                                         return 'border border-gray-200';
                                     }
