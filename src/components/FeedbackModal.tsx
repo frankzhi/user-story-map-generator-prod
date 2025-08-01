@@ -79,6 +79,15 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ storyMap, onClose,
                   featureTotal + feature.tasks.length, 0), 0)}</p>
             </div>
           </div>
+          
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+            <h3 className="text-sm font-medium text-yellow-900 mb-2">💡 反馈提示</h3>
+            <div className="text-sm text-yellow-800">
+              <p><strong>删除支撑性需求：</strong>输入"删除所有支撑性需求"</p>
+              <p><strong>恢复支撑性需求：</strong>输入"显示支撑性需求"或"恢复支撑性需求"</p>
+              <p><strong>限制支撑性需求：</strong>输入"每个活动最多保留3个支撑性需求"</p>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}

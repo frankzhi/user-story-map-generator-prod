@@ -27,6 +27,7 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
   const [showFeedback, setShowFeedback] = useState(false);
   const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(storyMap);
   const [sortByPriority, setSortByPriority] = useState(true);
+  const [showSupportingNeeds, setShowSupportingNeeds] = useState(true);
 
   const handleStoryClick = (story: UserStory) => {
     setSelectedStory(story);
@@ -112,13 +113,14 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         }));
         
         // Create supporting needs with their associated user story information
-        const supportingNeedsWithAssociation = feature.tasks.flatMap(task => 
-          generateSupportingNeeds(task).map(need => ({
-            ...need,
-            associatedStoryId: task.id,
-            associatedStoryTitle: task.title
-          }))
-        );
+        const supportingNeedsWithAssociation = showSupportingNeeds ? 
+          feature.tasks.flatMap(task => 
+            generateSupportingNeeds(task).map(need => ({
+              ...need,
+              associatedStoryId: task.id,
+              associatedStoryTitle: task.title
+            }))
+          ) : [];
         
         // Remove duplicates while preserving association information
         const uniqueSupportingNeeds = supportingNeedsWithAssociation.filter((need, index, self) => 
@@ -611,8 +613,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   };
 
   const handleFeedbackUpdate = (updatedStoryMap: StoryMap) => {
-    setCurrentStoryMap(updatedStoryMap);
-    localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+    // 检查是否所有tasks都被清空了（删除支撑性需求的标志）
+    const hasNoTasks = updatedStoryMap.epics.every(epic => 
+      epic.features.every(feature => feature.tasks.length === 0)
+    );
+    
+    if (hasNoTasks) {
+      // 如果所有tasks都被清空，说明是删除支撑性需求的指令
+      setShowSupportingNeeds(false);
+    } else {
+      // 否则正常更新故事地图
+      setCurrentStoryMap(updatedStoryMap);
+      localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+    }
+    
     setShowFeedback(false);
   };
 

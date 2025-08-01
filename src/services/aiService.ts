@@ -1196,6 +1196,13 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
 
   async generateStoryMapWithFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): Promise<StoryMapYAML> {
     try {
+      // 首先检查是否是删除支撑性需求的指令
+      const feedbackLower = feedbackPrompt.toLowerCase();
+      if (feedbackLower.includes('删除') && (feedbackLower.includes('支撑性需求') || feedbackLower.includes('supporting'))) {
+        // 直接处理删除支撑性需求的逻辑，不调用AI
+        return this.handleSupportingNeedsDeletion(currentStoryMap, feedbackPrompt);
+      }
+      
       if (this.deepseekService.isConfigured() && currentStoryMap) {
         // Use DeepSeek to process feedback and modify story map
         const response = await this.deepseekService.generateStoryMapWithFeedback(currentStoryMap, feedbackPrompt);
@@ -1208,6 +1215,27 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
       console.error('Error generating story map with feedback:', error);
       return this.generateModifiedStoryMapFromFeedback(feedbackPrompt, currentStoryMap);
     }
+  }
+
+  private handleSupportingNeedsDeletion(currentStoryMap?: StoryMap, feedbackPrompt?: string): StoryMapYAML {
+    if (!currentStoryMap) {
+      return this.generateChargingPileStoryMap();
+    }
+
+    // 保持现有的故事地图结构，但清空所有tasks（支撑性需求）
+    return {
+      title: currentStoryMap.title,
+      description: currentStoryMap.description,
+      epics: currentStoryMap.epics.map(epic => ({
+        title: epic.title,
+        description: epic.description,
+        features: epic.features.map(feature => ({
+          title: feature.title,
+          description: feature.description,
+          tasks: [] // 清空所有支撑性需求
+        }))
+      }))
+    };
   }
 
   private generateModifiedStoryMapFromFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): StoryMapYAML {
