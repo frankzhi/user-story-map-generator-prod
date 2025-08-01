@@ -547,6 +547,30 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     return selectedColor;
   };
 
+  // Get inline style for border color to ensure it's applied
+  const getBorderStyle = (storyId: string) => {
+    const colors = [
+      '#2563eb', // blue-600
+      '#16a34a', // green-600
+      '#9333ea', // purple-600
+      '#ea580c', // orange-600
+      '#db2777', // pink-600
+      '#4f46e5', // indigo-600
+      '#0d9488', // teal-600
+      '#dc2626', // red-600
+      '#ca8a04', // yellow-600
+      '#0891b2'  // cyan-600
+    ];
+    
+    const hash = storyId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    const colorIndex = Math.abs(hash) % colors.length;
+    return { borderLeftColor: colors[colorIndex], borderLeftWidth: '4px', borderLeftStyle: 'solid' as const };
+  };
+
   const mapLayout = transformToMapLayout();
 
   const sortByPriorityOrder = (a: UserStory, b: UserStory) => {
@@ -779,7 +803,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   return (
                                     <div
                                       key={storyIndex}
-                                      className={`story-card cursor-pointer bg-white ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1 relative`}
+                                      className="story-card cursor-pointer bg-white border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1 relative"
+                                      style={getBorderStyle(story.id)}
                                       onClick={() => handleStoryClick(story)}
                                     >
                                       <div className="flex items-start justify-between mb-1">
@@ -833,7 +858,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   return (
                                     <div
                                       key={needIndex}
-                                      className={`bg-white ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative`}
+                                      className="bg-white border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative"
+                                      style={getBorderStyle(item.associatedStoryId)}
                                     >
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
