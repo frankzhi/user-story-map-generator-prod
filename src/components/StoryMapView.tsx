@@ -7,6 +7,13 @@ import { InlineStoryMapEditor } from './InlineStoryMapEditor';
 import { FeedbackModal } from './FeedbackModal';
 import { PriorityBadge, PrioritySelector, PriorityIcon, type Priority } from './PrioritySelector';
 
+interface SupportingNeedWithAssociation {
+  need: string;
+  priority: Priority;
+  associatedStoryId: string;
+  associatedStoryTitle: string;
+}
+
 interface StoryMapViewProps {
   storyMap: StoryMap;
   onBack: () => void;
@@ -104,9 +111,17 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           supportingNeeds: generateSupportingNeeds(task)
         }));
         
-        // Get unique supporting needs for this activity
-        const allSupportingNeeds = feature.tasks.flatMap(task => generateSupportingNeeds(task));
-        const uniqueSupportingNeeds = allSupportingNeeds.filter((need, index, self) => 
+        // Create supporting needs with their associated user story information
+        const supportingNeedsWithAssociation = feature.tasks.flatMap(task => 
+          generateSupportingNeeds(task).map(need => ({
+            ...need,
+            associatedStoryId: task.id,
+            associatedStoryTitle: task.title
+          }))
+        );
+        
+        // Remove duplicates while preserving association information
+        const uniqueSupportingNeeds = supportingNeedsWithAssociation.filter((need, index, self) => 
           index === self.findIndex(n => n.need === need.need)
         );
         
@@ -807,15 +822,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   const priorityOrder = { high: 3, medium: 2, low: 1 };
                                   return priorityOrder[b.priority] - priorityOrder[a.priority];
                                 }) : activity.supportingNeeds).map((item, needIndex) => {
-                                  // Find the user story that generated this supporting need
-                                  const relatedUserStory = activity.userStories.find(story => 
-                                    generateSupportingNeeds(story).some(need => need.need === item.need)
-                                  );
-                                  
-                                  // Use association color from the related user story, or default to gray
-                                  const associationColor = relatedUserStory 
-                                    ? getAssociationColor(relatedUserStory.id)
-                                    : 'border-l-gray-400';
+                                  // Use the associated story ID to get the correct color
+                                  const associationColor = getAssociationColor(item.associatedStoryId);
 
                                   return (
                                     <div
