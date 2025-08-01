@@ -518,8 +518,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     return <Smartphone className="w-4 h-4" />;
   };
 
-  // Generate association colors for user stories and their supporting needs
-  const getAssociationColor = (taskId: string) => {
+  // Generate association colors based on activity (feature) to ensure consistency
+  const getAssociationColor = (activityIndex: number) => {
     const colors = [
       'border-l-blue-500',
       'border-l-green-500', 
@@ -533,13 +533,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       'border-l-cyan-500'
     ];
     
-    // Use task ID to consistently assign colors
-    const hash = taskId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    
-    return colors[Math.abs(hash) % colors.length];
+    return colors[activityIndex % colors.length];
   };
 
   const mapLayout = transformToMapLayout();
@@ -768,8 +762,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   // Force priority to be a valid value if it's undefined or null
                                   const validPriority = story.priority || 'medium';
                                   
-                                  // Use association color for left border
-                                  const associationColor = getAssociationColor(story.id);
+                                  // Use association color for left border based on activity index
+                                  const associationColor = getAssociationColor(activityIndex);
 
                                   return (
                                     <div
@@ -822,8 +816,13 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   const priorityOrder = { high: 3, medium: 2, low: 1 };
                                   return priorityOrder[b.priority] - priorityOrder[a.priority];
                                 }) : activity.supportingNeeds).map((item, needIndex) => {
-                                  // Use the associated story ID to get the correct color
-                                  const associationColor = getAssociationColor(item.associatedStoryId);
+                                  // Find the activity index for this supporting need's associated story
+                                  const associatedActivityIndex = activity.userStories.findIndex(story => 
+                                    story.id === item.associatedStoryId
+                                  );
+                                  
+                                  // Use association color based on the activity index
+                                  const associationColor = getAssociationColor(associatedActivityIndex >= 0 ? associatedActivityIndex : activityIndex);
 
                                   return (
                                     <div
