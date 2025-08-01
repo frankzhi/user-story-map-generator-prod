@@ -539,7 +539,12 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       return a & a;
     }, 0);
     
-    return colors[Math.abs(hash) % colors.length];
+    const colorIndex = Math.abs(hash) % colors.length;
+    const selectedColor = colors[colorIndex];
+    
+    console.log(`Story ID: ${storyId}, Hash: ${hash}, Color Index: ${colorIndex}, Color: ${selectedColor}`);
+    
+    return selectedColor;
   };
 
   const mapLayout = transformToMapLayout();
