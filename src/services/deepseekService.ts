@@ -287,6 +287,11 @@ Guidelines for modification:
 - If user wants to add new stages/epics, create them with complete features and tasks
 - If user wants to modify existing content, update it based on feedback
 - If user wants to complete missing content (activities, touchpoints, user stories, supporting needs), add them appropriately
+- If user wants to DELETE content:
+  * "删除所有支撑性需求" or "remove all supporting needs" - Remove all tasks from all features
+  * "删除所有活动" or "remove all activities" - Remove all features from all epics
+  * "删除所有阶段" or "remove all phases" - Remove all epics
+  * "删除所有内容" or "remove all content" - Clear the entire story map
 - Maintain the overall structure and quality of the story map
 - Ensure all tasks have proper priority, effort estimates, and acceptance criteria
 - For supporting needs, focus on specific technical requirements that are directly related to the user stories and business functionality

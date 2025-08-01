@@ -1421,9 +1421,33 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
       }
       
       if (feedbackLower.includes('删除') || feedbackLower.includes('remove')) {
-        // 删除一些内容
-        if (baseStoryMap.epics.length > 1) {
-          baseStoryMap.epics.pop();
+        // 智能删除逻辑
+        if (feedbackLower.includes('支撑性需求') || feedbackLower.includes('supporting') || feedbackLower.includes('需求')) {
+          // 删除所有支撑性需求（tasks）
+          baseStoryMap.epics = baseStoryMap.epics.map(epic => ({
+            ...epic,
+            features: epic.features.map(feature => ({
+              ...feature,
+              tasks: [] // 清空所有支撑性需求
+            }))
+          }));
+        } else if (feedbackLower.includes('活动') || feedbackLower.includes('activity') || feedbackLower.includes('feature')) {
+          // 删除所有活动（features）
+          baseStoryMap.epics = baseStoryMap.epics.map(epic => ({
+            ...epic,
+            features: [] // 清空所有活动
+          }));
+        } else if (feedbackLower.includes('阶段') || feedbackLower.includes('phase') || feedbackLower.includes('epic')) {
+          // 删除所有阶段
+          baseStoryMap.epics = [];
+        } else if (feedbackLower.includes('所有') || feedbackLower.includes('all')) {
+          // 删除所有内容
+          baseStoryMap.epics = [];
+        } else {
+          // 默认删除最后一个阶段
+          if (baseStoryMap.epics.length > 1) {
+            baseStoryMap.epics.pop();
+          }
         }
       }
     } else {
