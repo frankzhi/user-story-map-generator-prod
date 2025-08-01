@@ -5,7 +5,7 @@ import type { StoryMap, UserStory, Task } from '../types/story';
 import EnhancedStoryDetail from './EnhancedStoryDetail';
 import { InlineStoryMapEditor } from './InlineStoryMapEditor';
 import { FeedbackModal } from './FeedbackModal';
-import { PriorityBadge, PrioritySelector, type Priority } from './PrioritySelector';
+import { PriorityBadge, PrioritySelector, PriorityIcon, type Priority } from './PrioritySelector';
 
 interface StoryMapViewProps {
   storyMap: StoryMap;
@@ -503,6 +503,30 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     return <Smartphone className="w-4 h-4" />;
   };
 
+  // Generate association colors for user stories and their supporting needs
+  const getAssociationColor = (taskId: string) => {
+    const colors = [
+      'border-l-blue-500',
+      'border-l-green-500', 
+      'border-l-purple-500',
+      'border-l-orange-500',
+      'border-l-pink-500',
+      'border-l-indigo-500',
+      'border-l-teal-500',
+      'border-l-red-500',
+      'border-l-yellow-500',
+      'border-l-cyan-500'
+    ];
+    
+    // Use task ID to consistently assign colors
+    const hash = taskId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    return colors[Math.abs(hash) % colors.length];
+  };
+
   const mapLayout = transformToMapLayout();
 
   const sortByPriorityOrder = (a: UserStory, b: UserStory) => {
@@ -726,32 +750,17 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                 style={{ width: `${activityWidth}px` }}
                               >
                                 {(sortByPriority ? activity.userStories.sort(sortByPriorityOrder) : activity.userStories).map((story, storyIndex) => {
-                                  // Debug: Log story priority for troubleshooting
-                                  console.log(`Story: ${story.title}, Priority: ${story.priority}, Type: ${typeof story.priority}`);
-                                  
                                   // Force priority to be a valid value if it's undefined or null
                                   const validPriority = story.priority || 'medium';
-                                  console.log(`Valid Priority: ${validPriority}`);
                                   
-                                  const getPriorityBorderColor = (priority: Priority) => {
-                                    switch (priority) {
-                                      case 'high':
-                                        return 'border-l-4 border-l-red-500 border-r border-t border-b border-gray-200';
-                                      case 'medium':
-                                        return 'border-l-4 border-l-yellow-500 border-r border-t border-b border-gray-200';
-                                      case 'low':
-                                        return 'border-l-4 border-l-blue-500 border-r border-t border-b border-gray-200';
-                                      default:
-                                        return 'border border-gray-200';
-                                    }
-                                  };
+                                  // Use association color for left border
+                                  const associationColor = getAssociationColor(story.id);
 
                                   return (
                                     <div
                                       key={storyIndex}
-                                      className={`story-card cursor-pointer bg-white ${getPriorityBorderColor(validPriority)} rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1`}
+                                      className={`story-card cursor-pointer bg-white border-l-4 ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1 relative`}
                                       onClick={() => handleStoryClick(story)}
-                                      style={{ borderLeftWidth: '4px', borderLeftColor: validPriority === 'high' ? '#ef4444' : validPriority === 'medium' ? '#eab308' : validPriority === 'low' ? '#3b82f6' : '#e5e7eb' }}
                                     >
                                       <div className="flex items-start justify-between mb-1">
                                         <User className="w-4 h-4 text-gray-500" />
@@ -760,6 +769,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                       <p className="text-sm text-gray-700 leading-relaxed">
                                         {story.description}
                                       </p>
+                                      {/* Priority icon in bottom-right corner */}
+                                      <div className="absolute bottom-1 right-1">
+                                        <PriorityIcon priority={validPriority} />
+                                      </div>
                                     </div>
                                   );
                                 })}
@@ -794,23 +807,20 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   const priorityOrder = { high: 3, medium: 2, low: 1 };
                                   return priorityOrder[b.priority] - priorityOrder[a.priority];
                                 }) : activity.supportingNeeds).map((item, needIndex) => {
-                                  const getPriorityBorderColor = (priority: Priority) => {
-                                    switch (priority) {
-                                      case 'high':
-                                        return 'border-l-4 border-l-red-500 border-r border-t border-b border-gray-200';
-                                      case 'medium':
-                                        return 'border-l-4 border-l-yellow-500 border-r border-t border-b border-gray-200';
-                                      case 'low':
-                                        return 'border-l-4 border-l-blue-500 border-r border-t border-b border-gray-200';
-                                      default:
-                                        return 'border border-gray-200';
-                                    }
-                                  };
+                                  // Find the user story that generated this supporting need
+                                  const relatedUserStory = activity.userStories.find(story => 
+                                    generateSupportingNeeds(story).some(need => need.need === item.need)
+                                  );
+                                  
+                                  // Use association color from the related user story, or default to gray
+                                  const associationColor = relatedUserStory 
+                                    ? getAssociationColor(relatedUserStory.id)
+                                    : 'border-l-gray-400';
 
                                   return (
                                     <div
                                       key={needIndex}
-                                      className={`bg-white ${getPriorityBorderColor(item.priority)} rounded-md p-2 shadow-sm flex-shrink-0 mx-1`}
+                                      className={`bg-white border-l-4 ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative`}
                                     >
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
@@ -818,6 +828,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                         </span>
                                       </div>
                                       <p className="text-xs text-gray-700">{item.need}</p>
+                                      {/* Priority icon in bottom-right corner */}
+                                      <div className="absolute bottom-1 right-1">
+                                        <PriorityIcon priority={item.priority} />
+                                      </div>
                                     </div>
                                   );
                                 })}
