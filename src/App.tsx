@@ -9,6 +9,8 @@ const StoryMapViewWithRouting = ({ storyMap }: { storyMap: StoryMap }) => {
   const navigate = useNavigate();
   
   const handleBackToHome = () => {
+    // Clear the story map from localStorage when going back to home
+    localStorage.removeItem('currentStoryMap');
     navigate('/');
   };
 
@@ -20,11 +22,26 @@ const StoryMapViewWithRouting = ({ storyMap }: { storyMap: StoryMap }) => {
   );
 };
 
-// Main App component with routing
-function AppContent() {
+// Home page component with story map generation
+const HomePageWithRouting = () => {
+  const navigate = useNavigate();
+  const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap | null>(null);
+
+  const handleStoryMapGenerated = (storyMap: StoryMap) => {
+    setCurrentStoryMap(storyMap);
+    localStorage.setItem('currentStoryMap', JSON.stringify(storyMap));
+    navigate('/story-map');
+  };
+
+  return (
+    <HomePage onStoryMapGenerated={handleStoryMapGenerated} />
+  );
+};
+
+// Story map page component
+const StoryMapPage = () => {
   const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const location = useLocation();
   const navigate = useNavigate();
 
   // Load story map from localStorage on component mount
@@ -37,28 +54,13 @@ function AppContent() {
       } catch (e) {
         console.error('Failed to parse saved story map:', e);
         localStorage.removeItem('currentStoryMap');
+        setError('Failed to load story map');
       }
-    }
-  }, []);
-
-  // Save story map to localStorage whenever it changes
-  useEffect(() => {
-    if (currentStoryMap) {
-      localStorage.setItem('currentStoryMap', JSON.stringify(currentStoryMap));
     } else {
-      localStorage.removeItem('currentStoryMap');
+      // If no story map in localStorage, redirect to home
+      navigate('/');
     }
-  }, [currentStoryMap]);
-
-  const handleStoryMapGenerated = (storyMap: StoryMap) => {
-    setCurrentStoryMap(storyMap);
-    navigate('/story-map');
-  };
-
-  const handleBackToHome = () => {
-    setCurrentStoryMap(null);
-    navigate('/');
-  };
+  }, [navigate]);
 
   // Simple error boundary
   if (error) {
@@ -68,31 +70,39 @@ function AppContent() {
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
           <p className="text-gray-700 mb-4">{error}</p>
           <button 
-            onClick={() => setError(null)}
+            onClick={() => navigate('/')}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            Try Again
+            Go to Home
           </button>
         </div>
       </div>
     );
   }
 
+  if (!currentStoryMap) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md">
+          <h1 className="text-2xl font-bold text-gray-600 mb-4">Loading...</h1>
+          <p className="text-gray-700">Loading story map...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="App">
-      {currentStoryMap ? (
-        <StoryMapViewWithRouting storyMap={currentStoryMap} />
-      ) : (
-        <HomePage onStoryMapGenerated={handleStoryMapGenerated} />
-      )}
-    </div>
+    <StoryMapViewWithRouting storyMap={currentStoryMap} />
   );
-}
+};
 
 function App() {
   return (
     <Router>
-      <AppContent />
+      <Routes>
+        <Route path="/" element={<HomePageWithRouting />} />
+        <Route path="/story-map" element={<StoryMapPage />} />
+      </Routes>
     </Router>
   );
 }
