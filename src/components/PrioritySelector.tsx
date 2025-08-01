@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, Circle } from 'lucide-react';
+import { ChevronDown, Circle, ArrowUp, Minus, ArrowDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export type Priority = 'high' | 'medium' | 'low';
@@ -90,10 +90,18 @@ export const PriorityIcon: React.FC<{ priority: Priority; className?: string }> 
     }
   };
 
-  return (
-    <Circle 
-      className={`w-3 h-3 ${getPriorityColor(priority)} ${className}`} 
-      fill="currentColor"
-    />
-  );
+  const getPriorityIcon = (priority: Priority) => {
+    switch (priority) {
+      case 'high':
+        return <ArrowUp className={`w-3 h-3 ${getPriorityColor(priority)} ${className}`} />;
+      case 'medium':
+        return <Minus className={`w-3 h-3 ${getPriorityColor(priority)} ${className}`} />;
+      case 'low':
+        return <ArrowDown className={`w-3 h-3 ${getPriorityColor(priority)} ${className}`} />;
+      default:
+        return <Circle className={`w-3 h-3 ${getPriorityColor(priority)} ${className}`} fill="currentColor" />;
+    }
+  };
+
+  return getPriorityIcon(priority);
 }; 
