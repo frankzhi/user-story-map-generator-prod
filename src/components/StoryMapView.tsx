@@ -533,11 +533,18 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       'border-l-4 border-l-cyan-600'
     ];
     
-    // Use story ID to consistently assign colors
-    const hash = storyId.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
+    // Use improved hash function for better color distribution
+    let hash = 0;
+    for (let i = 0; i < storyId.length; i++) {
+      const char = storyId.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    
+    // Add additional entropy based on string length and position
+    hash = hash ^ storyId.length;
+    hash = hash ^ (storyId.charCodeAt(0) || 0);
+    hash = hash ^ (storyId.charCodeAt(storyId.length - 1) || 0);
     
     const colorIndex = Math.abs(hash) % colors.length;
     const selectedColor = colors[colorIndex];
@@ -550,16 +557,16 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   // Get inline style for border color to ensure it's applied
   const getBorderStyle = (storyId: string) => {
     const colors = [
-      '#1e40af', // blue-800 - 深蓝色
-      '#15803d', // green-700 - 深绿色
-      '#7c3aed', // violet-600 - 紫色
-      '#dc2626', // red-600 - 红色
-      '#ea580c', // orange-600 - 橙色
-      '#0891b2', // cyan-600 - 青色
-      '#059669', // emerald-600 - 翠绿色
-      '#7c2d12', // orange-800 - 深橙色
-      '#1f2937', // gray-800 - 深灰色
-      '#be185d'  // pink-600 - 粉色
+      '#dc2626', // red-600 - 红色 (高对比度)
+      '#2563eb', // blue-600 - 蓝色 (高对比度)
+      '#7c3aed', // violet-600 - 紫色 (中等对比度)
+      '#ea580c', // orange-600 - 橙色 (高对比度)
+      '#059669', // emerald-600 - 翠绿色 (中等对比度)
+      '#0891b2', // cyan-600 - 青色 (中等对比度)
+      '#be185d', // pink-600 - 粉色 (高对比度)
+      '#16a34a', // green-600 - 绿色 (中等对比度)
+      '#ca8a04', // yellow-600 - 黄色 (高对比度)
+      '#9333ea'  // purple-600 - 深紫色 (中等对比度)
     ];
     
     const hash = storyId.split('').reduce((a, b) => {
