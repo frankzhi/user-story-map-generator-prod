@@ -27,7 +27,10 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
   const [showFeedback, setShowFeedback] = useState(false);
   const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(storyMap);
   const [sortByPriority, setSortByPriority] = useState(true);
-  const [showSupportingNeeds, setShowSupportingNeeds] = useState(true);
+  const [showSupportingNeeds, setShowSupportingNeeds] = useState(() => {
+    const saved = localStorage.getItem('showSupportingNeeds');
+    return saved ? JSON.parse(saved) : true;
+  });
 
   const handleStoryClick = (story: UserStory) => {
     setSelectedStory(story);
@@ -112,20 +115,17 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           supportingNeeds: generateSupportingNeeds(task)
         }));
         
-        // Create supporting needs with their associated user story information
+        // Create supporting needs from AI-generated tasks
         const supportingNeedsWithAssociation = showSupportingNeeds ? 
-          feature.tasks.flatMap(task => 
-            generateSupportingNeeds(task).map(need => ({
-              ...need,
-              associatedStoryId: task.id,
-              associatedStoryTitle: task.title
-            }))
-          ) : [];
+          feature.tasks.map(task => ({
+            need: task.title,
+            priority: task.priority || 'medium',
+            associatedStoryId: task.id,
+            associatedStoryTitle: task.title
+          })) : [];
         
-        // Remove duplicates while preserving association information
-        const uniqueSupportingNeeds = supportingNeedsWithAssociation.filter((need, index, self) => 
-          index === self.findIndex(n => n.need === need.need)
-        );
+        // No need to remove duplicates since these are AI-generated
+        const uniqueSupportingNeeds = supportingNeedsWithAssociation;
         
         return {
           title: feature.title,
@@ -621,10 +621,14 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     if (hasNoTasks) {
       // 如果所有tasks都被清空，说明是删除支撑性需求的指令
       setShowSupportingNeeds(false);
+      localStorage.setItem('showSupportingNeeds', 'false');
     } else {
       // 否则正常更新故事地图
       setCurrentStoryMap(updatedStoryMap);
       localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+      // 如果有tasks，说明支撑性需求应该显示
+      setShowSupportingNeeds(true);
+      localStorage.setItem('showSupportingNeeds', 'true');
     }
     
     setShowFeedback(false);

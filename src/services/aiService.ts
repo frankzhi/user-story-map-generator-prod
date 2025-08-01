@@ -511,6 +511,39 @@ export class AIService {
                     "Given 显示已充电量和剩余时间，When 充电中，Then 应显示准确信息",
                     "Given 支持点击查看详情，When 用户点击进度，Then 应显示详细充电信息"
                   ]
+                },
+                {
+                  title: "实现BLE设备发现和配对协议",
+                  description: "支持蓝牙设备自动发现和配对",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 自动扫描附近BLE设备，When 用户配对，Then 应显示可用设备",
+                    "Given 支持设备配对和认证，When 配对成功，Then 应保存配对信息",
+                    "Given 配对状态持久化存储，When 重新连接，Then 应自动识别设备"
+                  ]
+                },
+                {
+                  title: "建立Wi-Fi设备连接状态管理",
+                  description: "管理Wi-Fi连接状态和网络切换",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 实时监控Wi-Fi连接状态，When 网络变化，Then 应自动切换",
+                    "Given 支持网络切换和重连，When 连接断开，Then 应自动重连",
+                    "Given 连接质量评估和优化，When 信号弱，Then 应提示用户"
+                  ]
+                },
+                {
+                  title: "开发设备固件版本检测和升级机制",
+                  description: "自动检测和升级设备固件",
+                  priority: "medium",
+                  effort: "5 days",
+                  acceptance_criteria: [
+                    "Given 自动检测固件版本，When 有新版本，Then 应提示升级",
+                    "Given 支持OTA升级，When 用户确认，Then 应安全升级",
+                    "Given 升级过程安全验证，When 升级完成，Then 应验证版本"
+                  ]
                 }
               ]
             },
@@ -538,6 +571,39 @@ export class AIService {
                     "Given 支持APP内通知和手机推送，When 异常发生，Then 应同时发送两种通知",
                     "Given 通知包含异常类型和解决建议，When 用户收到通知，Then 应看到详细信息",
                     "Given 用户可设置通知静音时段，When 在静音时段，Then 应不发送通知"
+                  ]
+                },
+                {
+                  title: "实现设备故障自诊断系统",
+                  description: "自动诊断设备故障原因",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Given 故障代码自动识别，When 故障发生，Then 应准确识别故障类型",
+                    "Given 故障原因分析报告，When 用户查看，Then 应看到详细分析",
+                    "Given 维修建议和解决方案，When 故障发生，Then 应提供解决建议"
+                  ]
+                },
+                {
+                  title: "建立故障代码分类和处理机制",
+                  description: "系统化处理各类故障",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 故障代码标准化分类，When 故障发生，Then 应正确分类",
+                    "Given 处理流程自动化，When 故障发生，Then 应自动启动处理流程",
+                    "Given 故障处理记录追踪，When 处理完成，Then 应保存处理记录"
+                  ]
+                },
+                {
+                  title: "开发远程故障诊断和修复功能",
+                  description: "支持远程诊断和修复",
+                  priority: "medium",
+                  effort: "5 days",
+                  acceptance_criteria: [
+                    "Given 远程连接设备，When 需要诊断，Then 应能安全连接",
+                    "Given 远程诊断故障，When 连接成功，Then 应能准确诊断",
+                    "Given 远程修复简单问题，When 问题简单，Then 应能自动修复"
                   ]
                 }
               ]
@@ -1222,20 +1288,49 @@ ${storyMapContext.epics?.map((epic: any, index: number) =>
       return this.generateChargingPileStoryMap();
     }
 
-    // 保持现有的故事地图结构，但清空所有tasks（支撑性需求）
-    return {
-      title: currentStoryMap.title,
-      description: currentStoryMap.description,
-      epics: currentStoryMap.epics.map(epic => ({
-        title: epic.title,
-        description: epic.description,
-        features: epic.features.map(feature => ({
-          title: feature.title,
-          description: feature.description,
-          tasks: [] // 清空所有支撑性需求
+    const feedbackLower = feedbackPrompt?.toLowerCase() || '';
+    
+    // 检查是否是限制数量的指令
+    const limitMatch = feedbackLower.match(/最多保留(\d+)个支撑性需求/);
+    const maxCount = limitMatch ? parseInt(limitMatch[1]) : 0;
+    
+    if (maxCount > 0) {
+      // 限制每个活动的支撑性需求数量
+      return {
+        title: currentStoryMap.title,
+        description: currentStoryMap.description,
+        epics: currentStoryMap.epics.map(epic => ({
+          title: epic.title,
+          description: epic.description,
+          features: epic.features.map(feature => ({
+            title: feature.title,
+            description: feature.description,
+            tasks: feature.tasks.slice(0, maxCount).map(task => ({
+              title: task.title,
+              description: task.description,
+              priority: task.priority || 'medium',
+              effort: task.estimatedEffort || '3 days',
+              acceptance_criteria: task.acceptanceCriteria || ['Given 用户需求，When 功能实现，Then 应满足用户期望']
+            }))
+          }))
         }))
-      }))
-    };
+      };
+    } else {
+      // 完全删除所有支撑性需求
+      return {
+        title: currentStoryMap.title,
+        description: currentStoryMap.description,
+        epics: currentStoryMap.epics.map(epic => ({
+          title: epic.title,
+          description: epic.description,
+          features: epic.features.map(feature => ({
+            title: feature.title,
+            description: feature.description,
+            tasks: [] // 清空所有支撑性需求
+          }))
+        }))
+      };
+    }
   }
 
   private generateModifiedStoryMapFromFeedback(feedbackPrompt: string, currentStoryMap?: StoryMap): StoryMapYAML {
