@@ -550,16 +550,16 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   // Get inline style for border color to ensure it's applied
   const getBorderStyle = (storyId: string) => {
     const colors = [
-      '#2563eb', // blue-600
-      '#16a34a', // green-600
-      '#9333ea', // purple-600
-      '#ea580c', // orange-600
-      '#db2777', // pink-600
-      '#4f46e5', // indigo-600
-      '#0d9488', // teal-600
-      '#dc2626', // red-600
-      '#ca8a04', // yellow-600
-      '#0891b2'  // cyan-600
+      '#1e40af', // blue-800 - 深蓝色
+      '#15803d', // green-700 - 深绿色
+      '#7c3aed', // violet-600 - 紫色
+      '#dc2626', // red-600 - 红色
+      '#ea580c', // orange-600 - 橙色
+      '#0891b2', // cyan-600 - 青色
+      '#059669', // emerald-600 - 翠绿色
+      '#7c2d12', // orange-800 - 深橙色
+      '#1f2937', // gray-800 - 深灰色
+      '#be185d'  // pink-600 - 粉色
     ];
     
     const hash = storyId.split('').reduce((a, b) => {
