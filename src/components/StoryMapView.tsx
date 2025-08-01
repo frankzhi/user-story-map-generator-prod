@@ -521,16 +521,16 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   // Generate association colors based on user story ID to ensure each story has a unique color
   const getAssociationColor = (storyId: string) => {
     const colors = [
-      'border-l-blue-500',
-      'border-l-green-500', 
-      'border-l-purple-500',
-      'border-l-orange-500',
-      'border-l-pink-500',
-      'border-l-indigo-500',
-      'border-l-teal-500',
-      'border-l-red-500',
-      'border-l-yellow-500',
-      'border-l-cyan-500'
+      'border-l-4 border-l-blue-600',
+      'border-l-4 border-l-green-600', 
+      'border-l-4 border-l-purple-600',
+      'border-l-4 border-l-orange-600',
+      'border-l-4 border-l-pink-600',
+      'border-l-4 border-l-indigo-600',
+      'border-l-4 border-l-teal-600',
+      'border-l-4 border-l-red-600',
+      'border-l-4 border-l-yellow-600',
+      'border-l-4 border-l-cyan-600'
     ];
     
     // Use story ID to consistently assign colors
@@ -779,7 +779,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   return (
                                     <div
                                       key={storyIndex}
-                                      className={`story-card cursor-pointer bg-white border-l-4 ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1 relative`}
+                                      className={`story-card cursor-pointer bg-white ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1 relative`}
                                       onClick={() => handleStoryClick(story)}
                                     >
                                       <div className="flex items-start justify-between mb-1">
@@ -833,7 +833,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   return (
                                     <div
                                       key={needIndex}
-                                      className={`bg-white border-l-4 ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative`}
+                                      className={`bg-white ${associationColor} border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative`}
                                     >
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
