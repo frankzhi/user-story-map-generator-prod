@@ -130,16 +130,20 @@ Return ONLY a valid JSON object with the following structure:
 Guidelines:
 - Create 3-5 epics that cover the main functional areas
 - Each epic should have 2-4 features
-- Each feature should have 3-6 tasks
+- Each feature should have 3-6 tasks (MANDATORY: Generate at least 3 tasks per feature)
 - Tasks should be specific, actionable, and testable
 - Priority should be based on business value and user impact
 - Effort should be realistic (1-5 days per task)
 - Acceptance criteria should be clear and measurable
 - Focus on user value and business outcomes
-
+- IMPORTANT: Break down each feature into multiple specific tasks to ensure comprehensive coverage
+- Each task should represent a distinct user action or system behavior
+- Avoid generic tasks - be specific about what users want to accomplish
+- Think about different user scenarios, edge cases, and user journeys
+- Consider different user roles, personas, and use cases for each feature
 ${languageContext}`;
 
-    const userPrompt = `Generate a user story map for this product: ${productDescription}`;
+    const userPrompt = `Generate a user story map for this product: ${productDescription}. IMPORTANT: For each feature, break it down into at least 3-4 specific user tasks. Think about different user actions, scenarios, and use cases. Ensure comprehensive task coverage for each feature.`;
 
     const messages: DeepSeekMessage[] = [
       { role: 'system', content: systemPrompt },
@@ -156,8 +160,8 @@ ${languageContext}`;
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.3,
-          max_tokens: 4000
+          temperature: 0.7,
+          max_tokens: 6000
         })
       });
 
@@ -279,8 +283,8 @@ ${languageContext}`;
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.3,
-          max_tokens: 4000
+          temperature: 0.7,
+          max_tokens: 6000
         })
       });
 
@@ -406,8 +410,8 @@ Please modify the story map based on the user feedback and return the complete u
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: messages,
-          temperature: 0.3,
-          max_tokens: 4000
+          temperature: 0.7,
+          max_tokens: 6000
         })
       });
 
