@@ -78,17 +78,17 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `b64bf67`
-- **提交信息**: "Fix syntax error in supporting requirements display logic"
+- **Commit**: `3b24f22`
+- **提交信息**: "Add missing task details and supporting requirement click functionality"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 08:52:29 UTC
-- **生产环境 URL**: https://user-story-map-prod-6cm9a521x-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 09:09:09 UTC
+- **生产环境 URL**: https://user-story-map-prod-m3ebs0jqn-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **测试修复后的支撑性需求显示** - 验证前端是否正确显示技术性支撑性需求而不是任务标题
-2. **验证 AI 生成质量** - 确认 AI 生成的支撑性需求是否符合技术依赖要求
-3. **前端显示优化** - 在界面上展示技术规格信息
-4. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
+1. **测试新增的任务详情显示** - 验证任务状态和验收标准是否正确显示
+2. **测试支撑性需求点击功能** - 验证支撑性需求卡片是否可以点击查看详情
+3. **验证版本号移除效果** - 确认支撑性需求卡片不再显示版本号
+4. **前端显示优化** - 在界面上展示技术规格信息
 5. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
 
 ## 核心问题与需求
