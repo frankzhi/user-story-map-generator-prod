@@ -169,6 +169,9 @@ ${languageContext}`;
       const data: DeepSeekResponse = await response.json();
       const content = data.choices[0]?.message?.content;
 
+      // 🔍 DEBUG: 添加调试日志
+      console.log('🔍 AI 原始响应:', content);
+
       if (!content) {
         throw new Error('No response content from DeepSeek API');
       }
@@ -180,6 +183,27 @@ ${languageContext}`;
       }
 
       const storyMap = JSON.parse(jsonMatch[0]);
+
+      // 🔍 DEBUG: 添加调试日志
+      console.log('🔍 解析后的 JSON:', JSON.stringify(storyMap, null, 2));
+
+      // 🔍 DEBUG: 检查支撑性需求
+      if (storyMap.epics) {
+        storyMap.epics.forEach((epic: any, epicIndex: number) => {
+          if (epic.features) {
+            epic.features.forEach((feature: any, featureIndex: number) => {
+              if (feature.tasks) {
+                feature.tasks.forEach((task: any, taskIndex: number) => {
+                  if (task.supporting_requirements) {
+                    console.log(`🔍 Epic ${epicIndex}, Feature ${featureIndex}, Task ${taskIndex} 的支撑性需求:`, task.supporting_requirements);
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+
       return this.validateAndTransformResponse(storyMap);
 
     } catch (error) {
