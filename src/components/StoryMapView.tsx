@@ -324,6 +324,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
 
   // 从 AI 生成的故事地图数据中获取支撑性需求
   const generateSupportingNeeds = (task: UserStory) => {
+    // 🔍 DEBUG: 添加调试日志
+    console.log(`🔍 生成支撑性需求 - 任务: "${task.title}"`);
+    console.log(`🔍 任务的支撑性需求数据:`, task.supportingRequirements);
+    
     // 如果任务有支撑性需求，直接返回
     if (task.supportingRequirements && task.supportingRequirements.length > 0) {
       return task.supportingRequirements.map(requirement => {
@@ -343,6 +347,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           }
         }
         
+        // 🔍 DEBUG: 添加调试日志
+        console.log(`🔍 支撑性需求: "${requirement.title}" -> 显示文本: "${needText}"`);
+        
         return {
           need: needText,
           priority: requirement.priority as Priority,
@@ -352,6 +359,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     }
     
     // 如果没有支撑性需求，返回空数组
+    console.log(`🔍 任务 "${task.title}" 没有支撑性需求`);
     return [];
   };
 

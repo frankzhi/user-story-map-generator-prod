@@ -206,24 +206,32 @@ export class AIService {
           title: feature.title,
           description: feature.description,
           order: featureIndex,
-          tasks: feature.tasks.map(task => ({
-            id: this.generateId(),
-            title: task.title,
-            description: task.description,
-            type: 'task' as const,
-            priority: task.priority as 'high' | 'medium' | 'low',
-            status: 'todo' as const,
-            acceptanceCriteria: task.acceptance_criteria,
-            estimatedEffort: task.effort,
-            supportingRequirements: task.supporting_requirements || [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }))
+          tasks: feature.tasks.map(task => {
+            // 🔍 DEBUG: 添加调试日志
+            console.log(`🔍 任务 "${task.title}" 的支撑性需求:`, task.supporting_requirements);
+            
+            return {
+              id: this.generateId(),
+              title: task.title,
+              description: task.description,
+              type: 'task' as const,
+              priority: task.priority as 'high' | 'medium' | 'low',
+              status: 'todo' as const,
+              acceptanceCriteria: task.acceptance_criteria,
+              estimatedEffort: task.effort,
+              supportingRequirements: task.supporting_requirements || [],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+          })
         }))
       })),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
+
+    // 🔍 DEBUG: 添加调试日志
+    console.log('🔍 转换后的 StoryMap:', JSON.stringify(storyMap, null, 2));
 
     return storyMap;
   }
