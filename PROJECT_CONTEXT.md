@@ -78,11 +78,20 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `9dfe698`
-- **提交信息**: "Optimize AI parameters and prompts to generate more comprehensive user stories"
+- **Commit**: `9e205af`
+- **提交信息**: "Enhance supporting requirements generation: add mandatory requirements and debug logging"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 09:40:08 UTC
-- **生产环境 URL**: https://user-story-map-prod-5e29uhbac-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 09:52:46 UTC
+- **生产环境 URL**: https://user-story-map-prod-r6vnjqw4q-freedomztm-7943s-projects.vercel.app
+
+### 支撑性需求优化
+1. **强制要求**：每个任务必须至少有1-2个支撑性需求
+2. **技术覆盖**：支撑性需求应该覆盖每个任务的主要技术依赖
+3. **调试日志**：添加了详细的任务数据日志，便于排查问题
+4. **提示词强化**：
+   - 明确要求每个任务都需要技术基础设施
+   - 强调考虑API、数据库、SDK等技术依赖
+   - 要求为每个用户故事生成相应的技术组件
 
 ### AI参数优化
 1. **Temperature调整**：从0.3增加到0.7，提高AI创造性
@@ -99,9 +108,10 @@ git push origin main
 3. ✅ **操作栏固定** - 对话框头部现在固定在顶部，不会在滚动时消失
 4. ✅ **支撑性需求卡片优化** - 移除了描述文本，只显示标题和类型信息
 5. ✅ **AI生成任务数量优化** - 调整参数和提示词，确保生成更多任务
+6. ✅ **支撑性需求覆盖优化** - 强制要求每个任务都有支撑性需求
 
 ### 待解决的问题
-1. **测试AI优化效果** - 验证新的参数设置是否能生成更多任务
+1. **测试支撑性需求生成效果** - 验证新的强制要求是否能确保每个任务都有支撑性需求
 2. **验证任务质量** - 确认生成的任务是否更加具体和全面
 3. **监控生成稳定性** - 确保AI生成的内容质量稳定
 4. **前端显示优化** - 在界面上展示技术规格信息
