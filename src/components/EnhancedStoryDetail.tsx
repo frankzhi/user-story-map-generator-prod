@@ -214,17 +214,87 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
             <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
             <p className="text-gray-600 mb-3">{task.description}</p>
             
-            {/* Priority Section */}
+            {/* Status and Priority Section */}
             <div className="flex items-center space-x-4 mb-4">
-              <span className="text-sm font-medium text-gray-700">优先级:</span>
-              <PrioritySelector
-                priority={task.priority}
-                onPriorityChange={(newPriority) => {
-                  const updatedTask = { ...task, priority: newPriority };
-                  onUpdate(updatedTask);
-                }}
-              />
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-medium text-gray-700">状态:</span>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  task.status === 'done' ? 'bg-green-100 text-green-800' :
+                  task.status === 'in-progress' ? 'bg-orange-100 text-orange-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {task.status === 'done' ? '已完成' : 
+                   task.status === 'in-progress' ? '进行中' : '待开始'}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-medium text-gray-700">优先级:</span>
+                <PrioritySelector
+                  priority={task.priority}
+                  onPriorityChange={(newPriority) => {
+                    const updatedTask = { ...task, priority: newPriority };
+                    onUpdate(updatedTask);
+                  }}
+                />
+              </div>
             </div>
+
+            {/* Original Acceptance Criteria */}
+            {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && (
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2 text-gray-800">验收标准</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {task.acceptanceCriteria.map((criteria, index) => (
+                    <li key={index} className="text-sm text-gray-700">{criteria}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Supporting Requirements */}
+            {task.supportingRequirements && task.supportingRequirements.length > 0 && (
+              <div className="mb-4">
+                <h4 className="font-semibold mb-2 text-gray-800">支撑性需求</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {task.supportingRequirements.map((req, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 p-3 rounded-md border border-gray-200 hover:border-blue-300 cursor-pointer transition-colors"
+                      onClick={() => {
+                        // TODO: 实现支撑性需求详情弹窗
+                        console.log('Supporting requirement clicked:', req);
+                      }}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-800">{req.title}</span>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          req.priority === 'high' ? 'bg-red-100 text-red-800' :
+                          req.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {req.priority === 'high' ? '高' : 
+                           req.priority === 'medium' ? '中' : '低'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 mb-2">{req.description}</p>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                          {req.type === 'software_dependency' ? '软件依赖' :
+                           req.type === 'service_integration' ? '服务集成' :
+                           req.type === 'security_compliance' ? '安全合规' : '性能需求'}
+                        </span>
+                        {req.technical_specs && (
+                          <span className="text-xs text-gray-500">
+                            {req.technical_specs.sdk_name && `${req.technical_specs.sdk_name}`}
+                            {req.technical_specs.integration_type && ` • ${req.technical_specs.integration_type}`}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Enhanced Data */}

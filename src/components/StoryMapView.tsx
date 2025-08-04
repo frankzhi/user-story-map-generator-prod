@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Download, Eye, User, CheckCircle, Clock, Info, MapPin, Smartphone, CreditCard, Car, MessageSquare, Edit } from 'lucide-react';
+import { ArrowLeft, Download, Eye, User, CheckCircle, Clock, Info, MapPin, Smartphone, CreditCard, Car, MessageSquare, Edit, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { StoryMap, UserStory, Task } from '../types/story';
 import EnhancedStoryDetail from './EnhancedStoryDetail';
@@ -21,16 +21,15 @@ interface StoryMapViewProps {
 
 export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) => {
   const { t } = useTranslation();
-  const [selectedStory, setSelectedStory] = useState<UserStory | null>(null);
+  const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(storyMap);
   const [showModal, setShowModal] = useState(false);
+  const [selectedStory, setSelectedStory] = useState<UserStory | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(storyMap);
-  const [sortByPriority, setSortByPriority] = useState(true);
-  const [showSupportingNeeds, setShowSupportingNeeds] = useState(() => {
-    const saved = localStorage.getItem('showSupportingNeeds');
-    return saved ? JSON.parse(saved) : true;
-  });
+  const [sortByPriority, setSortByPriority] = useState(false);
+  const [showSupportingNeeds, setShowSupportingNeeds] = useState(true);
+  const [selectedSupportingRequirement, setSelectedSupportingRequirement] = useState<any>(null);
+  const [showSupportingRequirementModal, setShowSupportingRequirementModal] = useState(false);
 
   const handleStoryClick = (story: UserStory) => {
     setSelectedStory(story);
@@ -40,6 +39,16 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
   const closeModal = () => {
     setShowModal(false);
     setSelectedStory(null);
+  };
+
+  const handleSupportingRequirementClick = (requirement: any) => {
+    setSelectedSupportingRequirement(requirement);
+    setShowSupportingRequirementModal(true);
+  };
+
+  const closeSupportingRequirementModal = () => {
+    setShowSupportingRequirementModal(false);
+    setSelectedSupportingRequirement(null);
   };
 
   const downloadYAML = () => {
@@ -334,12 +343,12 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       return task.supportingRequirements.map(requirement => {
         let needText = requirement.title;
         
-        // 如果有技术规格信息，添加到显示文本中
+        // 如果有技术规格信息，添加到显示文本中（移除版本号）
         if (requirement.technical_specs) {
           const specs = requirement.technical_specs;
           const specParts = [];
           
-          if (specs.version) specParts.push(`v${specs.version}`);
+          // 只显示 SDK 名称和集成类型，不显示版本号
           if (specs.sdk_name) specParts.push(specs.sdk_name);
           if (specs.integration_type) specParts.push(specs.integration_type);
           
@@ -749,8 +758,24 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   return (
                                     <div
                                       key={needIndex}
-                                      className="bg-white border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative"
+                                      className="bg-white border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative cursor-pointer hover:shadow-md transition-shadow"
                                       style={getBorderStyle(item.associatedStoryId)}
+                                      onClick={() => {
+                                        // 找到对应的任务和支撑性需求
+                                        const task = currentStoryMap.epics
+                                          .flatMap(epic => epic.features)
+                                          .flatMap(feature => feature.tasks)
+                                          .find(task => task.id === item.associatedStoryId);
+                                        
+                                        if (task && task.supportingRequirements) {
+                                          const supportingReq = task.supportingRequirements.find(req => 
+                                            req.title === item.need.split(' (')[0] // 移除技术规格信息
+                                          );
+                                          if (supportingReq) {
+                                            handleSupportingRequirementClick(supportingReq);
+                                          }
+                                        }
+                                      }}
                                     >
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
@@ -837,6 +862,105 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           onClose={() => setShowFeedback(false)}
           onUpdate={handleFeedbackUpdate}
         />
+      )}
+
+      {/* Supporting Requirement Detail Modal */}
+      {showSupportingRequirementModal && selectedSupportingRequirement && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">支撑性需求详情</h2>
+                <p className="text-sm text-gray-600 mt-1">技术依赖和集成需求</p>
+              </div>
+              <button
+                onClick={closeSupportingRequirementModal}
+                className="p-2 text-gray-600 hover:text-gray-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Basic Info */}
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{selectedSupportingRequirement.title}</h3>
+                <p className="text-gray-600 mb-4">{selectedSupportingRequirement.description}</p>
+                
+                {/* Priority and Type */}
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-medium text-gray-700">优先级:</span>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      selectedSupportingRequirement.priority === 'high' ? 'bg-red-100 text-red-800' :
+                      selectedSupportingRequirement.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {selectedSupportingRequirement.priority === 'high' ? '高' : 
+                       selectedSupportingRequirement.priority === 'medium' ? '中' : '低'}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-medium text-gray-700">类型:</span>
+                    <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                      {selectedSupportingRequirement.type === 'software_dependency' ? '软件依赖' :
+                       selectedSupportingRequirement.type === 'service_integration' ? '服务集成' :
+                       selectedSupportingRequirement.type === 'security_compliance' ? '安全合规' : '性能需求'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Technical Specifications */}
+                {selectedSupportingRequirement.technical_specs && (
+                  <div className="bg-gray-50 p-4 rounded-md">
+                    <h4 className="font-semibold mb-3 text-gray-800">技术规格</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedSupportingRequirement.technical_specs.version && (
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">版本:</span>
+                          <p className="text-sm text-gray-600">{selectedSupportingRequirement.technical_specs.version}</p>
+                        </div>
+                      )}
+                      {selectedSupportingRequirement.technical_specs.sdk_name && (
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">SDK名称:</span>
+                          <p className="text-sm text-gray-600">{selectedSupportingRequirement.technical_specs.sdk_name}</p>
+                        </div>
+                      )}
+                      {selectedSupportingRequirement.technical_specs.integration_type && (
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">集成类型:</span>
+                          <p className="text-sm text-gray-600">{selectedSupportingRequirement.technical_specs.integration_type}</p>
+                        </div>
+                      )}
+                      {selectedSupportingRequirement.technical_specs.api_endpoint && (
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">API端点:</span>
+                          <p className="text-sm text-gray-600 break-all">{selectedSupportingRequirement.technical_specs.api_endpoint}</p>
+                        </div>
+                      )}
+                      {selectedSupportingRequirement.technical_specs.documentation_url && (
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">文档链接:</span>
+                          <a 
+                            href={selectedSupportingRequirement.technical_specs.documentation_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-800 break-all"
+                          >
+                            {selectedSupportingRequirement.technical_specs.documentation_url}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
