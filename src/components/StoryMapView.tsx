@@ -117,16 +117,15 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         
         // Create supporting needs from AI-generated tasks
         const supportingNeedsWithAssociation = showSupportingNeeds ? 
-          feature.tasks.flatMap(task => {
-            const supportingNeeds = generateSupportingNeeds(task);
-            return supportingNeeds.map(need => ({
-              need: need.need,
-            priority: need.priority,
-            associatedStoryId: task.id,
-            associatedStoryTitle: task.title
-          })); })) : [];
-        
-        // No need to remove duplicates since these are AI-generated
+          feature.tasks.flatMap(task => { 
+            const supportingNeeds = generateSupportingNeeds(task); 
+            return supportingNeeds.map(need => ({ 
+              need: need.need, 
+              priority: need.priority, 
+              associatedStoryId: task.id, 
+              associatedStoryTitle: task.title 
+            })); 
+          }) : [];        // No need to remove duplicates since these are AI-generated
         const uniqueSupportingNeeds = supportingNeedsWithAssociation;
         
         return {
