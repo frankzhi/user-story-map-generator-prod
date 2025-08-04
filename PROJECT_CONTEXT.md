@@ -78,16 +78,22 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `3b24f22`
-- **提交信息**: "Add missing task details and supporting requirement click functionality"
+- **Commit**: `c3fbef8`
+- **提交信息**: "Fix dialog issues: remove duplicate acceptance criteria, add supporting requirement click functionality, fix header positioning"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 09:09:09 UTC
-- **生产环境 URL**: https://user-story-map-prod-m3ebs0jqn-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 09:29:35 UTC
+- **生产环境 URL**: https://user-story-map-prod-efi5xurig-freedomztm-7943s-projects.vercel.app
+
+### 已修复的问题
+1. ✅ **验收标准重复问题** - 只在没有AI优化数据时显示原始验收标准
+2. ✅ **支撑性需求点击功能** - 实现了真正的点击功能，可以查看详细信息
+3. ✅ **操作栏固定** - 对话框头部现在固定在顶部，不会在滚动时消失
+4. ✅ **支撑性需求卡片优化** - 移除了描述文本，只显示标题和类型信息
 
 ### 待解决的问题
-1. **测试新增的任务详情显示** - 验证任务状态和验收标准是否正确显示
-2. **测试支撑性需求点击功能** - 验证支撑性需求卡片是否可以点击查看详情
-3. **验证版本号移除效果** - 确认支撑性需求卡片不再显示版本号
+1. **测试新增的支撑性需求点击功能** - 验证点击支撑性需求卡片是否能正确显示详情弹窗
+2. **验证验收标准显示逻辑** - 确认AI优化后不再显示重复的验收标准
+3. **测试操作栏固定效果** - 验证滚动时操作栏是否保持可见
 4. **前端显示优化** - 在界面上展示技术规格信息
 5. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
 
