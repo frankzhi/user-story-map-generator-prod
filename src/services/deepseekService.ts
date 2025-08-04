@@ -63,6 +63,21 @@ The response should be a valid JSON object with the following structure:
                 "Criteria 1",
                 "Criteria 2",
                 "Criteria 3"
+              ],
+              "supporting_requirements": [
+                {
+                  "title": "Supporting Requirement Title",
+                  "description": "Supporting Requirement Description",
+                  "type": "software_dependency|service_integration|security_compliance|performance_requirement",
+                  "priority": "high|medium|low",
+                  "technical_specs": {
+                    "version": "Specific version number",
+                    "api_endpoint": "API endpoint URL (if applicable)",
+                    "sdk_name": "SDK name (if applicable)",
+                    "integration_type": "Type of integration",
+                    "documentation_url": "Documentation URL (if applicable)"
+                  }
+                }
               ]
             }
           ]
@@ -105,25 +120,33 @@ ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
   * "Implement Bluetooth Low Energy (BLE) protocol v4.2+"
   * "Configure device permission handling for iOS and Android"
 
-Supporting requirements MUST fall into these 4 categories:
+Supporting requirements MUST fall into these 4 categories and include technical specifications:
 
 1. SOFTWARE DEPENDENCIES:
    - Specific third-party libraries, frameworks, and tools with exact versions
    - Development tools and build dependencies
    - Examples:
      * "Integrate React Native 0.72.0 for cross-platform mobile development"
+       - technical_specs: { version: "0.72.0", sdk_name: "React Native", integration_type: "Framework Integration" }
      * "Implement Spring Boot 3.1.0 with Java 17 for backend services"
+       - technical_specs: { version: "3.1.0", sdk_name: "Spring Boot", integration_type: "Backend Framework" }
      * "Use MongoDB Atlas v6.0 for cloud database management"
+       - technical_specs: { version: "6.0", sdk_name: "MongoDB Atlas", integration_type: "Cloud Database" }
      * "Integrate Redux Toolkit 1.9.0 for state management"
+       - technical_specs: { version: "1.9.0", sdk_name: "Redux Toolkit", integration_type: "State Management" }
 
 2. SERVICE INTEGRATIONS:
    - External APIs and third-party services with specific versions
    - Business domain integrations with clear protocols
    - Examples:
      * "Integrate with WeChat Open Platform API v3.0 for social login"
+       - technical_specs: { version: "3.0", api_endpoint: "https://api.weixin.qq.com", sdk_name: "WeChat Open Platform API", integration_type: "Social Login" }
      * "Connect to AWS S3 SDK v2.0 for file storage and CDN"
+       - technical_specs: { version: "2.0", api_endpoint: "https://s3.amazonaws.com", sdk_name: "AWS S3 SDK", integration_type: "Cloud Storage" }
      * "Integrate with Alibaba Cloud IoT Platform API v1.0 for device management"
+       - technical_specs: { version: "1.0", api_endpoint: "https://iot.cn-shanghai.aliyuncs.com", sdk_name: "Alibaba Cloud IoT API", integration_type: "IoT Platform" }
      * "Connect to Tencent Cloud COS SDK v5.0 for media storage"
+       - technical_specs: { version: "5.0", api_endpoint: "https://cos.myqcloud.com", sdk_name: "Tencent Cloud COS SDK", integration_type: "Media Storage" }
 
 3. SECURITY & COMPLIANCE:
    - Authentication and authorization systems with specific protocols

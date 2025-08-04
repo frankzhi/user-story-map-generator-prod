@@ -82,6 +82,13 @@ export interface StoryMapYAML {
           description: string;
           type: 'software_dependency' | 'service_integration' | 'security_compliance' | 'performance_requirement';
           priority: string;
+          technical_specs?: {
+            version: string;
+            api_endpoint?: string;
+            sdk_name?: string;
+            integration_type: string;
+            documentation_url?: string;
+          };
         }[];
       }[];
     }[];

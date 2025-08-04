@@ -71,6 +71,21 @@ The response should be a valid JSON object with the following structure:
                 "Criteria 1",
                 "Criteria 2",
                 "Criteria 3"
+              ],
+              "supporting_requirements": [
+                {
+                  "title": "Supporting Requirement Title",
+                  "description": "Supporting Requirement Description",
+                  "type": "software_dependency|service_integration|security_compliance|performance_requirement",
+                  "priority": "high|medium|low",
+                  "technical_specs": {
+                    "version": "Specific version number",
+                    "api_endpoint": "API endpoint URL (if applicable)",
+                    "sdk_name": "SDK name (if applicable)",
+                    "integration_type": "Type of integration",
+                    "documentation_url": "Documentation URL (if applicable)"
+                  }
+                }
               ]
             }
           ]
