@@ -59,6 +59,16 @@ vercel --prod
 - 访问新的部署 URL
 - 测试相关功能
 
+#### 9. 更新项目上下文文档
+```bash
+# 更新文档中的部署信息
+# 更新当前状态和最新提交信息
+# 提交文档更新
+git add PROJECT_CONTEXT.md
+git commit -m "Update project context with latest deployment info"
+git push origin main
+```
+
 ## 核心问题与需求
 
 ### 主要问题：支撑性需求生成质量
@@ -162,9 +172,10 @@ supporting_requirements: {
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `35ddb9d`
-- **提交信息**: "Remove mock data functionality and optimize AI service"
+- **Commit**: `d493496`
+- **提交信息**: "Add project context documentation for future reference"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
+- **部署时间**: 2025-08-04 13:53:18 UTC
 
 ### 待解决的问题
 1. **完全移除 mock 功能** - 部分 mock 代码仍然存在
@@ -197,9 +208,36 @@ VITE_GEMINI_API_KEY=your_gemini_api_key
 3. **避免重复**: 验证相同的依赖/集成只出现一次
 4. **分类正确**: 确认支撑性需求属于四种分类之一
 
-## 常见问题解决
+## 文档更新指南
 
-### 构建失败
+### 部署时文档更新清单
+每次部署后，需要更新以下信息：
+
+1. **更新最新提交信息**
+   - Commit hash
+   - 提交信息
+   - 部署时间
+
+2. **更新生产环境 URL**
+   - 新的 Vercel 部署 URL
+
+3. **更新当前状态**
+   - 待解决的问题进展
+   - 新发现的问题
+
+4. **更新测试结果**
+   - 最新的测试发现
+   - 验证要点更新
+
+### 文档更新命令
+```bash
+# 更新文档后提交
+git add PROJECT_CONTEXT.md
+git commit -m "Update project context: [具体更新内容]"
+git push origin main
+```
+
+## 常见问题解决
 ```bash
 # 恢复文件
 git checkout -- filename
