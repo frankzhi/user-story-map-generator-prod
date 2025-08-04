@@ -72,14 +72,14 @@ git push origin main
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `b274879`
-- **提交信息**: "Fix AI prompt language inconsistency: convert English examples to Chinese for consistency"
+- **Commit**: `2402219`
+- **提交信息**: "Simplify AI system prompt: remove complex examples that confuse AI, focus on clear technical requirements"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 07:24:56 UTC
-- **生产环境 URL**: https://user-story-map-prod-j9iieudzw-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 07:41:07 UTC
+- **生产环境 URL**: https://user-story-map-prod-8jaipt7ys-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **测试修复后的 AI 生成质量** - 验证语言一致性修复后的生成效果
+1. **测试简化后的 AI 生成质量** - 验证简化提示词后的生成效果
 2. **前端显示优化** - 在界面上展示技术规格信息
 3. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
 4. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
