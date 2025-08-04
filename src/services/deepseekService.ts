@@ -233,7 +233,7 @@ Return ONLY the JSON object, no additional text or explanations.`;
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.7,
+          temperature: 0.3,
           max_tokens: 4000
         })
       });
@@ -336,7 +336,7 @@ Return ONLY the JSON object, no additional text or explanations.`;
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.7,
+          temperature: 0.3,
           max_tokens: 4000
         })
       });
@@ -463,7 +463,7 @@ Please modify the story map based on the user feedback and return the complete u
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: messages,
-          temperature: 0.7,
+          temperature: 0.3,
           max_tokens: 4000
         })
       });

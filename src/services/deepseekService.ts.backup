@@ -69,7 +69,14 @@ The response should be a valid JSON object with the following structure:
                   "title": "Supporting Requirement Title",
                   "description": "Supporting Requirement Description",
                   "type": "software_dependency|service_integration|security_compliance|performance_requirement",
-                  "priority": "high|medium|low"
+                  "priority": "high|medium|low",
+                  "technical_specs": {
+                    "version": "Specific version number",
+                    "api_endpoint": "API endpoint URL (if applicable)",
+                    "sdk_name": "SDK name (if applicable)",
+                    "integration_type": "Type of integration",
+                    "documentation_url": "Documentation URL (if applicable)"
+                  }
                 }
               ]
             }
@@ -95,51 +102,67 @@ ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
 🚨 CRITICAL: Supporting requirements are COMPLETELY DIFFERENT from user stories. They are technical infrastructure, dependencies, and integrations that enable user stories to be delivered.
 
 ❌ WRONG EXAMPLES (DO NOT DO THIS):
-- User Story: "通过蓝牙搜索附近可连接的智能手环" 
-- WRONG Supporting Requirement: "扫描附近可用的智能手环设备" (This is just rephrasing!)
-- User Story: "从手环获取并显示实时心率"
-- WRONG Supporting Requirement: "显示实时心率数据" (This is just rephrasing!)
-- User Story: "通过手机验证码快速登录"
-- WRONG Supporting Requirement: "手机号验证码登录" (This is just rephrasing!)
+- User Story: "用户输入手机号获取验证码进行登录" 
+- WRONG Supporting Requirement: "实现手机号验证码登录" (This is just rephrasing!)
+- User Story: "扫描附近可用的智能手表设备"
+- WRONG Supporting Requirement: "蓝牙设备搜索" (This is just rephrasing!)
+- User Story: "在地图上显示宠物位置标记"
+- WRONG Supporting Requirement: "宠物标记点渲染" (This is just rephrasing!)
+- User Story: "设计并开发列表页面"
+- WRONG Supporting Requirement: "实现宠物列表UI" (This is just rephrasing!)
 
 ✅ CORRECT EXAMPLES:
-- User Story: "通过蓝牙搜索附近可连接的智能手环"
-- CORRECT Supporting Requirements:
-  * "Integrate React Native BLE SDK v2.0 for device discovery"
-  * "Implement Bluetooth Low Energy (BLE) protocol v4.2+"
-  * "Configure device permission handling for iOS and Android"
-
-- User Story: "从手环获取并显示实时心率"
-- CORRECT Supporting Requirements:
-  * "Integrate device manufacturer API v1.0 for data retrieval"
-  * "Implement WebSocket connection for real-time data streaming"
-  * "Set up Redis 7.0 for real-time data caching"
-
-- User Story: "通过手机验证码快速登录"
+- User Story: "用户输入手机号获取验证码进行登录"
 - CORRECT Supporting Requirements:
   * "Integrate Alibaba Cloud SMS API v2.0 for verification code delivery"
   * "Implement Redis 7.0 for temporary code storage and validation"
   * "Set up SSL/TLS 1.3 encryption for secure data transmission"
 
-Supporting requirements MUST fall into these 4 categories:
+- User Story: "扫描附近可用的智能手表设备"
+- CORRECT Supporting Requirements:
+  * "Integrate React Native BLE SDK v2.0 for device discovery"
+  * "Implement Bluetooth Low Energy (BLE) protocol v4.2+"
+  * "Configure device permission handling for iOS and Android"
+
+- User Story: "在地图上显示宠物位置标记"
+- CORRECT Supporting Requirements:
+  * "Integrate Gaode Map SDK v8.0 for location services"
+  * "Implement custom marker rendering with MapKit"
+  * "Configure real-time location tracking with GPS"
+
+- User Story: "设计并开发列表页面"
+- CORRECT Supporting Requirements:
+  * "Integrate React Native FlatList for efficient list rendering"
+  * "Implement pull-to-refresh with RefreshControl"
+  * "Configure virtual scrolling for large datasets"
+
+Supporting requirements MUST fall into these 4 categories and include technical specifications:
 
 1. SOFTWARE DEPENDENCIES:
    - Specific third-party libraries, frameworks, and tools with exact versions
    - Development tools and build dependencies
    - Examples:
      * "Integrate React Native 0.72.0 for cross-platform mobile development"
+       - technical_specs: { version: "0.72.0", sdk_name: "React Native", integration_type: "Framework Integration" }
      * "Implement Spring Boot 3.1.0 with Java 17 for backend services"
+       - technical_specs: { version: "3.1.0", sdk_name: "Spring Boot", integration_type: "Backend Framework" }
      * "Use MongoDB Atlas v6.0 for cloud database management"
+       - technical_specs: { version: "6.0", sdk_name: "MongoDB Atlas", integration_type: "Cloud Database" }
      * "Integrate Redux Toolkit 1.9.0 for state management"
+       - technical_specs: { version: "1.9.0", sdk_name: "Redux Toolkit", integration_type: "State Management" }
 
 2. SERVICE INTEGRATIONS:
    - External APIs and third-party services with specific versions
    - Business domain integrations with clear protocols
    - Examples:
      * "Integrate with WeChat Open Platform API v3.0 for social login"
+       - technical_specs: { version: "3.0", api_endpoint: "https://api.weixin.qq.com", sdk_name: "WeChat Open Platform API", integration_type: "Social Login" }
      * "Connect to AWS S3 SDK v2.0 for file storage and CDN"
+       - technical_specs: { version: "2.0", api_endpoint: "https://s3.amazonaws.com", sdk_name: "AWS S3 SDK", integration_type: "Cloud Storage" }
      * "Integrate with Alibaba Cloud IoT Platform API v1.0 for device management"
+       - technical_specs: { version: "1.0", api_endpoint: "https://iot.cn-shanghai.aliyuncs.com", sdk_name: "Alibaba Cloud IoT API", integration_type: "IoT Platform" }
      * "Connect to Tencent Cloud COS SDK v5.0 for media storage"
+       - technical_specs: { version: "5.0", api_endpoint: "https://cos.myqcloud.com", sdk_name: "Tencent Cloud COS SDK", integration_type: "Media Storage" }
 
 3. SECURITY & COMPLIANCE:
    - Authentication and authorization systems with specific protocols
@@ -160,6 +183,18 @@ Supporting requirements MUST fall into these 4 categories:
      * "Implement database connection pooling with HikariCP v5.0"
 
 🚨 CRITICAL RULES:
+
+1. EVERY supporting requirement MUST mention a specific technical component (SDK, API, Library, Framework, Protocol, etc.)
+2. NEVER create supporting requirements that are just functional descriptions
+3. ALWAYS include the technical component name and version when applicable
+4. Supporting requirements should answer "What technical dependencies do we need?" not "How do we implement this feature?"
+5. If you can't identify a specific technical component, don't create a supporting requirement
+
+EXAMPLES OF WHAT TO AVOID:
+- "实现手机号输入界面" → Should be: "Integrate React Native TextInput with validation"
+- "验证码校验功能" → Should be: "Implement SMS verification with Twilio API v3.0"
+- "宠物标记点渲染" → Should be: "Integrate MapKit for custom marker rendering"
+- "实现宠物列表UI" → Should be: "Integrate React Native FlatList for list rendering"
 - NEVER create supporting requirements that are just rephrased user stories
 - NEVER create supporting requirements that are task breakdowns
 - NEVER use generic terms like "实现" (implement), "开发" (develop), "功能" (function)
@@ -246,15 +281,30 @@ Return ONLY the JSON object, no additional text or explanations.`;
         features: (epic.features || []).map((feature: any) => ({
           title: feature.title || 'Untitled Feature',
           description: feature.description || '',
-          tasks: (feature.tasks || []).map((task: any) => ({
-            title: task.title || 'Untitled Task',
-            description: task.description || '',
-            priority: task.priority || 'medium',
-            effort: task.effort || '2 days',
-            acceptance_criteria: Array.isArray(task.acceptance_criteria) 
-              ? task.acceptance_criteria 
-              : ['Acceptance criteria not specified']
-          }))
+                      tasks: (feature.tasks || []).map((task: any) => ({
+              title: task.title || 'Untitled Task',
+              description: task.description || '',
+              priority: task.priority || 'medium',
+              effort: task.effort || '2 days',
+              acceptance_criteria: Array.isArray(task.acceptance_criteria) 
+                ? task.acceptance_criteria 
+                : ['Acceptance criteria not specified'],
+              supporting_requirements: Array.isArray(task.supporting_requirements)
+                ? task.supporting_requirements.map((req: any) => ({
+                    title: req.title || 'Untitled Supporting Requirement',
+                    description: req.description || '',
+                    type: req.type || 'software_dependency',
+                    priority: req.priority || 'medium',
+                    technical_specs: req.technical_specs ? {
+                      version: req.technical_specs.version || '',
+                      api_endpoint: req.technical_specs.api_endpoint || '',
+                      sdk_name: req.technical_specs.sdk_name || '',
+                      integration_type: req.technical_specs.integration_type || '',
+                      documentation_url: req.technical_specs.documentation_url || ''
+                    } : undefined
+                  }))
+                : []
+            }))
         }))
       }))
     };
