@@ -156,6 +156,12 @@ supporting_requirements: {
 }
 ```
 
+### 最新优化内容
+- **强化 AI 提示词**: 添加了具体规则避免功能描述
+- **关键规则**: 要求每个支撑性需求必须提及具体的技术组件
+- **错误示例**: 提供了具体的转换示例
+- **验证机制**: 如果无法识别具体技术组件，则不创建支撑性需求
+
 ## 关键文件位置
 
 ### 核心服务文件
@@ -173,16 +179,17 @@ supporting_requirements: {
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `7ff6791`
-- **提交信息**: "Enhance supporting requirements with technical specifications: add version, api_endpoint, sdk_name, integration_type fields"
+- **Commit**: `5620ccb`
+- **提交信息**: "Strengthen AI prompts: add specific rules to avoid functional descriptions and require technical components"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 14:10:45 UTC
-- **生产环境 URL**: https://user-story-map-prod-r1bxfmocq-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 14:20:35 UTC
+- **生产环境 URL**: https://user-story-map-prod-ip42z9ovy-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
 1. **完全移除 mock 功能** - 部分 mock 代码仍然存在
-2. **验证 AI 生成质量** - 测试新的技术规格字段是否被正确生成
+2. **验证 AI 生成质量** - 测试强化后的提示词是否能避免功能描述
 3. **前端显示优化** - 在界面上展示技术规格信息
+4. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
 
 ## 环境变量配置
 
