@@ -72,17 +72,17 @@ git push origin main
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `df156d4`
-- **提交信息**: "Fix AI service fallback: replace non-existent generateMockStoryMap with generateGenericStoryMap and add supporting requirements"
+- **Commit**: `d52f48c`
+- **提交信息**: "Remove all mock data functions and clean up AI service"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 14:39:41 UTC
-- **生产环境 URL**: https://user-story-map-prod-lkw4zu0qd-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 14:44:26 UTC
+- **生产环境 URL**: https://user-story-map-prod-5i5j1wys8-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **配置 AI 服务** - 需要设置正确的 API 密钥以启用真实的 AI 生成
-2. **验证 AI 生成质量** - 测试强化后的提示词是否能避免功能描述
-3. **前端显示优化** - 在界面上展示技术规格信息
-4. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
+1. **验证 AI 生成质量** - 测试强化后的提示词是否能避免功能描述
+2. **前端显示优化** - 在界面上展示技术规格信息
+3. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
+4. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
 
 ## 核心问题与需求
 
