@@ -71,6 +71,12 @@ git push origin main
 
 ## 当前状态
 
+- **Commit**: `879c04d`
+- **提交信息**: "Enhance AI prompt with critical distinction between user stories and technical requirements"
+- **状态**: 已推送到 GitHub 和部署到 Vercel
+- **部署时间**: 2025-08-04 08:13:57 UTC
+- **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
+
 ### 最新提交
 - **Commit**: `60303bf`
 - **提交信息**: "Fix duplicate language context in AI prompts that was confusing the model"
@@ -79,7 +85,7 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-6b5t4nch6-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **测试修复后的 AI 生成质量** - 验证修复重复语言上下文后的生成效果
+1. **测试增强后的 AI 生成质量** - 验证添加关键区别说明后的生成效果
 2. **前端显示优化** - 在界面上展示技术规格信息
 3. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
 4. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
@@ -193,6 +199,12 @@ supporting_requirements: {
 - **故事地图视图**: `src/components/StoryMapView.tsx`
 
 ## 当前状态
+
+- **Commit**: `879c04d`
+- **提交信息**: "Enhance AI prompt with critical distinction between user stories and technical requirements"
+- **状态**: 已推送到 GitHub 和部署到 Vercel
+- **部署时间**: 2025-08-04 08:13:57 UTC
+- **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
 - **Commit**: `5620ccb`
