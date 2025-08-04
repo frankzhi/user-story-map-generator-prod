@@ -106,6 +106,10 @@ ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
 - WRONG Supporting Requirement: "实现手机号验证码登录" (This is just rephrasing!)
 - User Story: "扫描附近可用的智能手表设备"
 - WRONG Supporting Requirement: "蓝牙设备搜索" (This is just rephrasing!)
+- User Story: "在地图上显示宠物位置标记"
+- WRONG Supporting Requirement: "宠物标记点渲染" (This is just rephrasing!)
+- User Story: "设计并开发列表页面"
+- WRONG Supporting Requirement: "实现宠物列表UI" (This is just rephrasing!)
 
 ✅ CORRECT EXAMPLES:
 - User Story: "用户输入手机号获取验证码进行登录"
@@ -119,6 +123,18 @@ ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
   * "Integrate React Native BLE SDK v2.0 for device discovery"
   * "Implement Bluetooth Low Energy (BLE) protocol v4.2+"
   * "Configure device permission handling for iOS and Android"
+
+- User Story: "在地图上显示宠物位置标记"
+- CORRECT Supporting Requirements:
+  * "Integrate Gaode Map SDK v8.0 for location services"
+  * "Implement custom marker rendering with MapKit"
+  * "Configure real-time location tracking with GPS"
+
+- User Story: "设计并开发列表页面"
+- CORRECT Supporting Requirements:
+  * "Integrate React Native FlatList for efficient list rendering"
+  * "Implement pull-to-refresh with RefreshControl"
+  * "Configure virtual scrolling for large datasets"
 
 Supporting requirements MUST fall into these 4 categories and include technical specifications:
 
@@ -167,6 +183,18 @@ Supporting requirements MUST fall into these 4 categories and include technical 
      * "Implement database connection pooling with HikariCP v5.0"
 
 🚨 CRITICAL RULES:
+
+1. EVERY supporting requirement MUST mention a specific technical component (SDK, API, Library, Framework, Protocol, etc.)
+2. NEVER create supporting requirements that are just functional descriptions
+3. ALWAYS include the technical component name and version when applicable
+4. Supporting requirements should answer "What technical dependencies do we need?" not "How do we implement this feature?"
+5. If you can't identify a specific technical component, don't create a supporting requirement
+
+EXAMPLES OF WHAT TO AVOID:
+- "实现手机号输入界面" → Should be: "Integrate React Native TextInput with validation"
+- "验证码校验功能" → Should be: "Implement SMS verification with Twilio API v3.0"
+- "宠物标记点渲染" → Should be: "Integrate MapKit for custom marker rendering"
+- "实现宠物列表UI" → Should be: "Integrate React Native FlatList for list rendering"
 - NEVER create supporting requirements that are just rephrased user stories
 - NEVER create supporting requirements that are task breakdowns
 - NEVER use generic terms like "实现" (implement), "开发" (develop), "功能" (function)

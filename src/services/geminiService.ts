@@ -114,6 +114,10 @@ ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
 - WRONG Supporting Requirement: "实现手机号验证码登录" (This is just rephrasing!)
 - User Story: "扫描附近可用的智能手表设备"
 - WRONG Supporting Requirement: "蓝牙设备搜索" (This is just rephrasing!)
+- User Story: "在地图上显示宠物位置标记"
+- WRONG Supporting Requirement: "宠物标记点渲染" (This is just rephrasing!)
+- User Story: "设计并开发列表页面"
+- WRONG Supporting Requirement: "实现宠物列表UI" (This is just rephrasing!)
 
 ✅ CORRECT EXAMPLES:
 - User Story: "用户输入手机号获取验证码进行登录"
@@ -127,6 +131,18 @@ ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
   * "Integrate React Native BLE SDK v2.0 for device discovery"
   * "Implement Bluetooth Low Energy (BLE) protocol v4.2+"
   * "Configure device permission handling for iOS and Android"
+
+- User Story: "在地图上显示宠物位置标记"
+- CORRECT Supporting Requirements:
+  * "Integrate Gaode Map SDK v8.0 for location services"
+  * "Implement custom marker rendering with MapKit"
+  * "Configure real-time location tracking with GPS"
+
+- User Story: "设计并开发列表页面"
+- CORRECT Supporting Requirements:
+  * "Integrate React Native FlatList for efficient list rendering"
+  * "Implement pull-to-refresh with RefreshControl"
+  * "Configure virtual scrolling for large datasets"
 
 Supporting requirements MUST fall into these 4 categories:
 
