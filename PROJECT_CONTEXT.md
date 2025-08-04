@@ -78,17 +78,17 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `161fb6b`
-- **提交信息**: "Add debug logs to inspect AI response and supporting requirements"
+- **Commit**: `19d439a`
+- **提交信息**: "Add debug logs to track data flow for supporting requirements"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 08:26:41 UTC
-- **生产环境 URL**: https://user-story-map-prod-7mcx6flpm-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 08:42:14 UTC
+- **生产环境 URL**: https://user-story-map-prod-izy8qf5ih-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **测试调试日志功能** - 验证新增的调试日志是否能正确显示 AI 响应内容
-2. **分析 AI 实际输出** - 通过浏览器控制台查看 AI 的原始响应和解析后的 JSON
-3. **前端显示优化** - 在界面上展示技术规格信息
-4. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
+1. **测试新增的调试日志** - 验证数据流跟踪功能是否正常工作
+2. **分析前端显示问题** - 通过调试日志确定前端显示支撑性需求的具体问题
+3. **修复前端显示逻辑** - 确保前端正确显示支撑性需求的标题而不是任务标题
+4. **验证修复效果** - 测试修复后的显示效果
 5. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
 
 ## 核心问题与需求
