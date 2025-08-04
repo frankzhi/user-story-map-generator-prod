@@ -131,7 +131,9 @@ Guidelines:
 - Create 3-5 epics that cover the main functional areas
 - Each epic should have 2-4 features
 - Each feature should have 3-6 tasks (MANDATORY: Generate at least 3 tasks per feature)
-- Tasks should be specific, actionable, and testable
+- Each task MUST have at least 1-2 supporting requirements (MANDATORY: Every task needs technical infrastructure)
+- Supporting requirements should cover the main technical dependencies for each task
+- Think about what technical components are needed to implement each user story- Tasks should be specific, actionable, and testable
 - Priority should be based on business value and user impact
 - Effort should be realistic (1-5 days per task)
 - Acceptance criteria should be clear and measurable
@@ -143,7 +145,7 @@ Guidelines:
 - Consider different user roles, personas, and use cases for each feature
 ${languageContext}`;
 
-    const userPrompt = `Generate a user story map for this product: ${productDescription}. IMPORTANT: For each feature, break it down into at least 3-4 specific user tasks. Think about different user actions, scenarios, and use cases. Ensure comprehensive task coverage for each feature.`;
+    const userPrompt = `Generate a user story map for this product: ${productDescription}. IMPORTANT: For each feature, break it down into at least 3-4 specific user tasks. Think about different user actions, scenarios, and use cases. Ensure comprehensive task coverage for each feature. IMPORTANT: Every task must have supporting requirements that describe the technical infrastructure needed to implement it. Think about APIs, databases, SDKs, and other technical dependencies for each user story.`;
 
     const messages: DeepSeekMessage[] = [
       { role: 'system', content: systemPrompt },

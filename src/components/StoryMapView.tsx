@@ -384,7 +384,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     
     // 如果没有支撑性需求，返回空数组
     console.log(`🔍 任务 "${task.title}" 没有支撑性需求`);
-    return [];
+    console.log(`🔍 任务 "${task.title}" 的完整数据:`, task);    return [];
   };
 
   const getStatusIcon = (status: string) => {
