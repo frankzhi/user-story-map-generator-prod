@@ -22,7 +22,7 @@ export class AIService {
     return AIService.instance;
   }
 
-  async generateStoryMap(productDescription: string, provider: AIProvider = 'mock'): Promise<StoryMapYAML> {
+  async generateStoryMap(productDescription: string, provider: AIProvider = 'deepseek'): Promise<StoryMapYAML> {
     try {
       switch (provider) {
         case 'deepseek':
@@ -30,7 +30,7 @@ export class AIService {
             return await this.deepseekService.generateStoryMap(productDescription);
           } else {
             console.warn('DeepSeek not configured, falling back to mock data');
-            return this.generateMockStoryMap(productDescription);
+            throw new Error('DeepSeek API not configured. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
           }
         
         case 'gemini':
@@ -38,7 +38,7 @@ export class AIService {
             return await this.geminiService.generateStoryMap(productDescription);
           } else {
             console.warn('Gemini not configured, falling back to mock data');
-            return this.generateMockStoryMap(productDescription);
+            throw new Error('Gemini API not configured. Please add VITE_GEMINI_API_KEY to your environment variables.');
           }
         
         case 'mock':
@@ -59,7 +59,7 @@ export class AIService {
       {
         provider: 'deepseek',
         configured: this.deepseekService.isConfigured(),
-        name: 'DeepSeek'
+        name: 'DeepSeek (Recommended)'
       },
       {
         provider: 'gemini',
@@ -227,6 +227,168 @@ export class AIService {
               ]
             }
           ]
+        },
+        {
+          title: "Technical Infrastructure",
+          description: "Technical dependencies and integrations required for e-commerce platform",
+          features: [
+            {
+              title: "Software Dependencies",
+              description: "Third-party libraries and frameworks",
+              tasks: [
+                {
+                  title: "Integrate React 18.2.0 with TypeScript 5.0",
+                  description: "Frontend development framework setup",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "React 18.2.0 is properly configured",
+                    "TypeScript 5.0 compilation is working",
+                    "Development environment is set up"
+                  ]
+                },
+                {
+                  title: "Implement Spring Boot 3.1.0 for backend",
+                  description: "Backend framework and API development",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Spring Boot 3.1.0 is configured",
+                    "REST API endpoints are working",
+                    "Database connectivity is established"
+                  ]
+                },
+                {
+                  title: "Integrate Redux Toolkit 1.9.0 for state management",
+                  description: "Frontend state management setup",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Redux store is configured",
+                    "State management is working",
+                    "DevTools integration is enabled"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "Service Integrations",
+              description: "External APIs and third-party services",
+              tasks: [
+                {
+                  title: "Integrate Stripe API v3.0 for payment processing",
+                  description: "Payment gateway integration",
+                  priority: "high",
+                  effort: "5 days",
+                  acceptance_criteria: [
+                    "Stripe API v3.0 is integrated",
+                    "Payment processing is working",
+                    "Webhook handling is configured"
+                  ]
+                },
+                {
+                  title: "Connect to AWS S3 for product image storage",
+                  description: "Cloud storage integration",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "AWS S3 SDK is integrated",
+                    "Image upload is working",
+                    "CDN configuration is complete"
+                  ]
+                },
+                {
+                  title: "Integrate SendGrid API v3.0 for email notifications",
+                  description: "Email service integration",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "SendGrid API v3.0 is integrated",
+                    "Email templates are configured",
+                    "Delivery tracking is working"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "Security & Compliance",
+              description: "Authentication and data protection",
+              tasks: [
+                {
+                  title: "Implement OAuth 2.0 with JWT tokens",
+                  description: "Authentication system setup",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "OAuth 2.0 flow is implemented",
+                    "JWT token generation is working",
+                    "Token validation is secure"
+                  ]
+                },
+                {
+                  title: "Set up GDPR-compliant data processing",
+                  description: "Data protection compliance",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Data processing is GDPR compliant",
+                    "User consent is properly handled",
+                    "Data deletion is implemented"
+                  ]
+                },
+                {
+                  title: "Implement PCI DSS Level 1 compliance",
+                  description: "Payment data security",
+                  priority: "high",
+                  effort: "5 days",
+                  acceptance_criteria: [
+                    "PCI DSS Level 1 requirements are met",
+                    "Payment data is encrypted",
+                    "Security audit is passed"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "Performance Requirements",
+              description: "Scalability and optimization",
+              tasks: [
+                {
+                  title: "Implement Redis 7.0 for session caching",
+                  description: "Caching system setup",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Redis 7.0 is configured",
+                    "Session caching is working",
+                    "Cache invalidation is implemented"
+                  ]
+                },
+                {
+                  title: "Set up CDN (Cloudflare) for static assets",
+                  description: "Content delivery optimization",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Cloudflare CDN is configured",
+                    "Static assets are cached",
+                    "Global delivery is optimized"
+                  ]
+                },
+                {
+                  title: "Configure AWS Auto Scaling for dynamic load",
+                  description: "Scalability infrastructure",
+                  priority: "medium",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Auto Scaling is configured",
+                    "Load balancing is working",
+                    "Scaling policies are set"
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     };
@@ -277,6 +439,168 @@ export class AIService {
                     "Users can write and publish text posts",
                     "Posts support basic formatting",
                     "Posts appear in user's feed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: "Technical Infrastructure",
+          description: "Technical dependencies and integrations required for social network platform",
+          features: [
+            {
+              title: "Software Dependencies",
+              description: "Third-party libraries and frameworks",
+              tasks: [
+                {
+                  title: "Integrate React Native 0.72.0 for mobile app",
+                  description: "Cross-platform mobile development framework",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "React Native 0.72.0 is properly configured",
+                    "iOS and Android builds are working",
+                    "Development environment is set up"
+                  ]
+                },
+                {
+                  title: "Implement Node.js 18.0.0 with Express 4.18.0",
+                  description: "Backend API development framework",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Node.js 18.0.0 is configured",
+                    "Express 4.18.0 API endpoints are working",
+                    "Database connectivity is established"
+                  ]
+                },
+                {
+                  title: "Integrate Socket.io 4.7.0 for real-time communication",
+                  description: "Real-time messaging and notifications",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Socket.io 4.7.0 is integrated",
+                    "Real-time messaging is working",
+                    "Connection management is stable"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "Service Integrations",
+              description: "External APIs and third-party services",
+              tasks: [
+                {
+                  title: "Integrate AWS S3 for media file storage",
+                  description: "Cloud storage for images and videos",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "AWS S3 SDK is integrated",
+                    "Media upload is working",
+                    "CDN configuration is complete"
+                  ]
+                },
+                {
+                  title: "Connect to Firebase Cloud Messaging for push notifications",
+                  description: "Mobile push notification service",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Firebase Cloud Messaging is integrated",
+                    "Push notifications are working",
+                    "Notification targeting is configured"
+                  ]
+                },
+                {
+                  title: "Integrate Google Analytics 4.0 for user analytics",
+                  description: "User behavior tracking and analytics",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Google Analytics 4.0 is integrated",
+                    "User tracking is working",
+                    "Analytics dashboard is accessible"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "Security & Compliance",
+              description: "Authentication and data protection",
+              tasks: [
+                {
+                  title: "Implement Firebase Authentication for user login",
+                  description: "User authentication system",
+                  priority: "high",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Firebase Authentication is configured",
+                    "Social login is working",
+                    "User session management is secure"
+                  ]
+                },
+                {
+                  title: "Set up GDPR-compliant data processing",
+                  description: "Data protection compliance",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "Data processing is GDPR compliant",
+                    "User consent is properly handled",
+                    "Data deletion is implemented"
+                  ]
+                },
+                {
+                  title: "Implement content moderation API integration",
+                  description: "Automated content filtering",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Content moderation API is integrated",
+                    "Automated filtering is working",
+                    "Manual review process is available"
+                  ]
+                }
+              ]
+            },
+            {
+              title: "Performance Requirements",
+              description: "Scalability and optimization",
+              tasks: [
+                {
+                  title: "Implement Redis 7.0 for caching and sessions",
+                  description: "Caching and session management",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Redis 7.0 is configured",
+                    "Session caching is working",
+                    "Cache invalidation is implemented"
+                  ]
+                },
+                {
+                  title: "Set up CDN (Cloudflare) for media delivery",
+                  description: "Content delivery optimization",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Cloudflare CDN is configured",
+                    "Media files are cached",
+                    "Global delivery is optimized"
+                  ]
+                },
+                {
+                  title: "Configure MongoDB Atlas for scalable database",
+                  description: "Cloud database service",
+                  priority: "high",
+                  effort: "4 days",
+                  acceptance_criteria: [
+                    "MongoDB Atlas is configured",
+                    "Database scaling is working",
+                    "Backup and recovery are set up"
                   ]
                 }
               ]
@@ -513,36 +837,58 @@ export class AIService {
                   ]
                 },
                 {
-                  title: "实现BLE设备发现和配对协议",
-                  description: "支持蓝牙设备自动发现和配对",
+                  title: "集成React Native BLE SDK v2.0",
+                  description: "集成第三方蓝牙开发套件，支持设备发现和配对",
                   priority: "high",
                   effort: "4 days",
                   acceptance_criteria: [
-                    "Given 自动扫描附近BLE设备，When 用户配对，Then 应显示可用设备",
-                    "Given 支持设备配对和认证，When 配对成功，Then 应保存配对信息",
+                    "Given 集成React Native BLE SDK v2.0，When 应用启动，Then 应能扫描BLE设备",
+                    "Given 支持BLE设备配对和认证，When 配对成功，Then 应保存配对信息",
                     "Given 配对状态持久化存储，When 重新连接，Then 应自动识别设备"
                   ]
                 },
                 {
-                  title: "建立Wi-Fi设备连接状态管理",
-                  description: "管理Wi-Fi连接状态和网络切换",
+                  title: "集成Wi-Fi Manager SDK",
+                  description: "集成Wi-Fi管理SDK，支持网络连接和状态监控",
                   priority: "high",
                   effort: "3 days",
                   acceptance_criteria: [
-                    "Given 实时监控Wi-Fi连接状态，When 网络变化，Then 应自动切换",
+                    "Given 集成Wi-Fi Manager SDK，When 网络变化，Then 应自动切换",
                     "Given 支持网络切换和重连，When 连接断开，Then 应自动重连",
                     "Given 连接质量评估和优化，When 信号弱，Then 应提示用户"
                   ]
                 },
                 {
-                  title: "开发设备固件版本检测和升级机制",
-                  description: "自动检测和升级设备固件",
+                  title: "集成设备固件OTA升级服务",
+                  description: "集成第三方OTA升级服务，支持设备固件自动升级",
                   priority: "medium",
                   effort: "5 days",
                   acceptance_criteria: [
-                    "Given 自动检测固件版本，When 有新版本，Then 应提示升级",
+                    "Given 集成OTA升级服务API，When 有新版本，Then 应提示升级",
                     "Given 支持OTA升级，When 用户确认，Then 应安全升级",
                     "Given 升级过程安全验证，When 升级完成，Then 应验证版本"
+                  ]
+                },
+                {
+                  title: "集成阿里云IoT平台API",
+                  description: "集成阿里云IoT平台，支持设备管理和数据上报",
+                  priority: "high",
+                  effort: "5 days",
+                  acceptance_criteria: [
+                    "Given 集成阿里云IoT Platform API v1.0，When 设备连接，Then 应能上报数据",
+                    "Given 支持设备注册和管理，When 新设备接入，Then 应自动注册",
+                    "Given 支持设备状态监控，When 设备状态变化，Then 应实时更新"
+                  ]
+                },
+                {
+                  title: "集成腾讯云COS存储服务",
+                  description: "集成腾讯云对象存储，支持固件包和日志文件存储",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 集成腾讯云COS SDK v5.0，When 上传文件，Then 应能安全存储",
+                    "Given 支持文件版本管理，When 上传新版本，Then 应保留历史版本",
+                    "Given 支持文件访问权限控制，When 访问文件，Then 应验证权限"
                   ]
                 }
               ]
@@ -574,36 +920,58 @@ export class AIService {
                   ]
                 },
                 {
-                  title: "实现设备故障自诊断系统",
-                  description: "自动诊断设备故障原因",
+                  title: "集成设备故障诊断API",
+                  description: "集成第三方设备故障诊断服务，支持自动故障识别",
                   priority: "high",
                   effort: "4 days",
                   acceptance_criteria: [
-                    "Given 故障代码自动识别，When 故障发生，Then 应准确识别故障类型",
+                    "Given 集成故障诊断API，When 故障发生，Then 应准确识别故障类型",
                     "Given 故障原因分析报告，When 用户查看，Then 应看到详细分析",
                     "Given 维修建议和解决方案，When 故障发生，Then 应提供解决建议"
                   ]
                 },
                 {
-                  title: "建立故障代码分类和处理机制",
-                  description: "系统化处理各类故障",
+                  title: "集成故障代码管理服务",
+                  description: "集成故障代码标准化服务，支持故障分类和处理",
                   priority: "high",
                   effort: "3 days",
                   acceptance_criteria: [
-                    "Given 故障代码标准化分类，When 故障发生，Then 应正确分类",
+                    "Given 集成故障代码管理API，When 故障发生，Then 应正确分类",
                     "Given 处理流程自动化，When 故障发生，Then 应自动启动处理流程",
                     "Given 故障处理记录追踪，When 处理完成，Then 应保存处理记录"
                   ]
                 },
                 {
-                  title: "开发远程故障诊断和修复功能",
-                  description: "支持远程诊断和修复",
+                  title: "集成远程诊断服务",
+                  description: "集成第三方远程诊断服务，支持远程故障诊断和修复",
                   priority: "medium",
                   effort: "5 days",
                   acceptance_criteria: [
-                    "Given 远程连接设备，When 需要诊断，Then 应能安全连接",
+                    "Given 集成远程诊断API，When 需要诊断，Then 应能安全连接",
                     "Given 远程诊断故障，When 连接成功，Then 应能准确诊断",
                     "Given 远程修复简单问题，When 问题简单，Then 应能自动修复"
+                  ]
+                },
+                {
+                  title: "集成极光推送服务",
+                  description: "集成极光推送API，支持异常状态实时通知",
+                  priority: "medium",
+                  effort: "2 days",
+                  acceptance_criteria: [
+                    "Given 集成极光推送API v3.0，When 异常发生，Then 应能推送通知",
+                    "Given 支持通知分类和优先级，When 推送通知，Then 应按优先级发送",
+                    "Given 支持通知送达统计，When 推送完成，Then 应统计送达率"
+                  ]
+                },
+                {
+                  title: "集成阿里云日志服务",
+                  description: "集成阿里云SLS日志服务，支持异常日志收集和分析",
+                  priority: "medium",
+                  effort: "3 days",
+                  acceptance_criteria: [
+                    "Given 集成阿里云SLS SDK v2.0，When 异常发生，Then 应记录详细日志",
+                    "Given 支持日志查询和分析，When 查询日志，Then 应能快速检索",
+                    "Given 支持日志告警配置，When 异常频率过高，Then 应自动告警"
                   ]
                 }
               ]

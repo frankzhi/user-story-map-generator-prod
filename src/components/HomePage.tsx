@@ -13,7 +13,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
   const { t } = useTranslation();
   const [productDescription, setProductDescription] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState<AIProvider>('mock');
+  const [selectedProvider, setSelectedProvider] = useState<AIProvider>('deepseek');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
   const [availableProviders, setAvailableProviders] = useState<Array<{ provider: AIProvider; configured: boolean; name: string }>>([]);
@@ -68,7 +68,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
 
   useEffect(() => {
     const aiService = AIService.getInstance();
-    setAvailableProviders(aiService.getAvailableProviders());
+    const providers = aiService.getAvailableProviders();
+    setAvailableProviders(providers);
+    
+    // Auto-select the first configured AI provider, or mock if none configured
+    const configuredAIProvider = providers.find(p => p.configured && p.provider !== 'mock');
+    if (configuredAIProvider) {
+      setSelectedProvider(configuredAIProvider.provider);
+    } else {
+      setSelectedProvider('mock');
+    }
     
     // Load recent story maps
     const savedMaps = StorageService.getStoryMaps();

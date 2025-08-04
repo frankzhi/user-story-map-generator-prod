@@ -90,6 +90,99 @@ Guidelines:
 - Acceptance criteria should be clear and measurable
 - Focus on user value and business outcomes
 
+ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
+
+🚨 CRITICAL: Supporting requirements are COMPLETELY DIFFERENT from user stories. They are technical infrastructure, dependencies, and integrations that enable user stories to be delivered.
+
+❌ WRONG EXAMPLES (DO NOT DO THIS):
+- User Story: "用户输入手机号获取验证码进行登录" 
+- WRONG Supporting Requirement: "实现手机号验证码登录" (This is just rephrasing!)
+- User Story: "扫描附近可用的智能手表设备"
+- WRONG Supporting Requirement: "蓝牙设备搜索" (This is just rephrasing!)
+
+✅ CORRECT EXAMPLES:
+- User Story: "用户输入手机号获取验证码进行登录"
+- CORRECT Supporting Requirements:
+  * "Integrate Alibaba Cloud SMS API v2.0 for verification code delivery"
+  * "Implement Redis 7.0 for temporary code storage and validation"
+  * "Set up SSL/TLS 1.3 encryption for secure data transmission"
+
+- User Story: "扫描附近可用的智能手表设备"
+- CORRECT Supporting Requirements:
+  * "Integrate React Native BLE SDK v2.0 for device discovery"
+  * "Implement Bluetooth Low Energy (BLE) protocol v4.2+"
+  * "Configure device permission handling for iOS and Android"
+
+Supporting requirements MUST fall into these 4 categories:
+
+1. SOFTWARE DEPENDENCIES:
+   - Specific third-party libraries, frameworks, and tools with exact versions
+   - Development tools and build dependencies
+   - Examples:
+     * "Integrate React Native 0.72.0 for cross-platform mobile development"
+     * "Implement Spring Boot 3.1.0 with Java 17 for backend services"
+     * "Use MongoDB Atlas v6.0 for cloud database management"
+     * "Integrate Redux Toolkit 1.9.0 for state management"
+
+2. SERVICE INTEGRATIONS:
+   - External APIs and third-party services with specific versions
+   - Business domain integrations with clear protocols
+   - Examples:
+     * "Integrate with WeChat Open Platform API v3.0 for social login"
+     * "Connect to AWS S3 SDK v2.0 for file storage and CDN"
+     * "Integrate with Alibaba Cloud IoT Platform API v1.0 for device management"
+     * "Connect to Tencent Cloud COS SDK v5.0 for media storage"
+
+3. SECURITY & COMPLIANCE:
+   - Authentication and authorization systems with specific protocols
+   - Data protection and privacy compliance standards
+   - Examples:
+     * "Implement OAuth 2.0 with JWT tokens (RFC 7519) for authentication"
+     * "Set up GDPR-compliant data processing with encryption at rest"
+     * "Implement PCI DSS Level 1 compliance for payment data handling"
+     * "Configure SSL/TLS 1.3 with certificate pinning for secure communication"
+
+4. PERFORMANCE REQUIREMENTS:
+   - Scalability and performance solutions with specific technologies
+   - Infrastructure and deployment requirements
+   - Examples:
+     * "Implement Redis 7.0 with cluster mode for session caching"
+     * "Set up CDN (Cloudflare) with edge caching for static assets"
+     * "Configure AWS Auto Scaling with load balancer for dynamic scaling"
+     * "Implement database connection pooling with HikariCP v5.0"
+
+🚨 CRITICAL RULES:
+- NEVER create supporting requirements that are just rephrased user stories
+- NEVER create supporting requirements that are task breakdowns
+- NEVER use generic terms like "实现" (implement), "开发" (develop), "功能" (function)
+- Each supporting requirement must be a specific technical dependency, integration, or infrastructure need
+- Be extremely specific about technologies, versions, APIs, and technical specifications
+- Focus on what the development team needs to procure, integrate, or configure
+- Supporting requirements should answer "What technical dependencies do we need?" not "How do we implement this feature?"
+- If you're tempted to write something like "实现X功能", STOP and think about the actual technical dependencies needed
+
+🔍 VALIDATION CHECKLIST:
+Before generating any supporting requirement, ask yourself:
+1. Is this a specific technology, library, API, or infrastructure component?
+2. Does it include exact versions, protocols, or technical specifications?
+3. Is it something the development team needs to procure, integrate, or configure?
+4. Is it NOT just a rephrased user story with "实现" or "开发"?
+5. Does it belong to one of the 4 categories above?
+
+If the answer to any of these questions is NO, DO NOT generate that supporting requirement.
+     * "Configure AWS Auto Scaling with load balancer for dynamic scaling"
+     * "Implement database connection pooling with HikariCP v5.0"
+
+🚨 CRITICAL RULES:
+- NEVER create supporting requirements that are just rephrased user stories
+- NEVER create supporting requirements that are task breakdowns
+- NEVER use generic terms like "实现" (implement), "开发" (develop), "功能" (function)
+- Each supporting requirement must be a specific technical dependency, integration, or infrastructure need
+- Be extremely specific about technologies, versions, APIs, and technical specifications
+- Focus on what the development team needs to procure, integrate, or configure
+- Supporting requirements should answer "What technical dependencies do we need?" not "How do we implement this feature?"
+- If you're tempted to write something like "实现X功能", STOP and think about the actual technical dependencies needed
+
 Generate a user story map for this product: ${productDescription}
 
 Return ONLY the JSON object, no additional text or explanations.`;
