@@ -35,12 +35,32 @@ export class DeepSeekService {
     }
 
     const currentLang = i18n.language;
-    const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese). All content including titles, descriptions, and acceptance criteria should be in Chinese.' : 'Please respond in English.';
+    const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
     
     const systemPrompt = `You are an expert product manager and user story mapping specialist. 
-    
+
 Your task is to generate a comprehensive user story map from a product description. 
-The response should be a valid JSON object with the following structure:
+
+CRITICAL: Supporting requirements are technical dependencies, integrations, and infrastructure needs - NOT functional descriptions or rephrased user stories.
+
+Supporting requirements MUST include:
+- Specific technical components (SDKs, APIs, Libraries, Frameworks)
+- Version numbers when applicable
+- API endpoints when applicable
+- SDK names when applicable
+
+Examples of CORRECT supporting requirements:
+- "Integrate Firebase Authentication SDK v10.0 for user authentication"
+- "Implement Bluetooth Low Energy (BLE) protocol v4.2+ for device communication"
+- "Use React Native 0.72.0 for cross-platform mobile development"
+- "Connect to AWS S3 SDK v2.0 for file storage"
+
+Examples of WRONG supporting requirements (DO NOT DO THIS):
+- "实现手机号验证码登录" (This is just rephrasing the user story!)
+- "扫描附近可用的智能手表设备" (This is functional description!)
+- "设备配对流程" (This is task breakdown!)
+
+Return ONLY a valid JSON object with the following structure:
 
 {
   "title": "Product Title",
@@ -97,124 +117,7 @@ Guidelines:
 - Acceptance criteria should be clear and measurable
 - Focus on user value and business outcomes
 
-ENABLING STORIES (Supporting Requirements) - CRITICAL GUIDELINES:
-
-🚨 CRITICAL: Supporting requirements are COMPLETELY DIFFERENT from user stories. They are technical infrastructure, dependencies, and integrations that enable user stories to be delivered.
-
-❌ WRONG EXAMPLES (DO NOT DO THIS):
-- User Story: "用户输入手机号获取验证码进行登录" 
-- WRONG Supporting Requirement: "实现手机号验证码登录" (This is just rephrasing!)
-- User Story: "扫描附近可用的智能手表设备"
-- WRONG Supporting Requirement: "蓝牙设备搜索" (This is just rephrasing!)
-- User Story: "在地图上显示宠物位置标记"
-- WRONG Supporting Requirement: "宠物标记点渲染" (This is just rephrasing!)
-- User Story: "设计并开发列表页面"
-- WRONG Supporting Requirement: "实现宠物列表UI" (This is just rephrasing!)
-
-✅ CORRECT EXAMPLES:
-- User Story: "用户输入手机号获取验证码进行登录"
-- CORRECT Supporting Requirements:
-  * "集成阿里云短信服务 API v2.0 用于验证码发送"
-  * "实现 Redis 7.0 用于临时验证码存储和验证"
-  * "配置 SSL/TLS 1.3 加密用于安全数据传输"
-
-- User Story: "扫描附近可用的智能手表设备"
-- CORRECT Supporting Requirements:
-  * "集成 React Native BLE SDK v2.0 用于设备发现"
-  * "实现蓝牙低功耗 (BLE) 协议 v4.2+"
-  * "配置 iOS 和 Android 设备权限处理"
-
-- User Story: "在地图上显示宠物位置标记"
-- CORRECT Supporting Requirements:
-  * "集成高德地图 SDK v8.0 用于位置服务"
-  * "实现自定义标记渲染与 MapKit"
-  * "配置实时位置跟踪与 GPS"
-
-- User Story: "设计并开发列表页面"
-- CORRECT Supporting Requirements:
-  * "集成 React Native FlatList 用于高效列表渲染"
-  * "实现下拉刷新与 RefreshControl"
-  * "配置大数据集虚拟滚动"
-
-Supporting requirements MUST fall into these 4 categories and include technical specifications:
-
-1. SOFTWARE DEPENDENCIES:
-   - Specific third-party libraries, frameworks, and tools with exact versions
-   - Development tools and build dependencies
-   - Examples:
-     * "集成 React Native 0.72.0 用于跨平台移动开发"
-       - technical_specs: { version: "0.72.0", sdk_name: "React Native", integration_type: "Framework Integration" }
-     * "实现 Spring Boot 3.1.0 与 Java 17 用于后端服务"
-       - technical_specs: { version: "3.1.0", sdk_name: "Spring Boot", integration_type: "Backend Framework" }
-     * "使用 MongoDB Atlas v6.0 用于云数据库管理"
-       - technical_specs: { version: "6.0", sdk_name: "MongoDB Atlas", integration_type: "Cloud Database" }
-     * "集成 Redux Toolkit 1.9.0 用于状态管理"
-       - technical_specs: { version: "1.9.0", sdk_name: "Redux Toolkit", integration_type: "State Management" }
-
-2. SERVICE INTEGRATIONS:
-   - External APIs and third-party services with specific versions
-   - Business domain integrations with clear protocols
-   - Examples:
-     * "集成微信开放平台 API v3.0 用于社交登录"
-       - technical_specs: { version: "3.0", api_endpoint: "https://api.weixin.qq.com", sdk_name: "WeChat Open Platform API", integration_type: "Social Login" }
-     * "连接 AWS S3 SDK v2.0 用于文件存储和 CDN"
-       - technical_specs: { version: "2.0", api_endpoint: "https://s3.amazonaws.com", sdk_name: "AWS S3 SDK", integration_type: "Cloud Storage" }
-     * "集成阿里云物联网平台 API v1.0 用于设备管理"
-       - technical_specs: { version: "1.0", api_endpoint: "https://iot.cn-shanghai.aliyuncs.com", sdk_name: "Alibaba Cloud IoT API", integration_type: "IoT Platform" }
-     * "连接腾讯云 COS SDK v5.0 用于媒体存储"
-       - technical_specs: { version: "5.0", api_endpoint: "https://cos.myqcloud.com", sdk_name: "Tencent Cloud COS SDK", integration_type: "Media Storage" }
-
-3. SECURITY & COMPLIANCE:
-   - Authentication and authorization systems with specific protocols
-   - Data protection and privacy compliance standards
-   - Examples:
-     * "实现 OAuth 2.0 与 JWT 令牌 (RFC 7519) 用于身份验证"
-     * "设置符合 GDPR 的数据处理与静态加密"
-     * "实现 PCI DSS Level 1 合规用于支付数据处理"
-     * "配置 SSL/TLS 1.3 与证书固定用于安全通信"
-
-4. PERFORMANCE REQUIREMENTS:
-   - Scalability and performance solutions with specific technologies
-   - Infrastructure and deployment requirements
-   - Examples:
-     * "实现 Redis 7.0 集群模式用于会话缓存"
-     * "设置 CDN (Cloudflare) 边缘缓存用于静态资源"
-     * "配置 AWS Auto Scaling 与负载均衡器用于动态扩展"
-     * "实现数据库连接池与 HikariCP v5.0"
-
-🚨 CRITICAL RULES:
-
-1. EVERY supporting requirement MUST mention a specific technical component (SDK, API, Library, Framework, Protocol, etc.)
-2. NEVER create supporting requirements that are just functional descriptions
-3. ALWAYS include the technical component name and version when applicable
-4. Supporting requirements should answer "What technical dependencies do we need?" not "How do we implement this feature?"
-5. If you can't identify a specific technical component, don't create a supporting requirement
-
-EXAMPLES OF WHAT TO AVOID:
-- "实现手机号输入界面" → Should be: "集成 React Native TextInput 与验证"
-- "验证码校验功能" → Should be: "实现短信验证与 Twilio API v3.0"
-- "宠物标记点渲染" → Should be: "集成 MapKit 用于自定义标记渲染"
-- "实现宠物列表UI" → Should be: "集成 React Native FlatList 用于列表渲染"
-- NEVER create supporting requirements that are just rephrased user stories
-- NEVER create supporting requirements that are task breakdowns
-- NEVER use generic terms like "实现" (implement), "开发" (develop), "功能" (function)
-- Each supporting requirement must be a specific technical dependency, integration, or infrastructure need
-- Be extremely specific about technologies, versions, APIs, and technical specifications
-- Focus on what the development team needs to procure, integrate, or configure
-- Supporting requirements should answer "What technical dependencies do we need?" not "How do we implement this feature?"
-- If you're tempted to write something like "实现X功能", STOP and think about the actual technical dependencies needed
-
-🔍 VALIDATION CHECKLIST:
-Before generating any supporting requirement, ask yourself:
-1. Is this a specific technology, library, API, or infrastructure component?
-2. Does it include exact versions, protocols, or technical specifications?
-3. Is it something the development team needs to procure, integrate, or configure?
-4. Is it NOT just a rephrased user story with "实现" or "开发"?
-5. Does it belong to one of the 4 categories above?
-
-If the answer to any of these questions is NO, DO NOT generate that supporting requirement.
-
-Return ONLY the JSON object, no additional text or explanations.`;
+${languageContext}`;
 
     const userPrompt = `Generate a user story map for this product: ${productDescription}`;
 
