@@ -326,11 +326,29 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   const generateSupportingNeeds = (task: UserStory) => {
     // 如果任务有支撑性需求，直接返回
     if (task.supportingRequirements && task.supportingRequirements.length > 0) {
-      return task.supportingRequirements.map(requirement => ({
-        need: requirement.title,
-        priority: requirement.priority as Priority,
-        type: requirement.type
-      }));
+      return task.supportingRequirements.map(requirement => {
+        let needText = requirement.title;
+        
+        // 如果有技术规格信息，添加到显示文本中
+        if (requirement.technical_specs) {
+          const specs = requirement.technical_specs;
+          const specParts = [];
+          
+          if (specs.version) specParts.push(`v${specs.version}`);
+          if (specs.sdk_name) specParts.push(specs.sdk_name);
+          if (specs.integration_type) specParts.push(specs.integration_type);
+          
+          if (specParts.length > 0) {
+            needText += ` (${specParts.join(', ')})`;
+          }
+        }
+        
+        return {
+          need: needText,
+          priority: requirement.priority as Priority,
+          type: requirement.type
+        };
+      });
     }
     
     // 如果没有支撑性需求，返回空数组
