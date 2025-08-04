@@ -78,22 +78,32 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `c3fbef8`
-- **提交信息**: "Fix dialog issues: remove duplicate acceptance criteria, add supporting requirement click functionality, fix header positioning"
+- **Commit**: `9dfe698`
+- **提交信息**: "Optimize AI parameters and prompts to generate more comprehensive user stories"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 09:29:35 UTC
-- **生产环境 URL**: https://user-story-map-prod-efi5xurig-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 09:40:08 UTC
+- **生产环境 URL**: https://user-story-map-prod-5e29uhbac-freedomztm-7943s-projects.vercel.app
+
+### AI参数优化
+1. **Temperature调整**：从0.3增加到0.7，提高AI创造性
+2. **Max tokens增加**：从4000增加到6000，允许生成更多内容
+3. **提示词强化**：
+   - 添加了强制要求：每个feature至少生成3个任务
+   - 增加了任务分解指导
+   - 强调考虑不同用户场景和用例
+4. **用户提示优化**：添加了具体的任务分解示例和指导
 
 ### 已修复的问题
 1. ✅ **验收标准重复问题** - 只在没有AI优化数据时显示原始验收标准
 2. ✅ **支撑性需求点击功能** - 实现了真正的点击功能，可以查看详细信息
 3. ✅ **操作栏固定** - 对话框头部现在固定在顶部，不会在滚动时消失
 4. ✅ **支撑性需求卡片优化** - 移除了描述文本，只显示标题和类型信息
+5. ✅ **AI生成任务数量优化** - 调整参数和提示词，确保生成更多任务
 
 ### 待解决的问题
-1. **测试新增的支撑性需求点击功能** - 验证点击支撑性需求卡片是否能正确显示详情弹窗
-2. **验证验收标准显示逻辑** - 确认AI优化后不再显示重复的验收标准
-3. **测试操作栏固定效果** - 验证滚动时操作栏是否保持可见
+1. **测试AI优化效果** - 验证新的参数设置是否能生成更多任务
+2. **验证任务质量** - 确认生成的任务是否更加具体和全面
+3. **监控生成稳定性** - 确保AI生成的内容质量稳定
 4. **前端显示优化** - 在界面上展示技术规格信息
 5. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
 
