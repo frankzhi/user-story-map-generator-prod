@@ -27,6 +27,12 @@ export interface UserStory {
   estimatedEffort: string;
   assignee?: string;
   dependencies?: string[];
+  supportingRequirements?: {
+    title: string;
+    description: string;
+    type: 'software_dependency' | 'service_integration' | 'security_compliance' | 'performance_requirement';
+    priority: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -71,6 +77,12 @@ export interface StoryMapYAML {
         priority: string;
         effort: string;
         acceptance_criteria: string[];
+        supporting_requirements?: {
+          title: string;
+          description: string;
+          type: 'software_dependency' | 'service_integration' | 'security_compliance' | 'performance_requirement';
+          priority: string;
+        }[];
       }[];
     }[];
   }[];
