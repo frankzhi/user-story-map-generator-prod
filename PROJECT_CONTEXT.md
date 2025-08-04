@@ -72,17 +72,18 @@ git push origin main
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `d52f48c`
-- **提交信息**: "Remove all mock data functions and clean up AI service"
+- **Commit**: `c621adb`
+- **提交信息**: "Optimize AI generation: lower temperature to 0.3 for stricter prompt adherence"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 14:44:26 UTC
-- **生产环境 URL**: https://user-story-map-prod-5i5j1wys8-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 07:11:10 UTC
+- **生产环境 URL**: https://user-story-map-prod-36m05fdh6-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **验证 AI 生成质量** - 测试强化后的提示词是否能避免功能描述
+1. **测试优化后的 AI 生成质量** - 验证降低 temperature 参数后的生成效果
 2. **前端显示优化** - 在界面上展示技术规格信息
 3. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
 4. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
+5. **考虑添加更多 AI 提示词优化** - 如添加验证函数和过滤逻辑
 
 ## 核心问题与需求
 
