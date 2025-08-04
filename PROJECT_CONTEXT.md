@@ -146,11 +146,12 @@ supporting_requirements: {
   description: string;              // 例如："集成微信支付API进行移动支付"
   type: 'software_dependency' | 'service_integration' | 'security_compliance' | 'performance_requirement';
   priority: string;                 // 优先级
-  technical_specs?: {               // 技术规格（新增）
+  technical_specs?: {               // 技术规格（已实现）
     version: string;                // 版本号
     api_endpoint?: string;          // API端点
     sdk_name?: string;              // SDK名称
     integration_type: string;       // 集成类型
+    documentation_url?: string;     // 文档URL
   };
 }
 ```
@@ -172,15 +173,16 @@ supporting_requirements: {
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `d493496`
-- **提交信息**: "Add project context documentation for future reference"
+- **Commit**: `7ff6791`
+- **提交信息**: "Enhance supporting requirements with technical specifications: add version, api_endpoint, sdk_name, integration_type fields"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 13:53:18 UTC
+- **部署时间**: 2025-08-04 14:10:45 UTC
+- **生产环境 URL**: https://user-story-map-prod-r1bxfmocq-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
 1. **完全移除 mock 功能** - 部分 mock 代码仍然存在
-2. **更新 AI 提示词** - 需要包含改进的支撑性需求指导
-3. **验证 AI 生成质量** - 确保支撑性需求符合技术化要求
+2. **验证 AI 生成质量** - 测试新的技术规格字段是否被正确生成
+3. **前端显示优化** - 在界面上展示技术规格信息
 
 ## 环境变量配置
 
