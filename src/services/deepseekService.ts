@@ -281,15 +281,30 @@ Return ONLY the JSON object, no additional text or explanations.`;
         features: (epic.features || []).map((feature: any) => ({
           title: feature.title || 'Untitled Feature',
           description: feature.description || '',
-          tasks: (feature.tasks || []).map((task: any) => ({
-            title: task.title || 'Untitled Task',
-            description: task.description || '',
-            priority: task.priority || 'medium',
-            effort: task.effort || '2 days',
-            acceptance_criteria: Array.isArray(task.acceptance_criteria) 
-              ? task.acceptance_criteria 
-              : ['Acceptance criteria not specified']
-          }))
+                      tasks: (feature.tasks || []).map((task: any) => ({
+              title: task.title || 'Untitled Task',
+              description: task.description || '',
+              priority: task.priority || 'medium',
+              effort: task.effort || '2 days',
+              acceptance_criteria: Array.isArray(task.acceptance_criteria) 
+                ? task.acceptance_criteria 
+                : ['Acceptance criteria not specified'],
+              supporting_requirements: Array.isArray(task.supporting_requirements)
+                ? task.supporting_requirements.map((req: any) => ({
+                    title: req.title || 'Untitled Supporting Requirement',
+                    description: req.description || '',
+                    type: req.type || 'software_dependency',
+                    priority: req.priority || 'medium',
+                    technical_specs: req.technical_specs ? {
+                      version: req.technical_specs.version || '',
+                      api_endpoint: req.technical_specs.api_endpoint || '',
+                      sdk_name: req.technical_specs.sdk_name || '',
+                      integration_type: req.technical_specs.integration_type || '',
+                      documentation_url: req.technical_specs.documentation_url || ''
+                    } : undefined
+                  }))
+                : []
+            }))
         }))
       }))
     };
