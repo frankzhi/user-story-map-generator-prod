@@ -44,8 +44,8 @@ export class AIService {
       }
     } catch (error) {
       console.error(`Error generating story map with ${provider}:`, error);
-      // Fallback to mock data if AI service fails
-      return this.generateMockStoryMap(productDescription);
+      // Fallback to generic story map if AI service fails
+      return this.generateGenericStoryMap(productDescription);
     }
   }
 
@@ -1279,6 +1279,32 @@ export class AIService {
                     "Page loads quickly and is responsive",
                     "Navigation is intuitive and accessible",
                     "Content is well-organized and readable"
+                  ],
+                  supporting_requirements: [
+                    {
+                      title: "Integrate React 18.2.0 with TypeScript 5.0",
+                      description: "Frontend development framework setup",
+                      type: "software_dependency",
+                      priority: "high",
+                      technical_specs: {
+                        version: "18.2.0",
+                        sdk_name: "React",
+                        integration_type: "Frontend Framework",
+                        documentation_url: "https://react.dev"
+                      }
+                    },
+                    {
+                      title: "Set up Tailwind CSS v3.3.0 for styling",
+                      description: "CSS framework for responsive design",
+                      type: "software_dependency",
+                      priority: "medium",
+                      technical_specs: {
+                        version: "3.3.0",
+                        sdk_name: "Tailwind CSS",
+                        integration_type: "CSS Framework",
+                        documentation_url: "https://tailwindcss.com"
+                      }
+                    }
                   ]
                 },
                 {
@@ -1290,6 +1316,33 @@ export class AIService {
                     "Users can register new accounts",
                     "Secure login functionality",
                     "Password reset capability"
+                  ],
+                  supporting_requirements: [
+                    {
+                      title: "Integrate Firebase Authentication v10.0.0",
+                      description: "User authentication service",
+                      type: "service_integration",
+                      priority: "high",
+                      technical_specs: {
+                        version: "10.0.0",
+                        sdk_name: "Firebase Auth",
+                        integration_type: "Authentication Service",
+                        api_endpoint: "https://firebase.google.com/docs/auth",
+                        documentation_url: "https://firebase.google.com/docs/auth"
+                      }
+                    },
+                    {
+                      title: "Implement JWT token management",
+                      description: "Secure token-based authentication",
+                      type: "security_compliance",
+                      priority: "high",
+                      technical_specs: {
+                        version: "9.0.0",
+                        sdk_name: "jsonwebtoken",
+                        integration_type: "Token Management",
+                        documentation_url: "https://www.npmjs.com/package/jsonwebtoken"
+                      }
+                    }
                   ]
                 }
               ]
