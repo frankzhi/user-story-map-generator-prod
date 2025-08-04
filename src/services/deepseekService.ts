@@ -43,6 +43,21 @@ Your task is to generate a comprehensive user story map from a product descripti
 
 CRITICAL: Supporting requirements are technical dependencies, integrations, and infrastructure needs - NOT functional descriptions or rephrased user stories.
 
+🚨 CRITICAL DISTINCTION:
+
+USER STORIES describe WHAT users want to achieve:
+- "用户想要查看宠物详情"
+- "用户想要购买食物"
+- "用户想要查看投喂记录"
+
+SUPPORTING REQUIREMENTS describe WHAT TECHNICAL INFRASTRUCTURE is needed:
+- "需要 MySQL 数据库存储宠物信息"
+- "需要支付网关处理交易"
+- "需要地图 SDK 显示位置"
+- "需要 Redis 缓存提升性能"
+
+NEVER write supporting requirements like "实现宠物详情页" - that is still a user story!
+
 Supporting requirements MUST include:
 - Specific technical components (SDKs, APIs, Libraries, Frameworks)
 - Version numbers when applicable
@@ -50,13 +65,18 @@ Supporting requirements MUST include:
 - SDK names when applicable
 
 Examples of CORRECT supporting requirements:
-- "Integrate Firebase Authentication SDK v10.0 for user authentication"
-- "Implement Bluetooth Low Energy (BLE) protocol v4.2+ for device communication"
-- "Use React Native 0.72.0 for cross-platform mobile development"
-- "Connect to AWS S3 SDK v2.0 for file storage"
+- "Integrate Firebase Authentication for user authentication"
+- "Implement Bluetooth Low Energy (BLE) protocol for device communication"
+- "Use React Native for cross-platform mobile development"
+- "Connect to AWS S3 for file storage"
+- "Create MySQL database for user data storage"
+- "Implement RESTful API for data communication"
 
 Examples of WRONG supporting requirements (DO NOT DO THIS):
 - "实现手机号验证码登录" (This is just rephrasing the user story!)
+- "扫描附近可用的智能手表设备" (This is functional description!)
+- "设备配对流程" (This is task breakdown!)
+- "实现宠物详情页" (This is still a user story!)- "实现手机号验证码登录" (This is just rephrasing the user story!)
 - "扫描附近可用的智能手表设备" (This is functional description!)
 - "设备配对流程" (This is task breakdown!)
 
