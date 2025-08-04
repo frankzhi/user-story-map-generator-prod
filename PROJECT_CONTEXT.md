@@ -78,18 +78,18 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `60303bf`
-- **提交信息**: "Fix duplicate language context in AI prompts that was confusing the model"
+- **Commit**: `161fb6b`
+- **提交信息**: "Add debug logs to inspect AI response and supporting requirements"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 07:54:55 UTC
-- **生产环境 URL**: https://user-story-map-prod-6b5t4nch6-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 08:26:41 UTC
+- **生产环境 URL**: https://user-story-map-prod-7mcx6flpm-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **测试增强后的 AI 生成质量** - 验证添加关键区别说明后的生成效果
-2. **前端显示优化** - 在界面上展示技术规格信息
-3. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
-4. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
-5. **如果问题仍然存在，考虑更深入的 AI 提示词重构**
+1. **测试调试日志功能** - 验证新增的调试日志是否能正确显示 AI 响应内容
+2. **分析 AI 实际输出** - 通过浏览器控制台查看 AI 的原始响应和解析后的 JSON
+3. **前端显示优化** - 在界面上展示技术规格信息
+4. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
+5. **配置生产环境 API 密钥** - 在 Vercel 中设置环境变量
 
 ## 核心问题与需求
 
