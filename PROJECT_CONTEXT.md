@@ -72,14 +72,14 @@ git push origin main
 ## 当前状态
 
 ### 最新提交
-- **Commit**: `6a13d66`
-- **提交信息**: "Fix frontend display: add technical_specs support and update UserStory interface"
+- **Commit**: `df156d4`
+- **提交信息**: "Fix AI service fallback: replace non-existent generateMockStoryMap with generateGenericStoryMap and add supporting requirements"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-04 14:31:51 UTC
-- **生产环境 URL**: https://user-story-map-prod-j6lhdgff6-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-04 14:39:41 UTC
+- **生产环境 URL**: https://user-story-map-prod-lkw4zu0qd-freedomztm-7943s-projects.vercel.app
 
 ### 待解决的问题
-1. **完全移除 mock 功能** - 部分 mock 代码仍然存在
+1. **配置 AI 服务** - 需要设置正确的 API 密钥以启用真实的 AI 生成
 2. **验证 AI 生成质量** - 测试强化后的提示词是否能避免功能描述
 3. **前端显示优化** - 在界面上展示技术规格信息
 4. **持续监控生成质量** - 确保支撑性需求都包含具体的技术组件
