@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Sparkles, Save, Edit, Trash2 } from 'lucide-react';
-import type { Task } from '../types/story';
+import type { Task, UserStory } from '../types/story';
 import { AIService } from '../services/aiService';
 import i18n from '../i18n';
 import { PrioritySelector, type Priority } from './PrioritySelector';
 
 interface EnhancedStoryDetailProps {
-  task: Task;
+  task: UserStory;
   storyMap?: any; // 添加故事地图上下文
   onClose: () => void;
-  onUpdate: (updatedTask: Task) => void;
+  onUpdate: (updatedTask: UserStory) => void;
   onDelete: () => void;
 }
 
@@ -60,7 +60,7 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
     setIsLoading(true);
     try {
       const aiService = AIService.getInstance();
-      const enhancedStory = await aiService.enhanceStory(task, storyMap);
+      const enhancedStory = await aiService.enhanceStory(task as Task, storyMap);
       
       // Preserve the original priority when enhancing with AI
       const enhancedStoryWithPriority = {
@@ -140,15 +140,10 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
 
   const handleSave = () => {
     if (editableData) {
-      const updatedTask: Task = {
+      const updatedTask: UserStory = {
         ...task,
         description: editableData.userStory,
-        acceptanceCriteria: editableData.acceptanceCriteria,
-        // Add enhanced data to task metadata
-        metadata: {
-          ...task.metadata,
-          enhancedData: editableData
-        }
+        acceptanceCriteria: editableData.acceptanceCriteria
       };
       
       // Update cache with edited data
@@ -171,9 +166,9 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
+        {/* Header - Fixed */}
+        <div className="flex items-center justify-between p-6 border-b bg-white sticky top-0 z-10">
           <h2 className="text-2xl font-bold text-gray-900">
             {t('storyDetail.title')}
           </h2>
@@ -207,8 +202,8 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
+        {/* Content - Scrollable */}
+        <div className="p-6 space-y-6 overflow-y-auto flex-1">
           {/* Basic Info */}
           <div>
             <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
@@ -240,7 +235,7 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
             </div>
 
             {/* Original Acceptance Criteria */}
-            {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && (
+            {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && !enhancedData && (
               <div className="mb-4">
                 <h4 className="font-semibold mb-2 text-gray-800">验收标准</h4>
                 <ul className="list-disc list-inside space-y-1">
@@ -261,8 +256,11 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
                       key={index}
                       className="bg-gray-50 p-3 rounded-md border border-gray-200 hover:border-blue-300 cursor-pointer transition-colors"
                       onClick={() => {
-                        // TODO: 实现支撑性需求详情弹窗
-                        console.log('Supporting requirement clicked:', req);
+                        // 触发支撑性需求详情显示
+                        const event = new CustomEvent('showSupportingRequirement', {
+                          detail: req
+                        });
+                        window.dispatchEvent(event);
                       }}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -276,7 +274,6 @@ const EnhancedStoryDetail: React.FC<EnhancedStoryDetailProps> = ({
                            req.priority === 'medium' ? '中' : '低'}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600 mb-2">{req.description}</p>
                       <div className="flex items-center space-x-2">
                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
                           {req.type === 'software_dependency' ? '软件依赖' :

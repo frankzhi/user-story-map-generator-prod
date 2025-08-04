@@ -51,6 +51,20 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
     setSelectedSupportingRequirement(null);
   };
 
+  // 监听支撑性需求详情显示事件
+  React.useEffect(() => {
+    const handleShowSupportingRequirement = (event: CustomEvent) => {
+      setSelectedSupportingRequirement(event.detail);
+      setShowSupportingRequirementModal(true);
+    };
+
+    window.addEventListener('showSupportingRequirement', handleShowSupportingRequirement as EventListener);
+    
+    return () => {
+      window.removeEventListener('showSupportingRequirement', handleShowSupportingRequirement as EventListener);
+    };
+  }, []);
+
   const downloadYAML = () => {
     const yamlContent = convertToYAML(currentStoryMap);
     const blob = new Blob([yamlContent], { type: 'text/yaml' });
