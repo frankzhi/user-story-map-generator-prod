@@ -122,7 +122,7 @@ ${languageContext}`;
     const userPrompt = `Generate a user story map for this product: ${productDescription}`;
 
     const messages: DeepSeekMessage[] = [
-      { role: 'system', content: systemPrompt + '\n\n' + languageContext },
+      { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
     ];
 
@@ -220,12 +220,8 @@ ${languageContext}`;
       throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
     }
 
-    // Add language context to the prompt
-    const currentLang = i18n.language;
-    const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
-    
     const messages: DeepSeekMessage[] = [
-      { role: 'system', content: systemPrompt + '\n\n' + languageContext },
+      { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
     ];
 
