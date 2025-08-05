@@ -146,6 +146,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
             return supportingNeeds.map(need => ({ 
               need: need.need, 
               priority: need.priority, 
+              type: need.type,
               associatedStoryId: task.id, 
               associatedStoryTitle: task.title 
             })); 
