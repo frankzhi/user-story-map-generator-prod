@@ -374,6 +374,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         
         // 🔍 DEBUG: 添加调试日志
         console.log(`🔍 支撑性需求: "${requirement.title}" -> 显示文本: "${needText}"`);
+        console.log(`🔍 支撑性需求类型: "${requirement.type}"`);
+        console.log(`🔍 完整支撑性需求数据:`, requirement);
         
         return {
           need: needText,
