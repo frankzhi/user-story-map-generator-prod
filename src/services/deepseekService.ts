@@ -195,7 +195,19 @@ EXAMPLES OF COMPREHENSIVE BREAKDOWN:
 - Don't just create "用户注册" - break it into: 填写表单、验证手机号、设置密码、同意条款、上传头像、完善资料、选择偏好、邮箱验证
 - Don't just create "搜索产品" - break it into: 输入关键词、应用筛选、查看结果、排序结果、保存历史、设置提醒、分享结果、导出结果
 
-IMPORTANT: Every task must have supporting requirements that describe the technical infrastructure needed to implement it. Think about APIs, databases, SDKs, and other technical dependencies for each user story.`;
+IMPORTANT: Every task must have supporting requirements that describe the technical infrastructure needed to implement it. Think about APIs, databases, SDKs, and other technical dependencies for each user story.
+
+CRITICAL: Each supporting requirement MUST have a valid "type" field with one of these values:
+- "software_dependency" for libraries, frameworks, SDKs
+- "service_integration" for APIs, external services
+- "security_compliance" for authentication, encryption, compliance
+- "performance_requirement" for caching, optimization, scalability
+
+Examples of correct type assignments:
+- MySQL database → "software_dependency"
+- REST API → "service_integration" 
+- JWT authentication → "security_compliance"
+- Redis caching → "performance_requirement"`;
 
     const messages: DeepSeekMessage[] = [
       { role: 'system', content: systemPrompt },
