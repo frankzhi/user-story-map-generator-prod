@@ -9,8 +9,8 @@ const StoryMapViewWithRouting = ({ storyMap }: { storyMap: StoryMap }) => {
   const navigate = useNavigate();
   
   const handleBackToHome = () => {
-    // Clear the story map from localStorage when going back to home
-    localStorage.removeItem('currentStoryMap');
+    // Don't clear the story map from localStorage when going back to home
+    // This allows users to return to their modified story map
     navigate('/');
   };
 
