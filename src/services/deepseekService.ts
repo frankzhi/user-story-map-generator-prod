@@ -35,7 +35,7 @@ export class DeepSeekService {
     }
 
     const currentLang = i18n.language;
-    const languageContext = currentLang === 'zh' ? 'Please respond in Chinese (Simplified Chinese).' : 'Please respond in English.';
+    const languageContext = currentLang === 'zh' ? 'MANDATORY: You MUST respond in Chinese (Simplified Chinese). All content including titles, descriptions, and task names must be in Chinese.' : 'Please respond in English.';
     
     const systemPrompt = `You are an expert product manager and user story mapping specialist. 
 
@@ -131,9 +131,11 @@ Guidelines:
 - Create 3-5 epics that cover the main functional areas
 - Each epic should have 2-4 features
 - Each feature should have 4-8 tasks (MANDATORY: Generate at least 4 tasks per feature to ensure comprehensive coverage)
+- MANDATORY: If you generate fewer than 4 tasks per feature, you are not following the requirements
 - Each task MUST have at least 1-2 supporting requirements (MANDATORY: Every task needs technical infrastructure)
 - Supporting requirements should cover the main technical dependencies for each task
 - Think about what technical components are needed to implement each user story
+- MANDATORY: Break down each feature comprehensively - do not create generic tasks
 
 TASK GENERATION STRATEGY:
 - CRITICAL: Think about COMPLETE user journeys, not just basic actions
@@ -183,13 +185,15 @@ ${languageContext}`;
     const userPrompt = `Generate a user story map for this product: ${productDescription}. 
 
 CRITICAL REQUIREMENTS:
-1. For each feature, break it down into at least 4-8 specific user tasks to ensure comprehensive coverage
-2. Think about COMPLETE user journeys, not just basic actions
-3. Consider different user personas (new users, power users, admin users)
-4. Include edge cases, error scenarios, and data management features
-5. Think about different devices, platforms, and offline/online scenarios
-6. Include notification, communication, analytics, and reporting features
-7. Consider integration with other systems and scalability requirements
+1. MANDATORY: For each feature, break it down into at least 4-8 specific user tasks to ensure comprehensive coverage
+2. MANDATORY: If you generate fewer than 4 tasks per feature, you are not following the requirements
+3. Think about COMPLETE user journeys, not just basic actions
+4. Consider different user personas (new users, power users, admin users)
+5. Include edge cases, error scenarios, and data management features
+6. Think about different devices, platforms, and offline/online scenarios
+7. Include notification, communication, analytics, and reporting features
+8. Consider integration with other systems and scalability requirements
+9. MANDATORY: Do not create generic tasks like "用户注册" - break them down into specific actions
 
 EXAMPLES OF COMPREHENSIVE BREAKDOWN:
 - Don't just create "用户注册" - break it into: 填写表单、验证手机号、设置密码、同意条款、上传头像、完善资料、选择偏好、邮箱验证
