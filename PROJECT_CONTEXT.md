@@ -78,11 +78,39 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `433856a`
-- **提交信息**: "Update project context: supporting requirements optimization and mandatory generation"
-- **状态**: 已推送到 GitHub 和部署到 Vercel（回退到用户确认的工作版本）
-- **部署时间**: 2025-08-05 02:13:58 UTC
-- **生产环境 URL**: https://user-story-map-prod-r6dgyy605-freedomztm-7943s-projects.vercel.app
+- **Commit**: `aef6493`
+- **提交信息**: "Optimize AI prompts to generate more comprehensive user stories with better task breakdown"
+- **状态**: 已推送到 GitHub 和部署到 Vercel
+- **部署时间**: 2025-08-05 03:16:25 UTC
+- **生产环境 URL**: https://user-story-map-prod-3cku8ov5r-freedomztm-7943s-projects.vercel.app
+
+### 用户故事数量优化
+1. **问题识别**：
+   - 用户反馈每个活动下的用户故事数量偏少
+   - 可能导致遗漏关键的业务场景和功能点
+   - 需要更全面的任务分解来确保功能完整性
+
+2. **优化策略**：
+   - **任务数量要求**：从3-6个增加到4-8个任务/功能
+   - **AI参数调整**：temperature从0.7增加到0.8，max_tokens从6000增加到8000
+   - **提示词强化**：添加了详细的任务分解策略和示例
+
+3. **任务分解策略**：
+   - 考虑完整的用户旅程，不仅仅是基本操作
+   - 包含不同用户角色（新用户、高级用户、管理员）
+   - 包含边缘情况和错误场景
+   - 考虑不同设备和平台
+   - 包含离线/在线场景
+   - 包含数据管理和隐私功能
+   - 考虑性能和可扩展性要求
+   - 考虑与其他系统的集成
+   - 包含通知和通信功能
+   - 考虑分析和报告需求
+
+4. **具体示例**：
+   - **用户注册**：从单一任务分解为8个具体任务
+   - **产品搜索**：从单一任务分解为8个具体任务
+   - 确保每个功能都有全面的任务覆盖
 
 ### 版本回退说明
 1. **回退原因**：
