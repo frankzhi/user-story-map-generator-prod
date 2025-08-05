@@ -740,20 +740,56 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                 className="flex flex-col gap-1 border-r border-gray-200"
                                 style={{ width: `${activityWidth}px` }}
                               >
-                                {activity.touchpoints.map((item, touchpointIndex) => (
-                                  <div
-                                    key={touchpointIndex}
-                                    className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1"
-                                  >
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                        {t('storyMap.potentialCustomer')}
-                                      </span>
-                                      {getTouchpointIcon(item.touchpoint)}
-                                    </div>
-                                    <p className="text-xs text-gray-700">{item.touchpoint}</p>
-                                  </div>
-                                ))}
+                                {(() => {
+                                  // 优化触点布局：按用户类型分组并去重
+                                  const touchpointGroups = new Map<string, string[]>();
+                                  
+                                  activity.touchpoints.forEach(item => {
+                                    // 从触点字符串中提取用户类型和页面信息
+                                    const parts = item.touchpoint.split('/');
+                                    if (parts.length >= 3) {
+                                      const userType = parts[1]; // 用户类型
+                                      const pageInfo = parts.slice(2).join('/'); // 页面信息
+                                      const key = `${parts[0]}/${userType}`; // 平台/用户类型作为分组键
+                                      
+                                      if (!touchpointGroups.has(key)) {
+                                        touchpointGroups.set(key, []);
+                                      }
+                                      const pages = touchpointGroups.get(key)!;
+                                      if (!pages.includes(pageInfo)) {
+                                        pages.push(pageInfo);
+                                      }
+                                    }
+                                  });
+                                  
+                                  return Array.from(touchpointGroups.entries()).map(([groupKey, pages], groupIndex) => {
+                                    const [platform, userType] = groupKey.split('/');
+                                    const userTypeLabel = userType === '用户' ? '顾客' : 
+                                                       userType === '管理员' ? '管理员' : 
+                                                       userType === '系统' ? '系统' : userType;
+                                    
+                                    return (
+                                      <div
+                                        key={groupIndex}
+                                        className="bg-white border border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 mb-1"
+                                      >
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                            {userTypeLabel}
+                                          </span>
+                                          {getTouchpointIcon(`${platform}/${userType}`)}
+                                        </div>
+                                        <div className="space-y-1">
+                                          {pages.map((page, pageIndex) => (
+                                            <p key={pageIndex} className="text-xs text-gray-700">
+                                              {page}
+                                            </p>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    );
+                                  });
+                                })()}
                               </div>
                             ))}
                           </div>
