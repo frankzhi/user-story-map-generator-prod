@@ -130,10 +130,45 @@ Return ONLY a valid JSON object with the following structure:
 Guidelines:
 - Create 3-5 epics that cover the main functional areas
 - Each epic should have 2-4 features
-- Each feature should have 3-6 tasks (MANDATORY: Generate at least 3 tasks per feature)
+- Each feature should have 4-8 tasks (MANDATORY: Generate at least 4 tasks per feature to ensure comprehensive coverage)
 - Each task MUST have at least 1-2 supporting requirements (MANDATORY: Every task needs technical infrastructure)
 - Supporting requirements should cover the main technical dependencies for each task
-- Think about what technical components are needed to implement each user story- Tasks should be specific, actionable, and testable
+- Think about what technical components are needed to implement each user story
+
+TASK GENERATION STRATEGY:
+- CRITICAL: Think about COMPLETE user journeys, not just basic actions
+- Consider different user personas (new users, power users, admin users)
+- Include edge cases and error scenarios
+- Think about different devices and platforms
+- Consider offline/online scenarios
+- Include data management and privacy features
+- Think about performance and scalability requirements
+- Consider integration with other systems
+- Include notification and communication features
+- Think about analytics and reporting needs
+
+EXAMPLES OF COMPREHENSIVE TASK BREAKDOWN:
+For a "User Registration" feature, don't just create "用户注册" - break it down into:
+- 用户填写注册表单
+- 用户验证手机号
+- 用户设置密码
+- 用户同意服务条款
+- 用户上传头像
+- 用户完善个人资料
+- 用户选择偏好设置
+- 用户完成邮箱验证
+
+For a "Product Search" feature, don't just create "搜索产品" - break it down into:
+- 用户输入搜索关键词
+- 用户应用筛选条件
+- 用户查看搜索结果
+- 用户排序搜索结果
+- 用户保存搜索历史
+- 用户设置搜索提醒
+- 用户分享搜索结果
+- 用户导出搜索结果
+
+- Tasks should be specific, actionable, and testable
 - Priority should be based on business value and user impact
 - Effort should be realistic (1-5 days per task)
 - Acceptance criteria should be clear and measurable
@@ -145,7 +180,22 @@ Guidelines:
 - Consider different user roles, personas, and use cases for each feature
 ${languageContext}`;
 
-    const userPrompt = `Generate a user story map for this product: ${productDescription}. IMPORTANT: For each feature, break it down into at least 3-4 specific user tasks. Think about different user actions, scenarios, and use cases. Ensure comprehensive task coverage for each feature. IMPORTANT: Every task must have supporting requirements that describe the technical infrastructure needed to implement it. Think about APIs, databases, SDKs, and other technical dependencies for each user story.`;
+    const userPrompt = `Generate a user story map for this product: ${productDescription}. 
+
+CRITICAL REQUIREMENTS:
+1. For each feature, break it down into at least 4-8 specific user tasks to ensure comprehensive coverage
+2. Think about COMPLETE user journeys, not just basic actions
+3. Consider different user personas (new users, power users, admin users)
+4. Include edge cases, error scenarios, and data management features
+5. Think about different devices, platforms, and offline/online scenarios
+6. Include notification, communication, analytics, and reporting features
+7. Consider integration with other systems and scalability requirements
+
+EXAMPLES OF COMPREHENSIVE BREAKDOWN:
+- Don't just create "用户注册" - break it into: 填写表单、验证手机号、设置密码、同意条款、上传头像、完善资料、选择偏好、邮箱验证
+- Don't just create "搜索产品" - break it into: 输入关键词、应用筛选、查看结果、排序结果、保存历史、设置提醒、分享结果、导出结果
+
+IMPORTANT: Every task must have supporting requirements that describe the technical infrastructure needed to implement it. Think about APIs, databases, SDKs, and other technical dependencies for each user story.`;
 
     const messages: DeepSeekMessage[] = [
       { role: 'system', content: systemPrompt },
@@ -162,8 +212,8 @@ ${languageContext}`;
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.7,
-          max_tokens: 6000
+          temperature: 0.8,
+          max_tokens: 8000
         })
       });
 
@@ -285,8 +335,8 @@ ${languageContext}`;
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.7,
-          max_tokens: 6000
+          temperature: 0.8,
+          max_tokens: 8000
         })
       });
 
@@ -412,8 +462,8 @@ Please modify the story map based on the user feedback and return the complete u
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: messages,
-          temperature: 0.7,
-          max_tokens: 6000
+          temperature: 0.8,
+          max_tokens: 8000
         })
       });
 
