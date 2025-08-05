@@ -468,7 +468,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
   };
 
   // Get inline style for border color to ensure it's applied
-  const getBorderStyle = (storyId: string) => {
+  const getBorderStyle = (storyId: string, activityIndex?: number, storyIndex?: number) => {
     const colors = [
       '#dc2626', // red-600 - 红色 (高对比度)
       '#2563eb', // blue-600 - 蓝色 (高对比度)
@@ -482,6 +482,16 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       '#9333ea'  // purple-600 - 深紫色 (中等对比度)
     ];
     
+    // 如果提供了活动索引和故事索引，使用它们来确保同一活动下的故事颜色不同
+    if (activityIndex !== undefined && storyIndex !== undefined) {
+      // 使用活动索引和故事索引的组合来生成颜色索引
+      // 这样可以确保同一活动下的不同故事有不同的颜色
+      const colorIndex = (activityIndex * 3 + storyIndex) % colors.length;
+      console.log(`Activity: ${activityIndex}, Story: ${storyIndex}, Color Index: ${colorIndex}, Color: ${colors[colorIndex]}`);
+      return { borderLeftColor: colors[colorIndex], borderLeftWidth: '4px', borderLeftStyle: 'solid' as const };
+    }
+    
+    // 如果没有提供索引，使用原来的hash方法作为后备
     const hash = storyId.split('').reduce((a, b) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
       return a & a;
@@ -740,7 +750,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                     <div
                                       key={storyIndex}
                                       className="story-card cursor-pointer bg-white border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow flex-shrink-0 mx-1 relative"
-                                      style={getBorderStyle(story.id)}
+                                      style={getBorderStyle(story.id, activityIndex, storyIndex)}
                                       onClick={() => handleStoryClick(story)}
                                     >
                                       <div className="flex items-start justify-between mb-1">
@@ -788,6 +798,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                   const priorityOrder = { high: 3, medium: 2, low: 1 };
                                   return priorityOrder[b.priority] - priorityOrder[a.priority];
                                 }) : activity.supportingNeeds).map((item, needIndex) => {
+                                  // 找到对应的故事索引
+                                  const associatedStoryIndex = activity.userStories.findIndex(story => story.id === item.associatedStoryId);
+                                  const storyIndex = associatedStoryIndex >= 0 ? associatedStoryIndex : needIndex;
+                                  
                                   // Use association color based on the associated story ID
                                   const associationColor = getAssociationColor(item.associatedStoryId);
 
@@ -795,7 +809,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                     <div
                                       key={needIndex}
                                       className="bg-white border-r border-t border-b border-gray-200 rounded-md p-2 shadow-sm flex-shrink-0 mx-1 relative cursor-pointer hover:shadow-md transition-shadow"
-                                      style={getBorderStyle(item.associatedStoryId)}
+                                      style={getBorderStyle(item.associatedStoryId, activityIndex, storyIndex)}
                                       onClick={() => {
                                         // 找到对应的任务和支撑性需求
                                         const task = currentStoryMap.epics
