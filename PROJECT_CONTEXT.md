@@ -78,11 +78,32 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `9214e12`
-- **提交信息**: "Replace generic '支撑性需求' labels with specific type labels on supporting requirement cards"
+- **Commit**: `35892e6`
+- **提交信息**: "Fix supporting requirement type field being lost during data transformation"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-05 03:29:38 UTC
-- **生产环境 URL**: https://user-story-map-prod-fp39jvse9-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-05 05:41:39 UTC
+- **生产环境 URL**: https://user-story-map-prod-618050gm8-freedomztm-7943s-projects.vercel.app
+
+### 支撑性需求标签修复
+1. **问题诊断**：
+   - 通过调试日志发现AI正确生成了`type`字段
+   - 数据结构完整，包含所有必要信息
+   - 问题在于数据转换过程中`type`字段被丢失
+
+2. **问题根源**：
+   - 在`transformToMapLayout`函数中，支撑性需求数据被重新构建
+   - 重新构建时没有包含`type`字段
+   - 导致前端无法获取到类型信息
+
+3. **修复内容**：
+   - 在`transformToMapLayout`函数中添加了`type: need.type`
+   - 确保类型信息在数据转换过程中被保留
+   - 修复了TypeScript类型检查问题
+
+4. **验证结果**：
+   - AI生成的数据包含正确的类型字段
+   - 数据转换过程现在保留类型信息
+   - 前端可以正确显示具体的类型标签
 
 ### 支撑性需求标签优化
 1. **优化目标**：
