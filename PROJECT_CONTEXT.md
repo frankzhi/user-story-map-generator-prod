@@ -78,11 +78,34 @@ git push origin main
 - **生产环境 URL**: https://user-story-map-prod-bjc6ew1js-freedomztm-7943s-projects.vercel.app
 
 ### 最新提交
-- **Commit**: `aef6493`
-- **提交信息**: "Optimize AI prompts to generate more comprehensive user stories with better task breakdown"
+- **Commit**: `9214e12`
+- **提交信息**: "Replace generic '支撑性需求' labels with specific type labels on supporting requirement cards"
 - **状态**: 已推送到 GitHub 和部署到 Vercel
-- **部署时间**: 2025-08-05 03:16:25 UTC
-- **生产环境 URL**: https://user-story-map-prod-3cku8ov5r-freedomztm-7943s-projects.vercel.app
+- **部署时间**: 2025-08-05 03:29:38 UTC
+- **生产环境 URL**: https://user-story-map-prod-fp39jvse9-freedomztm-7943s-projects.vercel.app
+
+### 支撑性需求标签优化
+1. **优化目标**：
+   - 将支撑性需求卡片上的通用"支撑性需求"标签替换为具体的类型标签
+   - 让用户一眼就能看到每个支撑性需求的具体类型
+   - 提高UI的信息密度和可读性
+
+2. **实现内容**：
+   - 添加了`getSupportingRequirementTypeLabel`函数来转换类型标签
+   - 更新了`SupportingNeedWithAssociation`接口，添加了`type`字段
+   - 修改了支撑性需求卡片的渲染逻辑，显示具体类型而不是通用标签
+
+3. **类型标签映射**：
+   - `software_dependency` → "软件依赖"
+   - `service_integration` → "服务集成"
+   - `security_compliance` → "安全合规"
+   - `performance_requirement` → "性能需求"
+   - 默认类型 → "技术需求"
+
+4. **用户体验提升**：
+   - 用户可以直接看到每个支撑性需求的具体类型
+   - 提高了信息密度，减少了认知负担
+   - 便于快速识别和分类不同的技术需求
 
 ### 用户故事数量优化
 1. **问题识别**：
