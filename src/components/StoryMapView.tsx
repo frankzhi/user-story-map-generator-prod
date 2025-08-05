@@ -10,6 +10,7 @@ import { PriorityBadge, PrioritySelector, PriorityIcon, type Priority } from './
 interface SupportingNeedWithAssociation {
   need: string;
   priority: Priority;
+  type?: string;
   associatedStoryId: string;
   associatedStoryTitle: string;
 }
@@ -377,7 +378,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
         return {
           need: needText,
           priority: requirement.priority as Priority,
-          type: requirement.type
+          type: requirement.type,
+          associatedStoryId: task.id,
+          associatedStoryTitle: task.title
         };
       });
     }
@@ -407,6 +410,22 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
       return <Car className="w-4 h-4" />;
     }
     return <Smartphone className="w-4 h-4" />;
+  };
+
+  // 获取支撑性需求类型的中文标签
+  const getSupportingRequirementTypeLabel = (type: string) => {
+    switch (type) {
+      case "software_dependency":
+        return "软件依赖";
+      case "service_integration":
+        return "服务集成";
+      case "security_compliance":
+        return "安全合规";
+      case "performance_requirement":
+        return "性能需求";
+      default:
+        return "技术需求";
+    }
   };
 
   // Generate association colors based on user story ID to ensure each story has a unique color
@@ -793,7 +812,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                                     >
                                       <div className="flex items-center gap-2 mb-1">
                                         <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                                          {t('storyMap.supportingNeed')}
+                                          {item.type ? getSupportingRequirementTypeLabel(item.type) : t('storyMap.supportingNeed')}
                                         </span>
                                       </div>
                                       <p className="text-xs text-gray-700">{item.need}</p>
