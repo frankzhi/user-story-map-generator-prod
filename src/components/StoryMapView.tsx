@@ -934,6 +934,10 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
               }))
             }));
             setCurrentStoryMap(updatedStoryMap);
+            
+            // Save the updated story map to localStorage immediately
+            localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+            
             closeModal();
           }}
           onDelete={() => {
