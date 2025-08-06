@@ -38,7 +38,7 @@ export class DeepSeekService {
     const languageContext = currentLang === 'zh' ? 'MANDATORY: You MUST respond in Chinese (Simplified Chinese). All content including titles, descriptions, and task names must be in Chinese.' : 'Please respond in English.';
     
     const systemPrompt = `You are an expert product manager and user story mapping specialist. 
-
+    
 Your task is to generate a comprehensive user story map from a product description. 
 
 CRITICAL: Supporting requirements are technical dependencies, integrations, and infrastructure needs - NOT functional descriptions or rephrased user stories.
@@ -335,7 +335,7 @@ Examples of correct type assignments:
     if (!this.apiKey) {
       throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
     }
-
+    
     const messages: DeepSeekMessage[] = [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
