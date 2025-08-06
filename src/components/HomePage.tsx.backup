@@ -81,7 +81,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
     }
     
     // Load recent story maps
-    const savedMaps = StoryMapDataManager.getRecentMaps();
+    const savedMaps = StorageService.getStoryMaps();
     setRecentMaps(savedMaps.slice(0, 5)); // Show last 5 maps
   }, []);
 
@@ -157,7 +157,7 @@ ${features}
   };
 
   const handleExportMaps = () => {
-    const data = StoryMapDataManager.exportData();
+    const data = StorageService.exportStoryMaps();
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -173,8 +173,8 @@ ${features}
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result as string;
-        if (StoryMapDataManager.importData(content)) {
-          const savedMaps = StoryMapDataManager.getRecentMaps();
+        if (StorageService.importStoryMaps(content)) {
+          const savedMaps = StorageService.getStoryMaps();
           setRecentMaps(savedMaps.slice(0, 5));
         }
       };

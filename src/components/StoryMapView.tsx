@@ -6,6 +6,7 @@ import EnhancedStoryDetail from './EnhancedStoryDetail';
 import { InlineStoryMapEditor } from './InlineStoryMapEditor';
 import { FeedbackModal } from './FeedbackModal';
 import { PriorityBadge, PrioritySelector, PriorityIcon, type Priority } from './PrioritySelector';
+import { StoryMapDataManager } from '../services/storyMapDataManager';
 
 interface SupportingNeedWithAssociation {
   need: string;
