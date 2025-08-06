@@ -84,6 +84,12 @@ export class StoryMapDataManager {
   // 获取最近的故事地图（用于首页显示）
   static getRecentMaps(count: number = 3): StoryMap[] {
     const state = this.getState();
+    console.log('🔍 getRecentMaps - 当前状态:', {
+      mapsCount: state.maps.length,
+      recentMapIds: state.recentMapIds,
+      currentMapId: state.currentMapId
+    });
+    
     const recentMaps = state.recentMapIds
       .map(id => state.maps.find(map => map.id === id))
       .filter((map): map is StoryMap => map !== undefined && map !== null)
