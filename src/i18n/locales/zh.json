@@ -98,6 +98,16 @@
     "moveStory": "移动故事",
     "copyStory": "复制故事",
     "doubleClickToEdit": "双击用户故事卡片可以编辑内容",
+    "progress": {
+      "generatingStoryMap": "正在生成用户故事地图",
+      "progress": "进度",
+      "pleaseWait": "请稍候，AI正在为您生成故事地图...",
+      "initializing": "初始化AI服务",
+      "connecting": "连接AI服务",
+      "generating": "AI生成中",
+      "processing": "处理数据",
+      "finalizing": "完成生成"
+    },
     "potentialCustomer": "潜在客户",
     "supportingNeed": "支撑性需求",
     "phases": "阶段",

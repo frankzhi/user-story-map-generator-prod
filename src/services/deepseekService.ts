@@ -231,8 +231,8 @@ Examples of correct type assignments:
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages,
-          temperature: 0.8,
-          max_tokens: 8000
+          temperature: 0.7,
+          max_tokens: 6000
         })
       });
 

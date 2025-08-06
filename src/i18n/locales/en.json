@@ -97,6 +97,16 @@
     "moveStory": "Move Story",
     "copyStory": "Copy Story",
     "doubleClickToEdit": "Double-click user story cards to edit content",
+    "progress": {
+      "generatingStoryMap": "Generating User Story Map",
+      "progress": "Progress",
+      "pleaseWait": "Please wait, AI is generating your story map...",
+      "initializing": "Initializing AI Service",
+      "connecting": "Connecting to AI Service",
+      "generating": "AI Generating",
+      "processing": "Processing Data",
+      "finalizing": "Finalizing Generation"
+    },
     "potentialCustomer": "Potential Customer",
     "supportingNeed": "Supporting Need",
     "phases": "Phases",

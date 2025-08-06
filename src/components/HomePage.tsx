@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AIService, type AIProvider } from '../services/aiService';
 import { StorageService } from '../services/storageService';
 import { StoryMapDataManager } from '../services/storyMapDataManager';
+import { GenerationProgress } from './GenerationProgress';
 import type { StoryMap } from '../types/story';
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -17,6 +18,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
   const [selectedProvider, setSelectedProvider] = useState<AIProvider>('deepseek');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [generationProgress, setGenerationProgress] = useState({
+    currentStep: 'initializing',
+    progress: 0
+  });
   const [availableProviders, setAvailableProviders] = useState<Array<{ provider: AIProvider; configured: boolean; name: string }>>([]);
   const [recentMaps, setRecentMaps] = useState<StoryMap[]>([]);
   const [showRecentMaps, setShowRecentMaps] = useState(false);
@@ -131,19 +136,35 @@ ${features}
 
     setIsGenerating(true);
     setError('');
+    setGenerationProgress({ currentStep: 'initializing', progress: 0 });
 
     try {
       console.log('🚀 开始生成故事地图，描述:', finalDescription.substring(0, 100) + '...');
       console.log('🚀 选择的AI提供商:', selectedProvider);
       
+      // 初始化阶段
+      setGenerationProgress({ currentStep: 'initializing', progress: 10 });
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const aiService = AIService.getInstance();
       console.log('🚀 AI服务实例创建成功');
       
+      // 连接阶段
+      setGenerationProgress({ currentStep: 'connecting', progress: 25 });
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // 生成阶段
+      setGenerationProgress({ currentStep: 'generating', progress: 40 });
       const yamlData = await aiService.generateStoryMap(finalDescription, selectedProvider);
       console.log('🚀 YAML数据生成成功:', yamlData);
       
+      // 处理阶段
+      setGenerationProgress({ currentStep: 'processing', progress: 70 });
       const storyMap = aiService.convertYAMLToStoryMap(yamlData);
       console.log('🚀 故事地图转换成功:', storyMap.title);
+      
+      // 完成阶段
+      setGenerationProgress({ currentStep: 'finalizing', progress: 90 });
       
       // 使用统一数据管理器保存故事地图
       StoryMapDataManager.addStoryMap(storyMap);
@@ -153,6 +174,9 @@ ${features}
       const updatedMaps = StoryMapDataManager.getRecentMaps(3);
       setRecentMaps(updatedMaps);
       
+      setGenerationProgress({ currentStep: 'finalizing', progress: 100 });
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       onStoryMapGenerated(storyMap);
       console.log('🚀 故事地图生成完成，已跳转到编辑页面');
     } catch (err) {
@@ -160,6 +184,7 @@ ${features}
       setError(t('errors.generationFailed'));
     } finally {
       setIsGenerating(false);
+      setGenerationProgress({ currentStep: 'initializing', progress: 0 });
     }
   };
 
@@ -746,6 +771,13 @@ ${features}
           </div>
         </div>
       </div>
+      
+      {/* 生成进度条 */}
+      <GenerationProgress 
+        isVisible={isGenerating}
+        currentStep={generationProgress.currentStep}
+        progress={generationProgress.progress}
+      />
     </div>
   );
 }; 
