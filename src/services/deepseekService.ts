@@ -83,7 +83,9 @@ Examples of WRONG supporting requirements (DO NOT DO THIS):
 - "扫描附近可用的智能手表设备" (This is functional description!)
 - "设备配对流程" (This is task breakdown!)
 
-Return ONLY a valid JSON object with the following structure:
+CRITICAL: You MUST return ONLY a valid JSON object. Do NOT include any markdown formatting, code blocks, or additional text.
+
+Return ONLY this JSON structure:
 
 {
   "title": "Product Title",
@@ -131,26 +133,22 @@ Return ONLY a valid JSON object with the following structure:
 }
 
 Guidelines:
-- Create 3-5 epics that cover the main functional areas
-- Each epic should have 2-4 features
-- Each feature should have 4-8 tasks (MANDATORY: Generate at least 4 tasks per feature to ensure comprehensive coverage)
-- MANDATORY: If you generate fewer than 4 tasks per feature, you are not following the requirements
-- Each task MUST have at least 1-2 supporting requirements (MANDATORY: Every task needs technical infrastructure)
+- Create 2-3 epics that cover the main functional areas
+- Each epic should have 1-2 features
+- Each feature should have 3-5 tasks (MANDATORY: Generate at least 3 tasks per feature)
+- MANDATORY: If you generate fewer than 3 tasks per feature, you are not following the requirements
+- Each task MUST have at least 1 supporting requirement (MANDATORY: Every task needs technical infrastructure)
 - Supporting requirements should cover the main technical dependencies for each task
 - Think about what technical components are needed to implement each user story
-- MANDATORY: Break down each feature comprehensively - do not create generic tasks
+- MANDATORY: Keep responses focused and avoid overly complex breakdowns
 
 TASK GENERATION STRATEGY:
-- CRITICAL: Think about COMPLETE user journeys, not just basic actions
-- Consider different user personas (new users, power users, admin users)
-- Include edge cases and error scenarios
-- Think about different devices and platforms
-- Consider offline/online scenarios
-- Include data management and privacy features
-- Think about performance and scalability requirements
-- Consider integration with other systems
-- Include notification and communication features
-- Think about analytics and reporting needs
+- CRITICAL: Focus on essential user workflows
+- Consider primary user scenarios
+- Include basic error handling
+- Think about core functionality
+- Include fundamental data management
+- Focus on key technical requirements
 
 EXAMPLES OF COMPREHENSIVE TASK BREAKDOWN:
 For a "User Registration" feature, break it down into:
@@ -163,49 +161,35 @@ For a "Product Search" feature, break it down into:
 
 - Tasks should be specific, actionable, and testable
 - Priority should be based on business value and user impact
-- Effort should be realistic (1-5 days per task)
+- Effort should be realistic (1-3 days per task)
 - Acceptance criteria should be clear and measurable
 - Focus on user value and business outcomes
-- IMPORTANT: Break down each feature into multiple specific tasks to ensure comprehensive coverage
-- Each task should represent a distinct user action or system behavior
-- Avoid generic tasks - be specific about what users want to accomplish
-- Think about different user scenarios, edge cases, and user journeys
-- Consider different user roles, personas, and use cases for each feature
+- IMPORTANT: Keep tasks focused and essential
+- Each task should represent a distinct user action
+- Avoid overly complex breakdowns
 ${languageContext}`;
 
     const userPrompt = `Generate a user story map for this product: ${productDescription}. 
 
 CRITICAL REQUIREMENTS:
-1. MANDATORY: For each feature, break it down into at least 4-8 specific user tasks to ensure comprehensive coverage
-2. MANDATORY: If you generate fewer than 4 tasks per feature, you are not following the requirements
-3. Think about COMPLETE user journeys, not just basic actions
-4. Consider different user personas (new users, power users, admin users)
-5. Include edge cases, error scenarios, and data management features
-6. Think about different devices, platforms, and offline/online scenarios
-7. Include notification, communication, analytics, and reporting features
-8. Consider integration with other systems and scalability requirements
-9. MANDATORY: Do not create generic tasks like "用户注册" - break them down into specific actions
+1. MANDATORY: For each feature, break it down into at least 3-5 specific user tasks
+2. MANDATORY: If you generate fewer than 3 tasks per feature, you are not following the requirements
+3. Focus on essential user workflows
+4. Include basic error handling scenarios
+5. Think about core functionality
+6. Include fundamental data management
+7. MANDATORY: Do not create generic tasks like "用户注册" - break them down into specific actions
 
-EXAMPLES OF COMPREHENSIVE TASK BREAKDOWN:
-For a "User Registration" feature, don't just create "用户注册" - break it down into:
+EXAMPLES OF TASK BREAKDOWN:
+For a "User Registration" feature, break it down into:
 - 用户填写注册表单
 - 用户验证手机号
 - 用户设置密码
-- 用户同意服务条款
-- 用户上传头像
-- 用户完善个人资料
-- 用户选择偏好设置
-- 用户完成邮箱验证
 
-For a "Product Search" feature, don't just create "搜索产品" - break it down into:
+For a "Product Search" feature, break it down into:
 - 用户输入搜索关键词
-- 用户应用筛选条件
 - 用户查看搜索结果
-- 用户排序搜索结果
-- 用户保存搜索历史
-- 用户设置搜索提醒
-- 用户分享搜索结果
-- 用户导出搜索结果
+- 用户应用筛选条件
 
 IMPORTANT: Every task must have supporting requirements that describe the technical infrastructure needed to implement it. Think about APIs, databases, SDKs, and other technical dependencies for each user story.
 
@@ -269,31 +253,45 @@ Examples of correct type assignments:
         // First try to parse the entire content as JSON
         storyMap = JSON.parse(content);
       } catch (parseError) {
-        console.warn('🔧 直接解析失败，尝试提取JSON:', parseError);
+        console.warn('🔧 直接解析失败，尝试清理和提取JSON:', parseError);
         
-        // Try to extract JSON from markdown code blocks
-        const jsonMatch = content.match(/```json\s*(\{[\s\S]*?\})\s*```/);
-        if (jsonMatch) {
-          try {
-            storyMap = JSON.parse(jsonMatch[1]);
-          } catch (blockError) {
-            console.warn('🔧 代码块解析失败，尝试简单匹配:', blockError);
-            
-            // Try simple JSON extraction
-            const simpleMatch = content.match(/\{[\s\S]*\}/);
-            if (simpleMatch) {
-              try {
-                storyMap = JSON.parse(simpleMatch[0]);
-              } catch (simpleError) {
-                console.error('🔧 所有JSON解析方法都失败:', simpleError);
-                throw new Error('Failed to parse JSON from AI response');
+        // Clean the content - remove markdown formatting
+        let cleanedContent = content
+          .replace(/```json\s*/g, '')
+          .replace(/```\s*/g, '')
+          .replace(/^["']*json["']*\s*/, '') // Remove "json" prefix
+          .trim();
+        
+        try {
+          storyMap = JSON.parse(cleanedContent);
+        } catch (cleanError) {
+          console.warn('🔧 清理后解析失败，尝试提取JSON块:', cleanError);
+          
+          // Try to extract JSON from markdown code blocks
+          const jsonMatch = content.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+          if (jsonMatch) {
+            try {
+              storyMap = JSON.parse(jsonMatch[1]);
+            } catch (blockError) {
+              console.warn('🔧 代码块解析失败，尝试简单匹配:', blockError);
+              
+              // Try simple JSON extraction
+              const simpleMatch = content.match(/\{[\s\S]*\}/);
+              if (simpleMatch) {
+                try {
+                  storyMap = JSON.parse(simpleMatch[0]);
+                } catch (simpleError) {
+                  console.error('🔧 所有JSON解析方法都失败:', simpleError);
+                  console.error('🔧 原始内容:', content.substring(0, 500));
+                  throw new Error('Failed to parse JSON from AI response');
+                }
+              } else {
+                throw new Error('No valid JSON found in DeepSeek response');
               }
-            } else {
-              throw new Error('No valid JSON found in DeepSeek response');
             }
+          } else {
+            throw new Error('No valid JSON found in DeepSeek response');
           }
-        } else {
-          throw new Error('No valid JSON found in DeepSeek response');
         }
       }
 
