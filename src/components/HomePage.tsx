@@ -80,7 +80,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
       setSelectedProvider('mock');
     }
     
-    // Load recent story maps
+    // 确保数据迁移并加载最近故事地图
+    StoryMapDataManager.migrateFromLegacyData();
     const savedMaps = StoryMapDataManager.getRecentMaps();
     setRecentMaps(savedMaps.slice(0, 5)); // Show last 5 maps
   }, []);
@@ -136,12 +137,12 @@ ${features}
       const yamlData = await aiService.generateStoryMap(finalDescription, selectedProvider);
       const storyMap = aiService.convertYAMLToStoryMap(yamlData);
       
-      // Save to storage
-      StorageService.saveStoryMap(storyMap);
+      // 使用统一数据管理器保存故事地图
+      StoryMapDataManager.addStoryMap(storyMap);
       
-      // Update recent maps
-      const updatedMaps = [storyMap, ...recentMaps].slice(0, 5);
-      setRecentMaps(updatedMaps);
+      // 更新最近故事地图列表
+      const updatedMaps = StoryMapDataManager.getRecentMaps();
+      setRecentMaps(updatedMaps.slice(0, 5));
       
       onStoryMapGenerated(storyMap);
     } catch (err) {
@@ -153,6 +154,8 @@ ${features}
   };
 
   const handleLoadRecentMap = (storyMap: StoryMap) => {
+    // 设置为当前故事地图
+    StoryMapDataManager.setCurrentMap(storyMap.id);
     onStoryMapGenerated(storyMap);
   };
 
