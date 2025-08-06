@@ -25,15 +25,22 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
   
   // 从 localStorage 加载最新数据，如果没有则使用传入的 storyMap
   const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(() => {
+    console.log('🔍 StoryMapView 初始化 - 传入的 storyMap:', storyMap);
     const savedStoryMap = localStorage.getItem('currentStoryMap');
+    console.log('🔍 StoryMapView 初始化 - localStorage 数据:', savedStoryMap);
+    
     if (savedStoryMap) {
       try {
-        return JSON.parse(savedStoryMap);
+        const parsedStoryMap = JSON.parse(savedStoryMap);
+        console.log('🔍 StoryMapView 初始化 - 使用 localStorage 数据:', parsedStoryMap);
+        return parsedStoryMap;
       } catch (e) {
         console.error('Failed to parse saved story map:', e);
+        console.log('🔍 StoryMapView 初始化 - 使用传入的 storyMap');
         return storyMap;
       }
     }
+    console.log('🔍 StoryMapView 初始化 - 使用传入的 storyMap');
     return storyMap;
   });
   const [showModal, setShowModal] = useState(false);
