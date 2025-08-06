@@ -962,6 +962,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
           }}
           onDelete={() => {
             // Handle story deletion
+            console.log('🔍 删除操作开始 - selectedStory:', selectedStory);
+            console.log('🔍 删除操作开始 - currentStoryMap:', currentStoryMap);
+            
             if (selectedStory) {
               const updatedStoryMap = { ...currentStoryMap };
               updatedStoryMap.epics = updatedStoryMap.epics.map(epic => ({
@@ -971,10 +974,13 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
                   tasks: feature.tasks.filter(task => task.id !== selectedStory.id)
                 }))
               }));
+              
+              console.log('🔍 删除操作 - 更新后的 storyMap:', updatedStoryMap);
               setCurrentStoryMap(updatedStoryMap);
               
               // Save the updated story map to localStorage immediately
               localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+              console.log('🔍 删除操作 - 已保存到 localStorage');
             }
             closeModal();
           }}

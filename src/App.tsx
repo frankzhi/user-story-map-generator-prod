@@ -46,10 +46,14 @@ const StoryMapPage = () => {
 
   // Load story map from localStorage on component mount
   useEffect(() => {
+    console.log('🔍 App.tsx - 开始加载 localStorage 数据');
     const savedStoryMap = localStorage.getItem('currentStoryMap');
+    console.log('🔍 App.tsx - localStorage 数据:', savedStoryMap);
+    
     if (savedStoryMap) {
       try {
         const parsedStoryMap = JSON.parse(savedStoryMap);
+        console.log('🔍 App.tsx - 解析成功，设置 currentStoryMap:', parsedStoryMap);
         setCurrentStoryMap(parsedStoryMap);
       } catch (e) {
         console.error('Failed to parse saved story map:', e);
@@ -57,6 +61,7 @@ const StoryMapPage = () => {
         setError('Failed to load story map');
       }
     } else {
+      console.log('🔍 App.tsx - 没有 localStorage 数据，重定向到主页');
       // If no story map in localStorage, redirect to home
       navigate('/');
     }
