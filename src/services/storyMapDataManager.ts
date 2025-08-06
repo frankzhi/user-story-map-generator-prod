@@ -64,11 +64,19 @@ export class StoryMapDataManager {
   // 更新故事地图
   static updateStoryMap(updatedMap: StoryMap): void {
     const state = this.getState();
+    console.log('🔄 开始更新故事地图:', updatedMap.title, 'ID:', updatedMap.id);
+    console.log('🔄 更新前状态:', {
+      mapsCount: state.maps.length,
+      currentMapId: state.currentMapId,
+      recentMapIds: state.recentMapIds
+    });
+    
     const updatedMaps = state.maps.map(map => 
       map.id === updatedMap.id ? updatedMap : map
     );
+    
     this.setState({ ...state, maps: updatedMaps });
-    console.log('🔄 更新故事地图:', updatedMap.title);
+    console.log('🔄 更新故事地图完成:', updatedMap.title);
   }
   
   // 删除故事地图

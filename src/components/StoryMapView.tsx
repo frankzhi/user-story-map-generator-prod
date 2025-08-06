@@ -29,17 +29,21 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
     // 确保数据迁移
     StoryMapDataManager.migrateFromLegacyData();
     
-    // 获取当前故事地图
+    // 设置当前故事地图ID
+    if (storyMap) {
+      StoryMapDataManager.setCurrentMap(storyMap.id);
+    }
+    
+    // 获取当前故事地图（从统一数据源）
     const currentMap = StoryMapDataManager.getCurrentMap();
     if (currentMap) {
-      // 添加到最近访问列表
-      StoryMapDataManager.addToRecentMaps(currentMap.id);
+      console.log('🔍 StoryMapView 从统一数据源加载:', currentMap.title);
       return currentMap;
     }
     
     // 如果没有当前地图，使用传入的 storyMap
     if (storyMap) {
-      StoryMapDataManager.addToRecentMaps(storyMap.id);
+      console.log('🔍 StoryMapView 使用传入的 storyMap:', storyMap.title);
       return storyMap;
     }
     
