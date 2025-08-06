@@ -4,11 +4,43 @@
 这是一个基于AI的用户故事地图生成器，使用DeepSeek API来生成结构化的用户故事地图。项目部署在Vercel上，支持中英文双语界面。
 
 ## 最新部署
-- **生产环境URL**: https://user-story-map-prod-g5hkeipny-freedomztm-7943s-projects.vercel.app
+- **生产环境URL**: https://user-story-map-prod-g82i4kij2-freedomztm-7943s-projects.vercel.app
 - **GitHub仓库**: https://github.com/frankzhi/user-story-map-generator-prod.git
-- **最后更新**: 2025-08-05 14:22 (UTC+8)
+- **最后更新**: 2025-08-06 10:24 (UTC+8)
 
 ## 最近修复和改进
+
+### 2025-08-06 数据持久化问题修复
+**问题**: 用户删除用户故事后，数据没有正确持久化。用户从主页重新进入时，删除的用户故事会重新出现。
+
+**根本原因**: StoryMapView 组件只使用传入的 `storyMap` 作为初始值，不会从 localStorage 重新加载最新数据。
+
+**解决方案**:
+1. **修改 StoryMapView 初始化逻辑**: 使用 `useState` 的函数初始化形式，从 localStorage 加载最新数据
+2. **添加错误处理**: 如果 localStorage 数据解析失败，回退到传入的 storyMap
+3. **保持数据一致性**: 确保组件始终使用最新的 localStorage 数据
+
+**技术实现**:
+```typescript
+const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(() => {
+  const savedStoryMap = localStorage.getItem('currentStoryMap');
+  if (savedStoryMap) {
+    try {
+      return JSON.parse(savedStoryMap);
+    } catch (e) {
+      console.error('Failed to parse saved story map:', e);
+      return storyMap;
+    }
+  }
+  return storyMap;
+});
+```
+
+**修复效果**:
+- ✅ 用户删除故事后，数据正确保存到 localStorage
+- ✅ 返回主页时，不清除 localStorage 数据
+- ✅ 重新进入时，从 localStorage 加载最新数据
+- ✅ 删除的用户故事不再重新出现
 
 ### 2025-08-05 触点生成优化
 **问题**: 触点（Touchpoints）存在两个主要问题：
@@ -88,6 +120,8 @@ src/
 ```
 
 ## 待办事项
+- [x] 修复数据持久化问题 - StoryMapView 组件现在正确从 localStorage 加载最新数据
+- [ ] 测试数据持久化修复效果 - 验证删除操作是否正确保存
 - [ ] 测试触点生成效果 - 验证平台类型和用户类型识别是否正确
 - [ ] 优化AI提示词 - 确保生成的任务包含更多平台相关信息
 - [ ] 添加更多平台类型支持 - 如桌面应用、API等
