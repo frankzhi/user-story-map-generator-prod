@@ -64,19 +64,11 @@ export class StoryMapDataManager {
   // 更新故事地图
   static updateStoryMap(updatedMap: StoryMap): void {
     const state = this.getState();
-    console.log('🔄 开始更新故事地图:', updatedMap.title, 'ID:', updatedMap.id);
-    console.log('🔄 更新前状态:', {
-      mapsCount: state.maps.length,
-      currentMapId: state.currentMapId,
-      recentMapIds: state.recentMapIds
-    });
-    
     const updatedMaps = state.maps.map(map => 
       map.id === updatedMap.id ? updatedMap : map
     );
-    
     this.setState({ ...state, maps: updatedMaps });
-    console.log('🔄 更新故事地图完成:', updatedMap.title);
+    console.log('🔄 更新故事地图:', updatedMap.title);
   }
   
   // 删除故事地图
@@ -92,17 +84,10 @@ export class StoryMapDataManager {
   // 获取最近的故事地图（用于首页显示）
   static getRecentMaps(count: number = 3): StoryMap[] {
     const state = this.getState();
-    console.log('🔍 getRecentMaps - 当前状态:', {
-      mapsCount: state.maps.length,
-      recentMapIds: state.recentMapIds,
-      currentMapId: state.currentMapId
-    });
-    
     const recentMaps = state.recentMapIds
       .map(id => state.maps.find(map => map.id === id))
       .filter((map): map is StoryMap => map !== undefined && map !== null)
       .slice(0, count);
-    console.log('📋 获取最近故事地图:', recentMaps.length, '个');
     return recentMaps;
   }
   

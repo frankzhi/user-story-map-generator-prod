@@ -37,22 +37,12 @@ export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) 
     // 获取当前故事地图（从统一数据源）
     const currentMap = StoryMapDataManager.getCurrentMap();
     if (currentMap) {
-      console.log('🔍 StoryMapView 从统一数据源加载:', currentMap.title);
       return currentMap;
     }
     
     // 如果没有当前地图，使用传入的 storyMap
-    if (storyMap) {
-      console.log('🔍 StoryMapView 使用传入的 storyMap:', storyMap.title);
-      return storyMap;
-    }
-    
     return storyMap;
   });
-  
-  // 添加调试日志
-  console.log('🔍 StoryMapView 初始化 - 传入的 storyMap:', storyMap);
-  console.log('🔍 StoryMapView 初始化 - currentStoryMap:', currentStoryMap);
   const [showModal, setShowModal] = useState(false);
   const [selectedStory, setSelectedStory] = useState<UserStory | null>(null);
   const [showEditor, setShowEditor] = useState(false);

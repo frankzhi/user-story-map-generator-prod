@@ -83,7 +83,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
     // 确保数据迁移并加载最近故事地图
     StoryMapDataManager.migrateFromLegacyData();
     const savedMaps = StoryMapDataManager.getRecentMaps(3); // 显示最近3个故事地图
-    console.log('🔍 HomePage useEffect - 加载的最近故事地图:', savedMaps);
     setRecentMaps(savedMaps);
   }, []);
 
@@ -278,7 +277,6 @@ ${features}
         </div>
 
         {/* Recent Maps */}
-        {console.log('🔍 HomePage render - recentMaps:', recentMaps)}
         {recentMaps.length > 0 && (
           <div className="bg-white rounded-xl p-6 shadow-lg mb-8">
             <div className="flex items-center justify-between mb-4">
