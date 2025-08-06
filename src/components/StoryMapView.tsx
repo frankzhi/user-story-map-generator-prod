@@ -965,8 +965,8 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
             }));
             setCurrentStoryMap(updatedStoryMap);
             
-            // Save the updated story map to localStorage immediately
-            localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+            // 使用统一数据管理器保存更新
+            StoryMapDataManager.updateStoryMap(updatedStoryMap);
             
             closeModal();
           }}
@@ -988,9 +988,9 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
               console.log('🔍 删除操作 - 更新后的 storyMap:', updatedStoryMap);
               setCurrentStoryMap(updatedStoryMap);
               
-              // Save the updated story map to localStorage immediately
-              localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
-              console.log('🔍 删除操作 - 已保存到 localStorage');
+              // 使用统一数据管理器保存更新
+              StoryMapDataManager.updateStoryMap(updatedStoryMap);
+              console.log('🔍 删除操作 - 已保存到统一数据源');
             }
             closeModal();
           }}
