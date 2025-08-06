@@ -181,7 +181,13 @@ ${features}
       console.log('🚀 故事地图生成完成，已跳转到编辑页面');
     } catch (err) {
       console.error('❌ 生成故事地图时出错:', err);
-      setError(t('errors.generationFailed'));
+      
+      // 检查是否是超时错误
+      if (err instanceof Error && err.message.includes('timeout')) {
+        setError('AI服务响应超时，请重试。如果问题持续存在，请稍后再试。');
+      } else {
+        setError(t('errors.generationFailed'));
+      }
     } finally {
       setIsGenerating(false);
       setGenerationProgress({ currentStep: 'initializing', progress: 0 });
