@@ -133,21 +133,31 @@ ${features}
     setError('');
 
     try {
+      console.log('🚀 开始生成故事地图，描述:', finalDescription.substring(0, 100) + '...');
+      console.log('🚀 选择的AI提供商:', selectedProvider);
+      
       const aiService = AIService.getInstance();
+      console.log('🚀 AI服务实例创建成功');
+      
       const yamlData = await aiService.generateStoryMap(finalDescription, selectedProvider);
+      console.log('🚀 YAML数据生成成功:', yamlData);
+      
       const storyMap = aiService.convertYAMLToStoryMap(yamlData);
+      console.log('🚀 故事地图转换成功:', storyMap.title);
       
       // 使用统一数据管理器保存故事地图
       StoryMapDataManager.addStoryMap(storyMap);
+      console.log('🚀 故事地图已保存到统一数据源');
       
       // 更新最近故事地图列表
       const updatedMaps = StoryMapDataManager.getRecentMaps(3);
       setRecentMaps(updatedMaps);
       
       onStoryMapGenerated(storyMap);
+      console.log('🚀 故事地图生成完成，已跳转到编辑页面');
     } catch (err) {
+      console.error('❌ 生成故事地图时出错:', err);
       setError(t('errors.generationFailed'));
-      console.error('Error generating story map:', err);
     } finally {
       setIsGenerating(false);
     }

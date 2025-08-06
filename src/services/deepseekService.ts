@@ -30,6 +30,9 @@ export class DeepSeekService {
   }
 
   async generateStoryMap(productDescription: string): Promise<StoryMapYAML> {
+    console.log('🔧 DeepSeek服务 - 开始生成故事地图');
+    console.log('🔧 API密钥状态:', this.apiKey ? '已配置' : '未配置');
+    
     if (!this.apiKey) {
       throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
     }
