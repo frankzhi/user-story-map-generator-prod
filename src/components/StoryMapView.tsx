@@ -23,8 +23,19 @@ interface StoryMapViewProps {
 export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) => {
   const { t } = useTranslation();
   
-  // 直接使用传入的 storyMap，不重新加载 localStorage
-  const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(storyMap);
+  // 使用 useState 的函数初始化形式，从 localStorage 加载最新数据
+  const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(() => {
+    const savedStoryMap = localStorage.getItem('currentStoryMap');
+    if (savedStoryMap) {
+      try {
+        return JSON.parse(savedStoryMap);
+      } catch (e) {
+        console.error('Failed to parse saved story map:', e);
+        return storyMap;
+      }
+    }
+    return storyMap;
+  });
   
   // 添加调试日志
   console.log('🔍 StoryMapView 初始化 - 传入的 storyMap:', storyMap);
