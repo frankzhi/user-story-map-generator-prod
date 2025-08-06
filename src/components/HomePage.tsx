@@ -82,8 +82,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onStoryMapGenerated }) => {
     
     // 确保数据迁移并加载最近故事地图
     StoryMapDataManager.migrateFromLegacyData();
-    const savedMaps = StoryMapDataManager.getRecentMaps();
-    setRecentMaps(savedMaps.slice(0, 5)); // Show last 5 maps
+    const savedMaps = StoryMapDataManager.getRecentMaps(3); // 显示最近3个故事地图
+    setRecentMaps(savedMaps);
   }, []);
 
   // Auto-fill charging pile description when mock demo is selected
@@ -141,8 +141,8 @@ ${features}
       StoryMapDataManager.addStoryMap(storyMap);
       
       // 更新最近故事地图列表
-      const updatedMaps = StoryMapDataManager.getRecentMaps();
-      setRecentMaps(updatedMaps.slice(0, 5));
+      const updatedMaps = StoryMapDataManager.getRecentMaps(3);
+      setRecentMaps(updatedMaps);
       
       onStoryMapGenerated(storyMap);
     } catch (err) {

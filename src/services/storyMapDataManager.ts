@@ -4,6 +4,7 @@ import type { StoryMap } from '../types/story';
 export interface StoryMapState {
   maps: StoryMap[];           // 所有故事地图
   currentMapId: string | null; // 当前编辑的故事地图ID
+  recentMapIds: string[];     // 最近访问的故事地图ID列表（最多3个）
   lastUpdated: number;        // 最后更新时间戳
 }
 
@@ -15,10 +16,10 @@ export class StoryMapDataManager {
   static getState(): StoryMapState {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY);
-      return stored ? JSON.parse(stored) : { maps: [], currentMapId: null, lastUpdated: Date.now() };
+      return stored ? JSON.parse(stored) : { maps: [], currentMapId: null, recentMapIds: [], lastUpdated: Date.now() };
     } catch (error) {
       console.error('Failed to get story map state:', error);
-      return { maps: [], currentMapId: null, lastUpdated: Date.now() };
+      return { maps: [], currentMapId: null, recentMapIds: [], lastUpdated: Date.now() };
     }
   }
   
@@ -44,7 +45,9 @@ export class StoryMapDataManager {
   // 设置当前编辑的故事地图
   static setCurrentMap(mapId: string): void {
     const state = this.getState();
-    this.setState({ ...state, currentMapId: mapId });
+    // 添加到最近访问列表
+    const newRecentMapIds = [mapId, ...state.recentMapIds.filter(id => id !== mapId)].slice(0, 3);
+    this.setState({ ...state, currentMapId: mapId, recentMapIds: newRecentMapIds });
     console.log('🎯 设置当前故事地图ID:', mapId);
   }
   
@@ -52,7 +55,9 @@ export class StoryMapDataManager {
   static addStoryMap(storyMap: StoryMap): void {
     const state = this.getState();
     const updatedMaps = [storyMap, ...state.maps].slice(0, 50); // 保持最多50个
-    this.setState({ ...state, maps: updatedMaps, currentMapId: storyMap.id });
+    // 添加到最近访问列表
+    const newRecentMapIds = [storyMap.id, ...state.recentMapIds.filter(id => id !== storyMap.id)].slice(0, 3);
+    this.setState({ ...state, maps: updatedMaps, currentMapId: storyMap.id, recentMapIds: newRecentMapIds });
     console.log('➕ 添加新故事地图:', storyMap.title);
   }
   
@@ -71,16 +76,36 @@ export class StoryMapDataManager {
     const state = this.getState();
     const updatedMaps = state.maps.filter(map => map.id !== mapId);
     const newCurrentMapId = state.currentMapId === mapId ? null : state.currentMapId;
-    this.setState({ ...state, maps: updatedMaps, currentMapId: newCurrentMapId });
+    const newRecentMapIds = state.recentMapIds.filter(id => id !== mapId);
+    this.setState({ ...state, maps: updatedMaps, currentMapId: newCurrentMapId, recentMapIds: newRecentMapIds });
     console.log('🗑️ 删除故事地图:', mapId);
   }
   
   // 获取最近的故事地图（用于首页显示）
-  static getRecentMaps(count: number = 5): StoryMap[] {
+  static getRecentMaps(count: number = 3): StoryMap[] {
     const state = this.getState();
-    const recentMaps = state.maps.slice(0, count);
+    const recentMaps = state.recentMapIds
+      .map(id => state.maps.find(map => map.id === id))
+      .filter((map): map is StoryMap => map !== undefined && map !== null)
+      .slice(0, count);
     console.log('📋 获取最近故事地图:', recentMaps.length, '个');
     return recentMaps;
+  }
+  
+  // 添加故事地图到最近列表
+  static addToRecentMaps(mapId: string): void {
+    const state = this.getState();
+    const newRecentMapIds = [mapId, ...state.recentMapIds.filter(id => id !== mapId)].slice(0, 3);
+    this.setState({ ...state, recentMapIds: newRecentMapIds });
+    console.log('📋 添加到最近故事地图:', mapId);
+  }
+  
+  // 从最近列表中移除故事地图
+  static removeFromRecentMaps(mapId: string): void {
+    const state = this.getState();
+    const newRecentMapIds = state.recentMapIds.filter(id => id !== mapId);
+    this.setState({ ...state, recentMapIds: newRecentMapIds });
+    console.log('📋 从最近故事地图移除:', mapId);
   }
   
   // 导出所有数据
@@ -148,9 +173,11 @@ export class StoryMapDataManager {
       
       // 保存到新的统一数据源
       if (maps.length > 0) {
+        const recentMapIds = maps.slice(0, 3).map(map => map.id);
         const newState: StoryMapState = {
           maps: maps.slice(0, 50), // 限制最多50个
           currentMapId: maps[0]?.id || null,
+          recentMapIds,
           lastUpdated: Date.now()
         };
         this.setState(newState);

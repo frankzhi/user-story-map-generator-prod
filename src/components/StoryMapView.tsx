@@ -24,17 +24,25 @@ interface StoryMapViewProps {
 export const StoryMapView: React.FC<StoryMapViewProps> = ({ storyMap, onBack }) => {
   const { t } = useTranslation();
   
-  // 使用 useState 的函数初始化形式，从 localStorage 加载最新数据
+  // 使用统一数据管理器初始化
   const [currentStoryMap, setCurrentStoryMap] = useState<StoryMap>(() => {
-    const savedStoryMap = localStorage.getItem('currentStoryMap');
-    if (savedStoryMap) {
-      try {
-        return JSON.parse(savedStoryMap);
-      } catch (e) {
-        console.error('Failed to parse saved story map:', e);
-        return storyMap;
-      }
+    // 确保数据迁移
+    StoryMapDataManager.migrateFromLegacyData();
+    
+    // 获取当前故事地图
+    const currentMap = StoryMapDataManager.getCurrentMap();
+    if (currentMap) {
+      // 添加到最近访问列表
+      StoryMapDataManager.addToRecentMaps(currentMap.id);
+      return currentMap;
     }
+    
+    // 如果没有当前地图，使用传入的 storyMap
+    if (storyMap) {
+      StoryMapDataManager.addToRecentMaps(storyMap.id);
+      return storyMap;
+    }
+    
     return storyMap;
   });
   
@@ -583,13 +591,13 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     
     setCurrentStoryMap(updatedStoryMap);
     
-    // Save the updated story map to localStorage immediately
-    localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+    // 使用统一数据管理器保存更新
+    StoryMapDataManager.updateStoryMap(updatedStoryMap);
   };
 
   const handleStoryMapUpdate = (updatedStoryMap: StoryMap) => {
     setCurrentStoryMap(updatedStoryMap);
-    localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+    StoryMapDataManager.updateStoryMap(updatedStoryMap);
     setShowEditor(false);
   };
 
@@ -606,7 +614,7 @@ ${task.acceptance_criteria.map(criteria => `  - ${criteria}`).join('\n')}
     } else {
       // 否则正常更新故事地图
       setCurrentStoryMap(updatedStoryMap);
-      localStorage.setItem('currentStoryMap', JSON.stringify(updatedStoryMap));
+      StoryMapDataManager.updateStoryMap(updatedStoryMap);
       // 如果有tasks，说明支撑性需求应该显示
       setShowSupportingNeeds(true);
       localStorage.setItem('showSupportingNeeds', 'true');
