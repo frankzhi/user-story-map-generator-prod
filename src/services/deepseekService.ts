@@ -244,10 +244,40 @@ Examples of correct type assignments:
         throw new Error(`DeepSeek API error: ${response.status} - ${errorText}`);
       }
 
-      const jsonParseStartTime = Date.now();
-      const data: DeepSeekResponse = await response.json();
-      const jsonParseEndTime = Date.now();
-      console.log('⏱️ JSON解析耗时:', jsonParseEndTime - jsonParseStartTime, 'ms');
+      const apiResponseParseStartTime = Date.now();
+      
+      // 为 response.json() 添加超时保护
+      const responseParseTimeout = 10000; // 10秒超时
+      const responseParseWithTimeout = () => {
+        return new Promise<DeepSeekResponse>((resolve, reject) => {
+          const timeoutId = setTimeout(() => {
+            reject(new Error('API response parsing timeout'));
+          }, responseParseTimeout);
+          
+          response.json()
+            .then((data) => {
+              clearTimeout(timeoutId);
+              resolve(data);
+            })
+            .catch((error) => {
+              clearTimeout(timeoutId);
+              reject(error);
+            });
+        });
+      };
+      
+      let data: DeepSeekResponse;
+      try {
+        data = await responseParseWithTimeout();
+        const apiResponseParseEndTime = Date.now();
+        console.log('⏱️ API响应解析耗时:', apiResponseParseEndTime - apiResponseParseStartTime, 'ms');
+      } catch (parseError) {
+        if (parseError instanceof Error && parseError.message === 'API response parsing timeout') {
+          console.error('⏱️ API响应解析超时，耗时超过10秒');
+          throw new Error('API response parsing timeout: Response took too long to parse');
+        }
+        throw parseError;
+      }
       
       const content = data.choices[0]?.message?.content;
 
