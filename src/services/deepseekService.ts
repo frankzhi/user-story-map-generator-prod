@@ -133,14 +133,14 @@ Return ONLY this JSON structure:
 }
 
 Guidelines:
-- Create 2-3 epics that cover the main functional areas
-- Each epic should have 1-2 features
-- Each feature should have 3-4 tasks (MANDATORY: Generate at least 3 tasks per feature)
-- MANDATORY: If you generate fewer than 3 tasks per feature, you are not following the requirements
-- Each task MUST have at least 1 supporting requirement (MANDATORY: Every task needs technical infrastructure)
+- Create 3-5 epics that cover the main functional areas
+- Each epic should have 2-4 features
+- Each feature should have 4-8 tasks (MANDATORY: Generate at least 4 tasks per feature to ensure comprehensive coverage)
+- MANDATORY: If you generate fewer than 4 tasks per feature, you are not following the requirements
+- Each task MUST have at least 1-2 supporting requirements (MANDATORY: Every task needs technical infrastructure)
 - Supporting requirements should cover the main technical dependencies for each task
 - Think about what technical components are needed to implement each user story
-- MANDATORY: Keep responses focused and concise
+- MANDATORY: Break down each feature comprehensively - do not create generic tasks
 
 TASK GENERATION STRATEGY:
 - CRITICAL: Focus on essential user workflows
@@ -228,7 +228,7 @@ Examples of correct type assignments:
           model: 'deepseek-chat',
           messages,
           temperature: 0.7,
-          max_tokens: 4000  // 减少token数量，避免响应过大
+          max_tokens: 8000  // 恢复原来的token数量，保持内容完整性
         }),
         signal: controller.signal
       });
@@ -262,76 +262,68 @@ Examples of correct type assignments:
       const jsonExtractStartTime = Date.now();
       let storyMap;
       
-      // 使用Worker或setTimeout来强制中断长时间运行的JSON解析
-      const jsonParseTimeout = 5000; // 5秒JSON解析超时
-      
+      // 智能内容预处理和分段解析
       try {
-        // 直接尝试解析，如果超时则抛出错误
-        const parseWithTimeout = () => {
-          return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => {
-              reject(new Error('JSON parsing timeout'));
-            }, jsonParseTimeout);
-            
-            try {
-              // First try to parse the entire content as JSON
-              const result = JSON.parse(content);
-              clearTimeout(timeoutId);
-              resolve(result);
-            } catch (parseError) {
-              clearTimeout(timeoutId);
-              reject(parseError);
-            }
-          });
-        };
-        
-        storyMap = await parseWithTimeout();
-      } catch (parseError) {
-        if (parseError instanceof Error && parseError.message === 'JSON parsing timeout') {
-          console.error('⏱️ JSON解析超时，耗时超过5秒');
-          throw new Error('JSON parsing timeout: AI response took too long to parse');
+        // 1. 首先检查内容是否被截断
+        if (content.length > 10000) {
+          console.warn('🔧 响应内容较大，长度:', content.length);
         }
         
-        console.warn('🔧 直接解析失败，尝试清理和提取JSON:', parseError);
+        // 2. 检查JSON完整性
+        const openBraces = (content.match(/\{/g) || []).length;
+        const closeBraces = (content.match(/\}/g) || []).length;
+        console.log('🔧 JSON括号匹配检查: 开括号', openBraces, '闭括号', closeBraces);
         
-        // Clean the content - remove markdown formatting
-        let cleanedContent = content
-          .replace(/```json\s*/g, '')
-          .replace(/```\s*/g, '')
-          .replace(/^["']*json["']*\s*/, '') // Remove "json" prefix
-          .trim();
+        if (openBraces !== closeBraces) {
+          console.warn('🔧 JSON括号不匹配，可能被截断');
+        }
         
+        // 3. 尝试直接解析
         try {
-          storyMap = JSON.parse(cleanedContent);
-        } catch (cleanError) {
-          console.warn('🔧 清理后解析失败，尝试提取JSON块:', cleanError);
+          storyMap = JSON.parse(content);
+          console.log('🔧 直接解析成功');
+        } catch (parseError) {
+          console.warn('🔧 直接解析失败，尝试智能清理:', parseError instanceof Error ? parseError.message : 'Unknown error');
           
-          // Try to extract JSON from markdown code blocks
-          const jsonMatch = content.match(/```json\s*(\{[\s\S]*?\})\s*```/);
-          if (jsonMatch) {
-            try {
-              storyMap = JSON.parse(jsonMatch[1]);
-            } catch (blockError) {
-              console.warn('🔧 代码块解析失败，尝试简单匹配:', blockError);
-              
-              // Try simple JSON extraction
-              const simpleMatch = content.match(/\{[\s\S]*\}/);
-              if (simpleMatch) {
-                try {
-                  storyMap = JSON.parse(simpleMatch[0]);
-                } catch (simpleError) {
-                  console.error('🔧 所有JSON解析方法都失败:', simpleError);
-                  console.error('🔧 原始内容:', content.substring(0, 500));
-                  throw new Error('Failed to parse JSON from AI response');
-                }
-              } else {
-                throw new Error('No valid JSON found in DeepSeek response');
-              }
+          // 4. 智能内容清理
+          let cleanedContent = content;
+          
+          // 移除可能的markdown格式
+          cleanedContent = cleanedContent
+            .replace(/```json\s*/g, '')
+            .replace(/```\s*/g, '')
+            .replace(/^["']*json["']*\s*/, '')
+            .trim();
+          
+          // 尝试清理后的内容
+          try {
+            storyMap = JSON.parse(cleanedContent);
+            console.log('🔧 清理后解析成功');
+          } catch (cleanError) {
+            console.warn('🔧 清理后解析失败，尝试提取JSON块:', cleanError instanceof Error ? cleanError.message : 'Unknown error');
+            
+            // 5. 智能JSON提取
+            const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              try {
+                storyMap = JSON.parse(jsonMatch[0]);
+                console.log('🔧 正则提取解析成功');
+                             } catch (extractError) {
+                 console.error('🔧 正则提取解析失败:', extractError instanceof Error ? extractError.message : 'Unknown error');
+                 console.error('🔧 提取的内容长度:', jsonMatch[0].length);
+                 console.error('🔧 提取的内容前500字符:', jsonMatch[0].substring(0, 500));
+                 throw new Error('Failed to parse extracted JSON content');
+               }
+            } else {
+              throw new Error('No valid JSON structure found in response');
             }
-          } else {
-            throw new Error('No valid JSON found in DeepSeek response');
           }
         }
+      } catch (error) {
+        console.error('🔧 JSON解析最终失败:', error instanceof Error ? error.message : 'Unknown error');
+        console.error('🔧 原始内容长度:', content.length);
+        console.error('🔧 原始内容前1000字符:', content.substring(0, 1000));
+        throw error;
       }
 
       const jsonExtractEndTime = Date.now();
