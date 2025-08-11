@@ -231,7 +231,7 @@ Examples of correct type assignments:
     try {
       // 创建超时控制器
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60秒超时
       
       const response = await fetch(this.apiUrl, {
         method: 'POST',
@@ -340,7 +340,7 @@ Examples of correct type assignments:
       
       // 检查是否是超时错误
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error('Request timeout: AI service took too long to respond. Please try again.');
+        throw new Error('Request timeout: AI service took too long to respond (60 seconds). Please try again.');
       }
       
       throw new Error(`Failed to generate story map: ${error instanceof Error ? error.message : 'Unknown error'}`);
