@@ -246,37 +246,82 @@ Examples of correct type assignments:
 
       const apiResponseParseStartTime = Date.now();
       
-      // 为 response.json() 添加超时保护
-      const responseParseTimeout = 10000; // 10秒超时
-      const responseParseWithTimeout = () => {
-        return new Promise<DeepSeekResponse>((resolve, reject) => {
-          const timeoutId = setTimeout(() => {
-            reject(new Error('API response parsing timeout'));
-          }, responseParseTimeout);
-          
-          response.json()
-            .then((data) => {
-              clearTimeout(timeoutId);
-              resolve(data);
-            })
-            .catch((error) => {
-              clearTimeout(timeoutId);
-              reject(error);
-            });
-        });
-      };
+      // 使用流式读取，避免一次性加载大响应
+      console.log('🔧 开始流式读取API响应...');
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
+      
+      let chunks: Uint8Array[] = [];
+      let totalLength = 0;
+      const startTime = Date.now();
       
       let data: DeepSeekResponse;
+      
       try {
-        data = await responseParseWithTimeout();
-        const apiResponseParseEndTime = Date.now();
-        console.log('⏱️ API响应解析耗时:', apiResponseParseEndTime - apiResponseParseStartTime, 'ms');
-      } catch (parseError) {
-        if (parseError instanceof Error && parseError.message === 'API response parsing timeout') {
-          console.error('⏱️ API响应解析超时，耗时超过10秒');
-          throw new Error('API response parsing timeout: Response took too long to parse');
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          chunks.push(value);
+          totalLength += value.length;
+          
+          // 每读取1MB数据记录一次进度
+          if (totalLength % (1024 * 1024) === 0) {
+            console.log(`🔧 已读取: ${(totalLength / (1024 * 1024)).toFixed(1)}MB`);
+          }
+          
+          // 如果响应过大，提前警告
+          if (totalLength > 50 * 1024 * 1024) { // 50MB
+            console.warn('🔧 响应内容过大，可能影响性能');
+          }
         }
-        throw parseError;
+        
+        const readEndTime = Date.now();
+        console.log(`🔧 流式读取完成，总大小: ${(totalLength / 1024).toFixed(1)}KB，耗时: ${readEndTime - startTime}ms`);
+        
+        // 合并所有chunks
+        const allBytes = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const chunk of chunks) {
+          allBytes.set(chunk, offset);
+          offset += chunk.length;
+        }
+        
+        // 转换为文本
+        const text = new TextDecoder().decode(allBytes);
+        console.log('🔧 响应内容长度:', text.length);
+        
+        // 尝试解析JSON
+        try {
+          data = JSON.parse(text);
+          const apiResponseParseEndTime = Date.now();
+          console.log('⏱️ API响应解析耗时:', apiResponseParseEndTime - apiResponseParseStartTime, 'ms');
+        } catch (jsonError) {
+          console.error('🔧 JSON解析失败，尝试智能修复...');
+          
+          // 智能修复策略：查找JSON开始和结束位置
+          const jsonStart = text.indexOf('{');
+          const jsonEnd = text.lastIndexOf('}');
+          
+          if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+            const jsonContent = text.substring(jsonStart, jsonEnd + 1);
+            console.log('🔧 提取的JSON内容长度:', jsonContent.length);
+            
+            try {
+              data = JSON.parse(jsonContent);
+              console.log('🔧 智能修复成功');
+            } catch (fixError) {
+              throw new Error(`Failed to parse JSON even after intelligent fixing: ${fixError}`);
+            }
+          } else {
+            throw new Error('No valid JSON structure found in response');
+          }
+        }
+      } catch (streamError) {
+        console.error('🔧 流式读取失败:', streamError);
+        throw new Error(`Stream reading failed: ${streamError}`);
       }
       
       const content = data.choices[0]?.message?.content;
