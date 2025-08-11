@@ -4,11 +4,62 @@
 这是一个基于AI的用户故事地图生成器，使用DeepSeek API来生成结构化的用户故事地图。项目部署在Vercel上，支持中英文双语界面。
 
 ## 最新部署
-- **生产环境URL**: https://user-story-map-prod-g82i4kij2-freedomztm-7943s-projects.vercel.app
+- **生产环境URL**: https://user-story-map-prod-fxd1qclis-freedomztm-7943s-projects.vercel.app
 - **GitHub仓库**: https://github.com/frankzhi/user-story-map-generator-prod.git
-- **最后更新**: 2025-08-06 10:24 (UTC+8)
+- **最后更新**: 2025-08-11 16:03 (UTC+8)
 
 ## 最近修复和改进
+
+### 2025-08-11 API响应解析超时问题修复 ✅ 已修复
+**问题**: 用户故事地图生成时出现极长的等待时间（238秒），导致用户体验极差。
+
+**根本原因分析**: 
+1. **计时器混淆**: 两个不同的"JSON解析"计时器混淆，导致性能分析不准确
+2. **真正的问题**: 浏览器内置的 `response.json()` 解析器在某些AI响应内容上会卡住
+3. **性能数据**: API请求226ms，但"JSON解析"耗时238秒，实际内容解析只需1ms
+
+**解决方案**:
+1. **明确区分解析阶段**: 
+   - 阶段1: API响应解析 (`response.json()`) - 浏览器内置解析器
+   - 阶段2: 内容JSON解析 (自定义解析器) - 处理AI响应内容
+2. **为API响应解析添加超时保护**: 10秒超时，防止浏览器解析器卡住
+3. **修复计时器命名**: 避免混淆，提供准确的性能诊断
+4. **增强错误处理**: 超时时快速失败，提供清晰的错误信息
+
+**技术实现**:
+```typescript
+// 为 response.json() 添加超时保护
+const responseParseTimeout = 10000; // 10秒超时
+const responseParseWithTimeout = () => {
+  return new Promise<DeepSeekResponse>((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(new Error('API response parsing timeout'));
+    }, responseParseTimeout);
+    
+    response.json()
+      .then((data) => {
+        clearTimeout(timeoutId);
+        resolve(data);
+      })
+      .catch((error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+};
+```
+
+**修复效果**:
+- ✅ 避免浏览器内置JSON解析器长时间卡住
+- ✅ 10秒内快速识别问题响应
+- ✅ 提供准确的性能分析和诊断
+- ✅ 大幅改善用户体验，避免长时间等待
+- ✅ 保持内容完整性和AI生成质量
+
+**测试验证**:
+- ✅ 修复了计时器混淆问题
+- ✅ 添加了API响应解析超时保护
+- ✅ 部署到生产环境并验证功能正常
 
 ### 2025-08-06 数据持久化问题修复 ✅ 已修复
 **问题**: 用户删除用户故事后，数据没有正确持久化。用户从主页重新进入时，删除的用户故事会重新出现。
@@ -137,6 +188,9 @@ src/
 - 暂无
 
 ## 部署历史
+- 2025-08-11 16:03: **API响应解析超时问题修复** - 修复计时器混淆，为浏览器内置JSON解析器添加10秒超时保护，解决238秒等待问题
+- 2025-08-11 15:30: 优化JSON解析策略 - 减少超时时间，改进解析策略，添加智能内容预处理
+- 2025-08-11 15:00: 实现深度内容分析和分段解析策略 - 添加内容预检，增强JSON结构检查，实现分段解析
 - 2025-08-05 14:22: 触点生成优化，支持动态平台检测和用户类型识别
 - 2025-08-05 13:56: 修复颜色重复问题，确保同一活动下故事颜色唯一
 - 2025-08-05 13:30: 修复支撑性需求标签显示问题
