@@ -280,73 +280,76 @@ Examples of correct type assignments:
       const jsonExtractStartTime = Date.now();
       let storyMap;
       
-      // 创建JSON解析超时保护
-      const jsonParseTimeout = 10000; // 10秒JSON解析超时
-      const jsonParsePromise = new Promise((resolve, reject) => {
-        try {
-          // First try to parse the entire content as JSON
-          const result = JSON.parse(content);
-          resolve(result);
-        } catch (parseError) {
-          console.warn('🔧 直接解析失败，尝试清理和提取JSON:', parseError);
-          
-          // Clean the content - remove markdown formatting
-          let cleanedContent = content
-            .replace(/```json\s*/g, '')
-            .replace(/```\s*/g, '')
-            .replace(/^["']*json["']*\s*/, '') // Remove "json" prefix
-            .trim();
-          
-          try {
-            const result = JSON.parse(cleanedContent);
-            resolve(result);
-          } catch (cleanError) {
-            console.warn('🔧 清理后解析失败，尝试提取JSON块:', cleanError);
-            
-            // Try to extract JSON from markdown code blocks
-            const jsonMatch = content.match(/```json\s*(\{[\s\S]*?\})\s*```/);
-            if (jsonMatch) {
-              try {
-                const result = JSON.parse(jsonMatch[1]);
-                resolve(result);
-              } catch (blockError) {
-                console.warn('🔧 代码块解析失败，尝试简单匹配:', blockError);
-                
-                // Try simple JSON extraction
-                const simpleMatch = content.match(/\{[\s\S]*\}/);
-                if (simpleMatch) {
-                  try {
-                    const result = JSON.parse(simpleMatch[0]);
-                    resolve(result);
-                  } catch (simpleError) {
-                    console.error('🔧 所有JSON解析方法都失败:', simpleError);
-                    console.error('🔧 原始内容:', content.substring(0, 500));
-                    reject(new Error('Failed to parse JSON from AI response'));
-                  }
-                } else {
-                  reject(new Error('No valid JSON found in DeepSeek response'));
-                }
-              }
-            } else {
-              reject(new Error('No valid JSON found in DeepSeek response'));
-            }
-          }
-        }
-      });
-      
-      // 添加超时保护
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('JSON parsing timeout')), jsonParseTimeout);
-      });
+      // 使用Worker或setTimeout来强制中断长时间运行的JSON解析
+      const jsonParseTimeout = 5000; // 5秒JSON解析超时
       
       try {
-        storyMap = await Promise.race([jsonParsePromise, timeoutPromise]) as any;
+        // 直接尝试解析，如果超时则抛出错误
+        const parseWithTimeout = () => {
+          return new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => {
+              reject(new Error('JSON parsing timeout'));
+            }, jsonParseTimeout);
+            
+            try {
+              // First try to parse the entire content as JSON
+              const result = JSON.parse(content);
+              clearTimeout(timeoutId);
+              resolve(result);
+            } catch (parseError) {
+              clearTimeout(timeoutId);
+              reject(parseError);
+            }
+          });
+        };
+        
+        storyMap = await parseWithTimeout();
       } catch (parseError) {
         if (parseError instanceof Error && parseError.message === 'JSON parsing timeout') {
-          console.error('⏱️ JSON解析超时，耗时超过10秒');
+          console.error('⏱️ JSON解析超时，耗时超过5秒');
           throw new Error('JSON parsing timeout: AI response took too long to parse');
         }
-        throw parseError;
+        
+        console.warn('🔧 直接解析失败，尝试清理和提取JSON:', parseError);
+        
+        // Clean the content - remove markdown formatting
+        let cleanedContent = content
+          .replace(/```json\s*/g, '')
+          .replace(/```\s*/g, '')
+          .replace(/^["']*json["']*\s*/, '') // Remove "json" prefix
+          .trim();
+        
+        try {
+          storyMap = JSON.parse(cleanedContent);
+        } catch (cleanError) {
+          console.warn('🔧 清理后解析失败，尝试提取JSON块:', cleanError);
+          
+          // Try to extract JSON from markdown code blocks
+          const jsonMatch = content.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+          if (jsonMatch) {
+            try {
+              storyMap = JSON.parse(jsonMatch[1]);
+            } catch (blockError) {
+              console.warn('🔧 代码块解析失败，尝试简单匹配:', blockError);
+              
+              // Try simple JSON extraction
+              const simpleMatch = content.match(/\{[\s\S]*\}/);
+              if (simpleMatch) {
+                try {
+                  storyMap = JSON.parse(simpleMatch[0]);
+                } catch (simpleError) {
+                  console.error('🔧 所有JSON解析方法都失败:', simpleError);
+                  console.error('🔧 原始内容:', content.substring(0, 500));
+                  throw new Error('Failed to parse JSON from AI response');
+                }
+              } else {
+                throw new Error('No valid JSON found in DeepSeek response');
+              }
+            }
+          } else {
+            throw new Error('No valid JSON found in DeepSeek response');
+          }
+        }
       }
 
       const jsonExtractEndTime = Date.now();
