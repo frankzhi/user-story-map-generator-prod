@@ -301,22 +301,84 @@ Examples of correct type assignments:
         } catch (jsonError) {
           console.error('🔧 JSON解析失败，尝试智能修复...');
           
-          // 智能修复策略：查找JSON开始和结束位置
-          const jsonStart = text.indexOf('{');
-          const jsonEnd = text.lastIndexOf('}');
+          // 增强的智能修复策略
+          let fixedText = text;
           
-          if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-            const jsonContent = text.substring(jsonStart, jsonEnd + 1);
-            console.log('🔧 提取的JSON内容长度:', jsonContent.length);
+          // 1. 修复常见的JSON语法错误
+          console.log('🔧 开始修复JSON语法错误...');
+          
+          // 修复缺少逗号的问题
+          fixedText = fixedText.replace(/"([^"]+)"\s*([}\]])/g, '"$1",$2');
+          
+          // 修复缺少大括号的问题
+          const openBraces = (fixedText.match(/\{/g) || []).length;
+          const closeBraces = (fixedText.match(/\}/g) || []).length;
+          const openBrackets = (fixedText.match(/\[/g) || []).length;
+          const closeBrackets = (fixedText.match(/\]/g) || []).length;
+          
+          console.log('🔧 修复前 - 大括号:', openBraces, ':', closeBraces, '方括号:', openBrackets, ':', closeBrackets);
+          
+          // 如果缺少闭大括号，在末尾添加
+          if (openBraces > closeBraces) {
+            const missingBraces = openBraces - closeBraces;
+            fixedText = fixedText + '}'.repeat(missingBraces);
+            console.log(`🔧 添加了 ${missingBraces} 个闭大括号`);
+          }
+          
+          // 如果缺少闭方括号，在末尾添加
+          if (openBrackets > closeBrackets) {
+            const missingBrackets = openBrackets - closeBrackets;
+            fixedText = fixedText + ']'.repeat(missingBrackets);
+            console.log(`🔧 添加了 ${missingBrackets} 个闭方括号`);
+          }
+          
+          // 2. 尝试修复后的JSON
+          try {
+            data = JSON.parse(fixedText);
+            console.log('🔧 语法修复成功');
+            const apiResponseParseEndTime = Date.now();
+            console.log('⏱️ API响应解析耗时:', apiResponseParseEndTime - apiResponseParseStartTime, 'ms');
+          } catch (fixError) {
+            console.error('🔧 语法修复失败，尝试提取有效JSON...');
             
-            try {
-              data = JSON.parse(jsonContent);
-              console.log('🔧 智能修复成功');
-            } catch (fixError) {
-              throw new Error(`Failed to parse JSON even after intelligent fixing: ${fixError}`);
+            // 3. 提取策略：查找JSON开始和结束位置
+            const jsonStart = fixedText.indexOf('{');
+            const jsonEnd = fixedText.lastIndexOf('}');
+            
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+              const jsonContent = fixedText.substring(jsonStart, jsonEnd + 1);
+              console.log('🔧 提取的JSON内容长度:', jsonContent.length);
+              
+              try {
+                data = JSON.parse(jsonContent);
+                console.log('🔧 JSON提取修复成功');
+              } catch (extractError) {
+                console.error('🔧 JSON提取修复失败，尝试最后修复...');
+                
+                // 4. 最后修复：移除可能导致错误的字符
+                let finalText = jsonContent;
+                
+                // 移除末尾的逗号
+                finalText = finalText.replace(/,(\s*[}\]])/g, '$1');
+                
+                // 移除未闭合的字符串
+                finalText = finalText.replace(/"([^"]*)$/gm, '');
+                
+                try {
+                  data = JSON.parse(finalText);
+                  console.log('🔧 最终修复成功');
+                                 } catch (finalError) {
+                   console.error('🔧 所有修复策略都失败了');
+                   console.error('🔧 原始错误:', jsonError instanceof Error ? jsonError.message : 'Unknown error');
+                   console.error('🔧 修复后错误:', fixError instanceof Error ? fixError.message : 'Unknown error');
+                   console.error('🔧 提取后错误:', extractError instanceof Error ? extractError.message : 'Unknown error');
+                   console.error('🔧 最终错误:', finalError instanceof Error ? finalError.message : 'Unknown error');
+                   throw new Error(`Failed to parse JSON after all repair attempts: ${finalError instanceof Error ? finalError.message : 'Unknown error'}`);
+                 }
+              }
+            } else {
+              throw new Error('No valid JSON structure found in response');
             }
-          } else {
-            throw new Error('No valid JSON structure found in response');
           }
         }
       } catch (streamError) {
