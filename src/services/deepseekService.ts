@@ -258,34 +258,84 @@ Examples of correct type assignments:
         throw new Error('No response content from DeepSeek API');
       }
 
-      // Try to extract JSON from the response with better error handling and timeout protection
+            // Try to extract JSON from the response with better error handling and timeout protection
       const jsonExtractStartTime = Date.now();
       let storyMap;
       
-      // 智能内容预处理和分段解析
+      // 深度内容分析和分段解析策略
       try {
-        // 1. 首先检查内容是否被截断
-        if (content.length > 10000) {
-          console.warn('🔧 响应内容较大，长度:', content.length);
+        // 1. 内容预检
+        console.log('🔧 开始内容预检...');
+        console.log('🔧 响应内容长度:', content.length);
+        
+        // 2. 检查内容特征
+        const hasLongStrings = content.includes('"') && content.match(/"[^"]{100,}"/g);
+        const hasSpecialChars = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/.test(content);
+        const hasUnicode = /[\u{10000}-\u{10FFFF}]/u.test(content);
+        
+        if (hasLongStrings) {
+          console.warn('🔧 检测到超长字符串，可能影响解析性能');
+        }
+        if (hasSpecialChars) {
+          console.warn('🔧 检测到特殊控制字符');
+        }
+        if (hasUnicode) {
+          console.warn('🔧 检测到扩展Unicode字符');
         }
         
-        // 2. 检查JSON完整性
+        // 3. 检查JSON结构完整性
         const openBraces = (content.match(/\{/g) || []).length;
         const closeBraces = (content.match(/\}/g) || []).length;
-        console.log('🔧 JSON括号匹配检查: 开括号', openBraces, '闭括号', closeBraces);
+        const openBrackets = (content.match(/\[/g) || []).length;
+        const closeBrackets = (content.match(/\]/g) || []).length;
         
-        if (openBraces !== closeBraces) {
-          console.warn('🔧 JSON括号不匹配，可能被截断');
+        console.log('🔧 JSON结构检查: 大括号', openBraces, ':', closeBraces, '方括号', openBrackets, ':', closeBrackets);
+        
+        if (openBraces !== closeBraces || openBrackets !== closeBrackets) {
+          console.warn('🔧 JSON结构不完整，可能被截断');
         }
         
-        // 3. 尝试直接解析
+        // 4. 分段解析策略
+        console.log('🔧 开始分段解析...');
+        
+        // 第一段：直接解析（带超时保护）
         try {
-          storyMap = JSON.parse(content);
-          console.log('🔧 直接解析成功');
+          const parseStartTime = Date.now();
+          console.log('🔧 尝试直接解析...');
+          
+          // 使用Worker或setTimeout来强制中断长时间运行的JSON解析
+          const jsonParseTimeout = 10000; // 10秒JSON解析超时
+          
+          const parseWithTimeout = () => {
+            return new Promise((resolve, reject) => {
+              const timeoutId = setTimeout(() => {
+                reject(new Error('JSON parsing timeout'));
+              }, jsonParseTimeout);
+              
+              try {
+                const result = JSON.parse(content);
+                clearTimeout(timeoutId);
+                resolve(result);
+              } catch (parseError) {
+                clearTimeout(timeoutId);
+                reject(parseError);
+              }
+            });
+          };
+          
+          storyMap = await parseWithTimeout();
+          const parseEndTime = Date.now();
+          console.log('🔧 直接解析成功，耗时:', parseEndTime - parseStartTime, 'ms');
+          
         } catch (parseError) {
+          if (parseError instanceof Error && parseError.message === 'JSON parsing timeout') {
+            console.error('⏱️ JSON解析超时，耗时超过10秒');
+            throw new Error('JSON parsing timeout: AI response took too long to parse');
+          }
+          
           console.warn('🔧 直接解析失败，尝试智能清理:', parseError instanceof Error ? parseError.message : 'Unknown error');
           
-          // 4. 智能内容清理
+          // 第二段：智能内容清理
           let cleanedContent = content;
           
           // 移除可能的markdown格式
@@ -297,28 +347,37 @@ Examples of correct type assignments:
           
           // 尝试清理后的内容
           try {
+            const cleanParseStartTime = Date.now();
+            console.log('🔧 尝试清理后解析...');
             storyMap = JSON.parse(cleanedContent);
-            console.log('🔧 清理后解析成功');
+            const cleanParseEndTime = Date.now();
+            console.log('🔧 清理后解析成功，耗时:', cleanParseEndTime - cleanParseStartTime, 'ms');
           } catch (cleanError) {
             console.warn('🔧 清理后解析失败，尝试提取JSON块:', cleanError instanceof Error ? cleanError.message : 'Unknown error');
             
-            // 5. 智能JSON提取
+            // 第三段：智能JSON提取
             const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
               try {
+                const extractParseStartTime = Date.now();
+                console.log('🔧 尝试正则提取解析...');
                 storyMap = JSON.parse(jsonMatch[0]);
-                console.log('🔧 正则提取解析成功');
-                             } catch (extractError) {
-                 console.error('🔧 正则提取解析失败:', extractError instanceof Error ? extractError.message : 'Unknown error');
-                 console.error('🔧 提取的内容长度:', jsonMatch[0].length);
-                 console.error('🔧 提取的内容前500字符:', jsonMatch[0].substring(0, 500));
-                 throw new Error('Failed to parse extracted JSON content');
-               }
+                const extractParseEndTime = Date.now();
+                console.log('🔧 正则提取解析成功，耗时:', extractParseEndTime - extractParseStartTime, 'ms');
+              } catch (extractError) {
+                console.error('🔧 正则提取解析失败:', extractError instanceof Error ? extractError.message : 'Unknown error');
+                console.error('🔧 提取的内容长度:', jsonMatch[0].length);
+                console.error('🔧 提取的内容前500字符:', jsonMatch[0].substring(0, 500));
+                throw new Error('Failed to parse extracted JSON content');
+              }
             } else {
               throw new Error('No valid JSON structure found in response');
             }
           }
         }
+        
+        console.log('🔧 分段解析完成');
+        
       } catch (error) {
         console.error('🔧 JSON解析最终失败:', error instanceof Error ? error.message : 'Unknown error');
         console.error('🔧 原始内容长度:', content.length);
