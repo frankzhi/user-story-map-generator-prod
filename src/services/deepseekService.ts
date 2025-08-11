@@ -30,8 +30,10 @@ export class DeepSeekService {
   }
 
   async generateStoryMap(productDescription: string): Promise<StoryMapYAML> {
+    const startTime = Date.now();
     console.log('🔧 DeepSeek服务 - 开始生成故事地图');
     console.log('🔧 API密钥状态:', this.apiKey ? '已配置' : '未配置');
+    console.log('⏱️ 开始时间:', new Date().toISOString());
     
     if (!this.apiKey) {
       throw new Error('DeepSeek API key not found. Please add VITE_DEEPSEEK_API_KEY to your environment variables.');
@@ -233,6 +235,9 @@ Examples of correct type assignments:
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60秒超时
       
+      console.log('⏱️ 准备发送API请求...');
+      const requestStartTime = Date.now();
+      
       const response = await fetch(this.apiUrl, {
         method: 'POST',
         headers: {
@@ -248,6 +253,10 @@ Examples of correct type assignments:
         signal: controller.signal
       });
       
+      const requestEndTime = Date.now();
+      const requestDuration = requestEndTime - requestStartTime;
+      console.log('⏱️ API请求完成，耗时:', requestDuration, 'ms');
+      
       clearTimeout(timeoutId);
 
       if (!response.ok) {
@@ -255,7 +264,11 @@ Examples of correct type assignments:
         throw new Error(`DeepSeek API error: ${response.status} - ${errorText}`);
       }
 
+      const jsonParseStartTime = Date.now();
       const data: DeepSeekResponse = await response.json();
+      const jsonParseEndTime = Date.now();
+      console.log('⏱️ JSON解析耗时:', jsonParseEndTime - jsonParseStartTime, 'ms');
+      
       const content = data.choices[0]?.message?.content;
 
       // 🔍 DEBUG: 添加调试日志
@@ -266,6 +279,7 @@ Examples of correct type assignments:
       }
 
       // Try to extract JSON from the response with better error handling
+      const jsonExtractStartTime = Date.now();
       let storyMap;
       try {
         // First try to parse the entire content as JSON
@@ -313,6 +327,9 @@ Examples of correct type assignments:
         }
       }
 
+      const jsonExtractEndTime = Date.now();
+      console.log('⏱️ JSON提取和解析总耗时:', jsonExtractEndTime - jsonExtractStartTime, 'ms');
+
       // 🔍 DEBUG: 添加调试日志
       console.log('🔍 解析后的 JSON:', JSON.stringify(storyMap, null, 2));
 
@@ -333,13 +350,24 @@ Examples of correct type assignments:
         });
       }
 
-      return this.validateAndTransformResponse(storyMap);
+      const validationStartTime = Date.now();
+      const result = this.validateAndTransformResponse(storyMap);
+      const validationEndTime = Date.now();
+      console.log('⏱️ 数据验证和转换耗时:', validationEndTime - validationStartTime, 'ms');
+      
+      const totalTime = Date.now() - startTime;
+      console.log('⏱️ 总耗时:', totalTime, 'ms');
+      console.log('⏱️ 结束时间:', new Date().toISOString());
+      
+      return result;
 
     } catch (error) {
-      console.error('DeepSeek API error:', error);
+      const errorTime = Date.now() - startTime;
+      console.error('❌ DeepSeek API error (耗时:', errorTime, 'ms):', error);
       
       // 检查是否是超时错误
       if (error instanceof Error && error.name === 'AbortError') {
+        console.error('⏱️ 请求超时，总耗时:', errorTime, 'ms');
         throw new Error('Request timeout: AI service took too long to respond (60 seconds). Please try again.');
       }
       
